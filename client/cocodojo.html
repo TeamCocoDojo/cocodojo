@@ -1,0 +1,17 @@
+<head>
+  <title>cocodojo</title>
+</head>
+
+<body>
+  {{> contents}}
+</body>
+
+<template name="contents">
+  <h1>Welcome to Coco Dojo. Have a nice day</h1>
+  {{#if currentUser}}
+    
+    <input type="button" value="Click" />
+  {{else}}
+    {{loginButtons}}
+  {{/if}}
+</template>
