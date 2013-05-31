@@ -1,17 +1,13 @@
 if (Meteor.isClient) {
 
   Meteor.loginWithGithub({
-      requestPermissions: {
-        github: ['user', 'public_repo']
-      },
-      requestOfflineToken: {
-        github: true
-      }
+    requestPermissions: {
+      github: ['user', 'public_repo']
+    },
+    requestOfflineToken: {
+      github: true
     }
-  );
-
-  
-
+  });
 }
 
 if (Meteor.isServer) {

@@ -1,49 +1,20 @@
 <head>
- <!--
-  <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="css/editor.css">
-  
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/main.js"></script>
-  <script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
--->
-<title>
-  CoCo DoJo
-</title>
+  <title>
+    CoCo DoJo
+  </title>
 </head>
 
 <body>
-
   <div class="viewport">
     <div class="frame">
       <div id="menu" class="menu nav-collapse collapse width in" >
-        <div class="collapse-inner">
-          <div class="navbar navbar-inverse">
-            <div class="navbar-inner">
-              Menu
-            </div>
-          </div>
-          <ul class="nav nav-tabs nav-stacked">
-            <li><a>Futurama</a></li>
-            <li><a>Star Wars</a></li>
-            <li><a>Doctor Who</a></li>
-          </ul>
-        </div>
+        {{> repoview}}
       </div>
 
       <div class="view">
-        <div class="navbar navbar-inverse">
-          <div class="navbar-inner">
-            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-          </div>
-        </div>
-        <div id="content">
+        {{> navigation }}
 
+        <div id="content">
           <div id="editorInstance">
           </div>
 
@@ -60,7 +31,6 @@
           <div id="chat">
             chat
           </div>
-
         </div>
       </div>
     </div>

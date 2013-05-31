@@ -18,14 +18,15 @@ cocodojo.githubAPI.getUsername = function() {
 
 cocodojo.githubAPI.getRepos = function(callback) {
   var accessToken = cocodojo.githubAPI.getAccessToken();
-  console.log(accessToken);
-  Meteor.http.get("https://api.github.com/user/repos?access_token=" + accessToken,
-    function (error, result) {
-      if (result.statusCode === 200) {
-        callback(result);
+  if (accessToken) {
+    Meteor.http.get("https://api.github.com/user/repos?access_token=" + accessToken,
+      function (error, result) {
+        if (result.statusCode === 200) {
+          callback(result);
+        }
       }
-    }
-  );
+    );
+  }
 };
 
 cocodojo.githubAPI.getFiles = function() {
@@ -76,17 +77,17 @@ cocodojo.githubFile.prototype = {
 };
 
 
-Template.contents.userName = function() {
+Template.repoview.userName = function() {
   return cocodojo.githubAPI.getUsername();
 };
 
-Template.contents.events({
+Template.repoview.events({
   'click input' : function () {
     cocodojo.githubAPI.getRepos();
   }
 });
 
-Template.contents.rendered = function() {
+Template.repoview.rendered = function() {
 
   cocodojo.githubAPI.getRepos(function(repos) {
     var allRepo = [];
