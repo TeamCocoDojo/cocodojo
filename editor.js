@@ -27,7 +27,6 @@ if(Meteor.isClient){
    Template.editor.rendered = function(){
       var codeSession = CodeSession.find();
       var codeSessionId = Session.get("codeSessionId");
-      console.log(codeSessionId);
 
       /* create cocodojo object*/
       editor = {};
@@ -58,7 +57,6 @@ if(Meteor.isClient){
                pendDeltas.push(deltas[i].delta);
             }
          }
-         console.log(pendDeltas);
          if(pendDeltas.length > 0){
             editor.updateDue = true;
             editor.editorInstance.getSession().getDocument().applyDeltas(pendDeltas);
@@ -67,14 +65,16 @@ if(Meteor.isClient){
          editor.updateDue = false;
       };
 
-
+      /*** Initialization ***/
+      setTimeout(function(){
+         var deltas = CodeSession.findOne({_id: Session.get("codeSessionId")}, {fields: {Deltas:1}}).Deltas;
+         editor.update(deltas);
+      }, 1000);
 
       var mongoQuery = CodeSession.find({_id: Session.get("codeSessionId")});
       mongoQuery.observe({
          changed : function(newDoc, oldIndex, oldDoc) {
-            //
             console.log("observed");
-            console.log(newDoc);
             editor.update(newDoc.Deltas);
             //editor.addComment(newDoc.Comments);
          }
