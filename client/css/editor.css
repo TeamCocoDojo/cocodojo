@@ -1,11 +1,7 @@
 html {
   height:100%;
 }
-body {
-  padding-top:60px;
-  height:90%;
-  position:relative;
-}
+
 
 /*#editorInstance { 
  width:80%; 
@@ -13,7 +9,7 @@ body {
 }*/
 
 
-#editor { 
+#editorInstance { 
   width:95%;
   /*height:100%;*/
   /* relative height seems not working... please take a look later */
@@ -67,7 +63,7 @@ body .viewport .frame .navbar .navbar-inner {
 
 body .viewport .frame .menu {
   height: 100%;
-  /*background-color: #3D6AA2;*/
+  /* background-color: #3D6AA2; */ 
 }
 
 body .viewport .frame .menu.collapse {

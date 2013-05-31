@@ -1,5 +1,5 @@
-$(document).ready(function(){
-  var editor = ace.edit("editor");
+$(window).load(function(){
+  var editor = ace.edit("editorInstance");
   editor.setTheme("ace/theme/monokai");
   editor.getSession().setMode("ace/mode/javascript");
 
