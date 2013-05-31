@@ -49,6 +49,8 @@ if(Meteor.isClient){
             }
          );
       });
+
+      // Fix me: typing simutaneously is not working very good. It should be something related to filter deltas. 
       editor.update = function(deltas){
          if(deltas === undefined){ return false; }
          var pendDeltas = [];
@@ -66,18 +68,52 @@ if(Meteor.isClient){
       };
 
       /*** Initialization ***/
-      setTimeout(function(){
-         var deltas = CodeSession.findOne({_id: Session.get("codeSessionId")}, {fields: {Deltas:1}}).Deltas;
-         editor.update(deltas);
-      }, 1000);
+      // Fix me: Directly do "CodeSession.findOne" always return undefined. Maybe we should find a event to bind
+      // Fix me: After several reloads, the CodeSession.findOne will always return undefined. Not yet figure out the cause. 
+      editor.init = function(){
+         var deltas = CodeSession.findOne({_id: Session.get("codeSessionId")});
+         if( typeof deltas != "undefined"){
+            //apply latest changes
+            editor.update(deltas.Deltas);
+
+            // add online users
+            /*
+            CodeSession.update(
+               {_id: Session.get("codeSessionId")},
+               { $push:
+                  { OnlineUsers: {name: editor.local_uid} }
+               }
+            );*/
+
+         }
+         else{
+            console.log("unable to connect to the server, retry in 1 second");
+            setTimeout("editor.init()", 1000);
+         }
+
+      };
+      setTimeout("editor.init()", 1000);
 
       var mongoQuery = CodeSession.find({_id: Session.get("codeSessionId")});
       mongoQuery.observe({
          changed : function(newDoc, oldIndex, oldDoc) {
-            console.log("observed");
+            console.log("observed");   
             editor.update(newDoc.Deltas);
             //editor.addComment(newDoc.Comments);
+            console.log(newDoc.OnlineUsers);
          }
+      });
+
+      // Fix me: not working, should do server side validation
+      // before leaves, update online user lists
+      $(window).unload( function() {
+         CodeSession.update(
+            {_id: Session.get("codeSessionId")},
+            { $pull:
+               { OnlineUsers: {name: editor.local_uid} }
+
+            }
+         );
       });
    };
 
