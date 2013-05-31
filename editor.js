@@ -1,23 +1,44 @@
 CodeSession = new Meteor.Collection("codeSession");
 if(Meteor.isClient){
+   var CocoDojoRouter = Backbone.Router.extend({
+      routes:{
+         ":session_id":"dojo"
+      },
+      dojo:function (codeSessionId) {
+         Session.set("codeSessionId", codeSessionId);
+      },
+      setCodeSession:function (codeSessionId) {
+         this.navigate(codeSessionId, true);
+      }
+   });
+   Router = new CocoDojoRouter;
+
+   Meteor.startup(function () {
+      Backbone.history.start({pushState: true});
+      $(document).ready(function() {
+         if (window.location.pathname == "/") {
+            var codeSessionId = CodeSession.insert({name: "New Dojo"});
+            Router.navigate(codeSessionId, false);
+         }
+      }); 
+   });
+
    Template.editor.rendered = function(){
       var codeSession = CodeSession.find();
-      /* Initial new session */
-      var codeSessionId = CodeSession.insert({name: "New Dojo"});
-      Session.set("codeSessionId", codeSessionId);
-      
+      var codeSessionId = Session.get("codeSessionId");
+      console.log(codeSessionId);
+
       /* create cocodojo object*/
       editor = {};
       editor.updateDue = false;
       editor.disableInput = false;
       editor.currentDelta = 0;
-      editor.localComments = {};
-      editor.commentsCount = 0;
       editor.local_uid = (((1+Math.random())*0x10000)|0).toString(16).slice(1);
       editor.editorInstance = ace.edit("editorInstance");
       editor.editorInstance.setTheme("ace/theme/monokai");
       editor.editorInstance.getSession().setMode("ace/mode/javascript");
       editor.editorInstance.getSession().getDocument().on("change", function(e){
+         console.log("changedd");
          CodeSession.update(
             {_id: Session.get("codeSessionId")}, 
             { $push:
@@ -49,6 +70,7 @@ if(Meteor.isClient){
       var mongoQuery = CodeSession.find({_id: Session.get("codeSessionId")});
       mongoQuery.observe({
          changed : function(newDoc, oldIndex, oldDoc) {
+            console.log("observed");
             console.log(newDoc);
             editor.update(newDoc.Deltas);
             //editor.addComment(newDoc.Comments);
