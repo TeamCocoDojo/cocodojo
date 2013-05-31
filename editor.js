@@ -5,6 +5,7 @@ if(Meteor.isClient){
          ":session_id":"dojo"
       },
       dojo:function (codeSessionId) {
+         console.log(codeSessionId);
          Session.set("codeSessionId", codeSessionId);
       },
       setCodeSession:function (codeSessionId) {
@@ -38,6 +39,7 @@ if(Meteor.isClient){
       editor.editorInstance.setTheme("ace/theme/monokai");
       editor.editorInstance.getSession().setMode("ace/mode/javascript");
       editor.editorInstance.getSession().getDocument().on("change", function(e){
+         if(editor.updateDue) return;
          console.log("changedd");
          CodeSession.update(
             {_id: Session.get("codeSessionId")}, 
@@ -52,11 +54,11 @@ if(Meteor.isClient){
          if(deltas === undefined){ return false; }
          var pendDeltas = [];
          for(var i=editor.currentDelta; i<deltas.length; ++i){
-            if(deltas[i].sender_uid !== editor.local_uid){
+            if(deltas[i].sender_uid != editor.local_uid){
                pendDeltas.push(deltas[i].delta);
             }
          }
-         console.log(pendDeltas.length);
+         console.log(pendDeltas);
          if(pendDeltas.length > 0){
             editor.updateDue = true;
             editor.editorInstance.getSession().getDocument().applyDeltas(pendDeltas);
@@ -70,6 +72,7 @@ if(Meteor.isClient){
       var mongoQuery = CodeSession.find({_id: Session.get("codeSessionId")});
       mongoQuery.observe({
          changed : function(newDoc, oldIndex, oldDoc) {
+            //
             console.log("observed");
             console.log(newDoc);
             editor.update(newDoc.Deltas);
