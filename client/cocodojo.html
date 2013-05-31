@@ -2,14 +2,35 @@
   <title>cocodojo</title>
 </head>
 
-<body>
+<body >
   {{> contents}}
 </body>
 
 <template name="contents">
   <h1>Welcome to Coco Dojo. Have a nice day</h1>
   {{#if currentUser}}
-    
+    <p>Hello {{userName}}</p>
+<div class="container fuelux">
+      <div id="ex-tree" class="tree">
+    <div class="tree-folder" style="display:none;">
+      <div class="tree-folder-header">
+        <i class="icon-folder-close"></i>
+
+        <div class="tree-folder-name"></div>
+      </div>
+      <div class="tree-folder-content"></div>
+      <div class="tree-loader" style="display:none">
+      </div>
+    </div>
+    <div class="tree-item" style="display:none;">
+      <i class="tree-dot"></i>
+
+      <div class="tree-item-name"></div>
+    </div>
+  </div>
+
+</div>
+</div>
     <input type="button" value="Click" />
   {{else}}
     {{loginButtons}}
