@@ -1,34 +1,7 @@
-html {
-  height:100%;
-}
-
-
-/*#editorInstance { 
- width:80%; 
- height:520px;
-}*/
-
-
-#editorInstance { 
-  width:95%;
-  /*height:100%;*/
-  /* relative height seems not working... please take a look later */
-  height: 600px;
-  padding:0;
-  margin:0 auto;
-  /*position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;*/
-}
-
-#fileDir, #slider, #chat, #video {
-  display: none;
-}
-
-
-/* slider */
+/* 
+CSS for HTML5 Facebook Style Sliding Menu Using Twitter Bootstrap Collapse
+http://tech.xtremelabs.com/html5-facebook-style-sliding-menu-using-twitter-bootstrap-collapse/
+*/
 
 body {
   position: absolute;
@@ -53,23 +26,23 @@ body .viewport .frame {
   height: 100%;
   top: 0;
   bottom: 0;
-  left: 0; 
+  left: 0;
 }
 
 body .viewport .frame .navbar .navbar-inner {
   border-radius: 0;
-  padding-left: 5px; 
+  padding-left: 5px;
 }
 
 body .viewport .frame .menu {
   height: 100%;
-  /* background-color: #3D6AA2; */ 
+  /* background-color: #3D6AA2; */
 }
 
 body .viewport .frame .menu.collapse {
   float: left;
   height: 100% !important;
-  width: auto; 
+  width: auto;
 }
 
 body .viewport .frame .menu.collapse.height {
@@ -79,7 +52,7 @@ body .viewport .frame .menu.collapse.height {
   -webkit-transition: height 0.35s ease;
   -moz-transition: height 0.35s ease;
   -o-transition: height 0.35s ease;
-  transition: height 0.35s ease; 
+  transition: height 0.35s ease;
 }
 
 body .viewport .frame .menu.collapse.width {
@@ -89,46 +62,46 @@ body .viewport .frame .menu.collapse.width {
   -webkit-transition: width 0.35s ease;
   -moz-transition: width 0.35s ease;
   -o-transition: width 0.35s ease;
-  transition: width 0.35s ease; 
+  transition: width 0.35s ease;
 }
 
 body .viewport .frame .menu.collapse.in.width {
-  width: auto; 
+  width: auto;
 }
 
 body .viewport .frame .menu.collapse.in.height {
-  height: auto; 
+  height: auto;
 }
 
 body .viewport .frame .menu .collapse-inner {
   position: relative;
   width: 250px;
-  height: 100%; 
+  height: 100%;
 }
 
 body .viewport .frame .menu .navbar .navbar-inner {
   text-align: center;
   color: grey;
   font-size: 1.2em;
-  line-height: 38px; 
+  line-height: 38px;
 }
 
 body .viewport .frame .menu .nav-stacked {
-  padding: 0 10px; 
+  padding: 0 10px;
 }
 
 body .viewport .frame .view {
   width: 50%;
   height: 100%;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 body .viewport .frame .view .navbar .navbar-inner .btn-navbar {
   display: block;
-  float: left; 
+  float: left;
 }
 
 body .viewport .frame .view #content {
   margin: auto 15px;
-  text-align: justify; 
+  text-align: justify;
 }
