@@ -2,17 +2,20 @@ html {
   height:100%;
 }
 
-#editorInstance {
-  width:95%;
-  /* relative height seems not working... please take a look later */
-  height: 600px;
-  padding:0;
-  margin:0 auto;
+body {
+  background-color: #666;
 }
 
-#fileDir, #slider, #chat, #video {
-  display: none;
+#content {
+  position: relative;
+  height: 91%;
 }
+
+#editorInstance {
+  width:99%; height: 96%;
+  padding:0; margin:0 auto;
+}
+
 
 /* GitHub Directory */
 .tree {

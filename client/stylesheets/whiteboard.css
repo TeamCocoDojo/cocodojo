@@ -1,0 +1,24 @@
+#whiteboard-container {
+	position: absolute; top: 0; left: 100%;
+	width: 20px; height: 80%;
+	background-color: #ddd;
+	transition: all 300ms ease;
+	z-index: 2;
+}
+#whiteboard-container:hover {
+	width: 85%; height: 80%;
+	position: absolute; top: 0; left: 20%;
+}
+
+#whiteboard-container #canvas{
+	width: 0; height: 0;
+	opacity: 0;
+}
+#whiteboard-container:hover #canvas{
+	width: 100%; height: 100%;
+	opacity: 1;
+}
+
+#whiteboard-container .well {
+  display: none;
+}

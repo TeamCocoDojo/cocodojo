@@ -1,0 +1,21 @@
+#video-container {
+	position: absolute;
+	bottom: 0; right: 0;
+  z-index: 2;
+}
+
+.video-instance {
+  float: right;
+  width: 132px; height: 99px;
+  margin: 6px;
+  opacity: 0.85;
+  overflow: hidden;
+  border-radius: 2px;
+  box-shadow: 1px 1px 3px 1px #333;
+  transition: all 300ms ease;
+}
+
+.video-instance:hover {
+  width: 160px; height: 120px;
+  opacity: 1;
+}

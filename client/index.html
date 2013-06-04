@@ -7,7 +7,7 @@
 <body>
   <div class="viewport">
     <div class="frame">
-      <div id="menu" class="menu nav-collapse collapse width in" >
+      <div id="menu" class="menu nav-collapse collapse width" >
         {{> repoview}}
       </div>
 
@@ -15,21 +15,13 @@
         {{> navigation }}
 
         <div id="content">
-           {{> editor}}
+          {{> editor}}
 
-          <div id="slider" class="well">
-            <div id="canvas">
-              <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Binary_tree.svg/240px-Binary_tree.svg.png"> 
-            </div>
-          </div>
+          {{> whiteboard}}
 
-          <div id="video">
-            <img src="http://www.liventerprise.com/phpthumb/cache/7/76/769/7697/Skype_Group_Video_chat.jpg"> 
-          </div>
+          {{> video}}
 
-          <div id="chat">
-            chat
-          </div>
+          {{> chatbox}}
         </div>
       </div>
     </div>
