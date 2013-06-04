@@ -1,5 +1,14 @@
 CodeSession = new Meteor.Collection("codeSession");
+if(Meteor.isServer){
+   var ot = Npm.require('ot')
+   var server = new ot.Server("lorem ipsum");
+   var operation = new ot.TextOperation().retain(11).insert(" dolor");
+   var str = operation.apply("lorem ipsum");
+   console.log(str);
+
+}
 if(Meteor.isClient){
+
    var CocoDojoRouter = Backbone.Router.extend({
       routes:{
          ":session_id":"dojo"
@@ -77,7 +86,7 @@ if(Meteor.isClient){
             editor.update(deltas.Deltas);
 
             // add online users
-            /*
+/*
             CodeSession.update(
                {_id: Session.get("codeSessionId")},
                { $push:
@@ -115,6 +124,8 @@ if(Meteor.isClient){
             }
          );
       });
+      console.log(ot);
+      var client = new ot.Client(0);
    };
 
 
