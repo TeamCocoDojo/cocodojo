@@ -1,11 +1,34 @@
-#navbar ul { 
+#navbarLeft {
+	float:left;
+}
+
+
+#navbarLeft ul { 
   margin: 0; 
   padding: 5px; 
   list-style-type: none; 
-  text-align: right; 
-  background-color: #000; 
+  text-align: left; 
+  /*background-color: #000; */
 } 
  
-#navbar ul li {  
+#navbarLeft ul li {  
   display: inline; 
+} 
+
+#navbarRight{
+	float: right;
+}
+
+#navbarRight ul { 
+  margin: 0; 
+  padding: 0px; 
+  list-style-type: none; 
+  text-align: right; 
+} 
+ 
+#navbarRight ul li {  
+  display: inline; 
+  padding-left: 20px;
+  font-family:"Courier New",Courier,monospace;
+  font-weight: bold;
 } 
