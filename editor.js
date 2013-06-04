@@ -1,7 +1,7 @@
 CodeSession = new Meteor.Collection("codeSession");
 
 if(Meteor.isServer){
-   var serverOt = Npm.require('ot');
+   var serverOt = ot;
    var server = new serverOt.Server("lorem ipsum");
    var operation = new serverOt.TextOperation().retain(11).insert(" dolor");
    var str = operation.apply("lorem ipsum");
