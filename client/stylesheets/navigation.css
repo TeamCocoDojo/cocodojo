@@ -1,0 +1,11 @@
+#navbar ul { 
+  margin: 0; 
+  padding: 5px; 
+  list-style-type: none; 
+  text-align: right; 
+  background-color: #000; 
+} 
+ 
+#navbar ul li {  
+  display: inline; 
+} 
