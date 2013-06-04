@@ -1788,4 +1788,3 @@ ot.EditorClient = (function () {
 
   return EditorClient;
 }());
-console.log(new ot.Client(0));
