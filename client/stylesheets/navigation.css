@@ -1,34 +1,61 @@
-#navbarLeft {
-	float:left;
+#navbarRight {
+	float:right;
 }
 
-
-#navbarLeft ul { 
-  margin: 0; 
-  padding: 5px; 
-  list-style-type: none; 
-  text-align: left; 
-  /*background-color: #000; */
-} 
- 
-#navbarLeft ul li {  
-  display: inline; 
-} 
-
-#navbarRight{
-	float: right;
-}
 
 #navbarRight ul { 
   margin: 0; 
-  padding: 0px; 
+  padding: 5px; 
   list-style-type: none; 
   text-align: right; 
+  /*background-color: #000; */
 } 
  
 #navbarRight ul li {  
+  display: inline; 
+} 
+
+#navbarLeft{
+	float: left;
+}
+
+#navbarLeft ul { 
+  margin: 0; 
+  padding: 0px; 
+  list-style-type: none; 
+  text-align: left; 
+} 
+ 
+#navbarLeft ul li {  
   display: inline; 
   padding-left: 20px;
   font-family:"Courier New",Courier,monospace;
   font-weight: bold;
 } 
+
+
+#info-container {
+  position: absolute; top: 100; left: 100;
+  width: 6%; height: 5%;
+/*  background-color: #ddd;*/
+  transition: all 300ms ease;
+  z-index: 2;
+}
+#info-container:hover {
+  width: 25%; height: 80%;
+  background-color: #ddd;
+  position: absolute; top: 100; left: 100;
+}
+
+#info-container #canvas{
+  width: 0; height: 0;
+  opacity: 0;
+}
+#info-container:hover #canvas{
+  width: 100%; height: 100%;
+  opacity: 1;
+}
+
+#info-container .well {
+  display: none;
+}
