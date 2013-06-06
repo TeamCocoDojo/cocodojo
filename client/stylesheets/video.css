@@ -1,6 +1,6 @@
 #video-container {
 	position: absolute;
-	bottom: 1em; right: 0;
+	bottom: 2em; right: 0;
   z-index: 2;
 }
 
