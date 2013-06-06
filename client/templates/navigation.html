@@ -2,53 +2,146 @@
 <template name="navigation">
   <div class="navbar navbar-inverse">
     <div class="navbar-inner">
-      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
+      <div class="images">
+        <img src="githubIconTransparent.png" width="20px" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
+      </div>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
       <div id="navbarLeft">
         <ul>
-
-          <li><a href="index.html"><img src="logo.png" width="100px"></a></li>
-        </ul>
-      </div>
-      <div id="navbarRight">
-        <ul>
-          <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">Getting Started</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="meetTheTeam.html">Meet the Team</a></li>
-          <li><a href="contact.html">Contact</a></li>
-
+          <li><a href="index.html"><img src="logo.png" width="99px"></a></li>
+          <!-- <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">Getting Started</a></li> -->
+          <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#about">About</a></li>
+          <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#meetTheTeam">Meet the Team</a></li>
+          <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#contact">Contact</a></li>
         </ul>
       </div>
     </div>
   </div>
 
 
-<!-- Modal Boxes-->
+<!-- MODAL BOXES-->
 
-<div id="gettingStarted" class="modal hide fade" tab index="-1">
-  <div class="modal-header">
-    <buttin tyoe="button" class="close" data-dismiss="modal">x</button>
-    <h3>Getting Started</h3>
+<!-- GETTING STARTED -->
+
+  <div id="gettingStarted" class="modal hide fade" tab index="-1">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">x</button>
+      <h2>Getting Started</h2>
+    </div>
+    <div class="modal-body">
+    <p>
+      All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! 
+    </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Close</button>
+    </div>
   </div>
-  <div class="modal-body">
-  <p>
-    All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! 
-  </p>
-</div>
-<div class="modal-footer">
-  <button class="btn" data-dismiss="modal">Close</button>
-</div>
+
+<!-- ABOUT US -->
+  
+  <div id="about" class="modal hide fade" tab index="-1">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">x</button>
+      <h2>About Coco Dojo</h2>
+    </div>
+    <div class="modal-body">
+        <h3>Inception:</h3>
+        <p>The idea for Coco Dojo came from our team trying to think of a way to showcase Meteor's framework and ultimately win an HTML5 hackathon.  Since Meteor's product is designed to synchronize data effectively we created a collaborative coding space and drawing whiteboard. Team Coco Dojo ended up winning overall first place as well as "Audience Favorite."  After the hackathon win we were approached by many developers and companies pushing us to keep developing our product.  There was instantly value for developers and many wanted to already start using our software!  That is how it all started</p>
+        <h3>Our continued adventure:</h3>
+        <p>Coco Dojo version 2.0 has started development in May 2013 with partner MadEye contributing to vision and technical guidance.  Our current collaborate coding platform, whiteboard, and chat box are being developed for ease of use, synchronization efficiency, and upgraded communication channels.  We are continuously releasing new features and enhancements.  Please let us know what you think and what else you want!</p>
+        <strong>
+          <p>Press Release from SF Gate newspaper<br>
+          <a href="http://www.prweb.com/releases/2013/4/prweb10673889.htm">http://www.prweb.com/releases/2013/4/prweb10673889.htm</a></p>
+          Article from Carnegie Mellon Silicon Valley site<br>
+          <a href="http://www.cmu.edu/silicon-valley/news-events/news/2013/post-hackathon.html">http://www.cmu.edu/silicon-valley/news-events/news/2013/post-hackathon.html</a>
+        </strong>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+<!-- MEET THE TEAM -->
+
+  <div id="meetTheTeam" class="modal hide fade" tab index="-1">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">x</button>
+      <h2>Meet the Team</h2>
+    </div>
+    <div class="modal-body">
+      <p><strong><font size="5">Lydian Lee</font> - Software Engineer, Back End</strong><br>
+      <a href="mailto:lydian.lee@sv.cmu.edu">lydian.lee@sv.cmu.edu</a></p>
+      </p>My name is Lydian. i got my CS master in National Taiwan university. I am interested in recommder system and seeking for learning advanced machine learning.</p><br>
+      <p><strong><font size="5">Sky Hu</font> - Software Engineer, Front End</strong><br>
+      <a href="mailto:sky.hu@sv.cmu.edu">sky.hu@sv.cmu.edu</a></p>
+      <p>I am Sky. My Chinese name means lake, sky and sea. An interesting fact is, they are all blue. I went to Canada three years ago and got my bachelor degree in Computer Science. The biggest achievement is that I made it to survive the winters there.
+      I am glad I am in California now, probably the best place on earth. Let my journey starts here with sunshine.</p><br>
+      <p><strong><font size="5">Sean Xiao</font> - Generalist Software Engineer</strong><br>
+      <a href="mailto:xiao@sv.cmu.edu">xiao@sv.cmu.edu</a></p>
+      <p>1st year master student in Computer Science at Carnegie Mellon University Silicon Valley. Sean is major on Software Engineering - Tech Track. At the same time, he is a co-founder of a startup company, which sells all kinds of iOS applications. Sean participates in the development. He is interested in trying out new techniques and he wants to be a guru in software development.</p><br>
+      <p><strong><font size="5">Clyde Li</font> - Chief Technical Officer</strong><br>
+      <a href="mailto:clyde.li@sv.cmu.edu">clyde.li@sv.cmu.edu</a></p>
+      <p>I am from Taipei, Taiwan, a global powerhouse in computer industry where I received my B.S. degree in June 2010 from the department of Electrical Engineering in National Taiwan University. My broad research interests are in Software and Web Developement, UI Design and High Speed Computing. I am now studying Software Engineering at Carnegie Mellon University Enhancing user experiences in applications has been a long career goal. I'm looking forward to build innovative designs with high-quality implementations. Besides academia, Basketball is my favourite sport while I also like cycling and hiking in the city. I love listening to a wide variety of music, including British Rock, Post Rock and Indie, etc. I also enjoy photography, paper craft and reading.</p><br>
+      <p><strong><font size="5">Dan Fortner</font> - Project Manager</strong><br>
+      <a href="mailto:daniel.fortner@sv.cmu.edu">daniel.fortner@sv.cmu.edu</a></p>
+      <p>I was born in California and raised on the East Coast (Connecticut). My main draw back in high school was sports, where I played soccer, wrestling and lacrosse. I excelled at wrestling which led me to Rhode Island College in Providence where I got my BA in Telecomunications and was on the NCAA D3 Wrestling team. After graduating I managed four restaurant concepts and learned my financials there. My knack for computers, specifically programming, led me back to school in 2011-2012; my strenght so far is Java programming. And I hope to combine my business saavy and technical programming skills at CMU SV as a full-time Software Management student.</p>
+      <hr>
+      <h3><font color="#005580">Partners</font></h3>
+      <ul>
+        <li>Carnegie Mellon, Silicon Valley<br>
+        <a href="http://www.cmu.edu/silicon-valley/index.html">http://www.cmu.edu/silicon-valley/index.html</a></li>
+        <li>MadEye<br>
+        <a href="http://madeye.io/">http://madeye.io/</a></li>
+        <li>Meteor<br>
+        <a href="http://meteor.com/">http://meteor.com/</a></li>
+        <li>apportable<br>
+        <a href="http://www.apportable.com/">http://www.apportable.com/</a></li>
+        <li>Wendy Fong<br>
+        <a href="http://www.cmu.edu/silicon-valley/faculty-staff/fong-wendy.html">http://www.cmu.edu/fong-wendy.html</a></li>
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+<!-- CONTACT US -->
+
+  <div id="contact" class="modal hide fade" tab index="-1">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">x</button>
+      <h2>Contact Us</h2>
+    </div>
+    <div class="modal-body">
+      <p>We always love to hear feedback; the good, bad, and the ugly!  Our application is made by developers for developers, we want to hear from you!  Feel free to write us in Chinese as well!!  您也可以用中文來和我們交流哦</p>
+      <p>For general feedback, support, partnership opportunities, or basically anything: <strong><a href="mailto:team-cocodojo@west.cmu.edu">team-cocodojo@west.cmu.edu</a></strong></p>
+      <hr>
+      <h4>Or if you know whom you want to talk to:</h4>
+      <br>
+      <strong>
+        <p>Dan Fortner - Project Manager<br>
+        <a href="mailto:daniel.fortner@sv.cmu.edu">daniel.fortner@sv.cmu.edu</a></p>
+        <br>
+        <p>Clyde Li - Chief Technical Officer<br>
+        <a href="mailto:clyde.li@sv.cmu.edu">clyde.li@sv.cmu.edu</a></p>
+        <br>
+        <p>Sean Xiao - Generalist Software Engineer<br>
+        <a href="mailto:xiao@sv.cmu.edu">xiao@sv.cmu.edu</a></p>
+        <br>
+        <p>Sky Hu - Software Engineer, Front End<br>
+        <a href="mailto:sky.hu@sv.cmu.edu">sky.hu@sv.cmu.edu</a></p>
+        <br>
+        <p>Lydian Lee - Software Engineer, Back End<br>
+        <a href="mailto:lydian.lee@sv.cmu.edu">lydian.lee@sv.cmu.edu</a></p>
+      </strong>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Close</button>
+    </div>
+  </div>
 
 </template>
-
-
-<!-- Whiteboard style dropdown -->
-<!--         <div id="info-container">
-          <div id="canvas">
-            <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/Binary_tree.svg/240px-Binary_tree.svg.png">
-          </div>
-          <div id="slider" class="well"></div>
-        </div> -->

@@ -1,3 +1,41 @@
+.modal-body{
+  font-family:"Courier New",Courier,monospace;
+  font-size: 100%; 
+}
+
+.modal-body.ul.first-line{
+    color:red;
+}
+
+.modal-body ul{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-body li{
+  margin-bottom: 18px;
+}
+
+.modal-body li::first-line{
+  font-size: 150%;
+  font-weight: bold;
+}
+
+.modal-header{
+  font-family:"Courier New",Courier,monospace;
+  color: #005580;
+}
+
+.modal-footer{
+
+}
+
+.images{
+  margin: 0px;
+  float:left;
+}
+
 #navbarRight {
 	float:right;
 }
@@ -8,7 +46,6 @@
   padding: 5px; 
   list-style-type: none; 
   text-align: right; 
-  /*background-color: #000; */
 } 
  
 #navbarRight ul li {  
@@ -21,7 +58,7 @@
 
 #navbarLeft ul { 
   margin: 0; 
-  padding: 0px; 
+  padding: 5px; 
   list-style-type: none; 
   text-align: left; 
 } 
@@ -37,7 +74,6 @@
 #info-container {
   position: absolute; top: 100; left: 100;
   width: 6%; height: 5%;
-/*  background-color: #ddd;*/
   transition: all 300ms ease;
   z-index: 2;
 }
