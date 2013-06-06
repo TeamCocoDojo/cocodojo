@@ -1,73 +1,7 @@
 CodeSession = new Meteor.Collection("codeSession");
-
-
-if(Meteor.isServer){
-  var server = new ot.Server("");
-  server.broadcast = function(operation) {
-  };
-
-  function onReceiveOperation (json) {
-    var operation = ot.Operation.fromJSON(JSON.parse(json));
-  }
-
-}
 if(Meteor.isClient){
 
   var cocodojo = cocodojo || {};
-
-
-  var CocoDojoRouter = Backbone.Router.extend({
-    routes: {
-      ":session_id": "dojo",
-      ":session_id/sync": "sync"
-    },
-    dojo: function(codeSessionId) {
-      Session.set("codeSessionId", codeSessionId);
-      cocodojo.client = new ot.Client(0);
-
-      cocodojo.client.applyOperation = function (operation) {
-
-      };
-
-      cocodojo.client.sendOperation = function (operation) {
-        // send the operation to the server, e.g. with ajax:
-        console.log(operation);
-        $.ajax({
-          url: codeSessionId + '/sync',
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(operation)
-        });
-      };
-
-      function onUserChange (change) {
-        var operation = client.createOperation(); // has the right revision number
-        // initialize operation here with for example operation.fromCodeMirrorChange
-        client.applyClient(operation);
-      }
-
-      function onReceiveOperation (json) {
-        var operation = ot.Operation.fromJSON(JSON.parse(json));
-        client.applyServer(operation);
-      }
-
-    },
-    sync :function(codeSessionId) {
-
-    }
-  });
-  Router = new CocoDojoRouter;
-
-  Meteor.startup(function () {
-    Backbone.history.start({pushState: true});
-    $(document).ready(function() {
-      if (window.location.pathname == "/") {
-        var codeSessionId = CodeSession.insert({name: "New Dojo"});
-        Router.navigate(codeSessionId, false);
-      }
-    }); 
-  });
-
   Template.editor.rendered = function(){
     var codeSession = CodeSession.find();
     var codeSessionId = Session.get("codeSessionId");
