@@ -12,8 +12,8 @@ body {
 }
 
 #editorInstance {
-  width:99%; height: 96%;
-  padding:0; margin:0 auto;
+  margin-right: 10px;
+  height: 96%;
 }
 
 

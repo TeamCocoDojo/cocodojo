@@ -8,8 +8,17 @@ if (Meteor.isClient) {
       github: true
     }
   });
+
+
 }
 
-$(window).load(function(){
+$(document).on('ready', function(){
 
 });
+
+
+Template.chatbox.rendered = function(){
+  $('#chatbox-container .chatbox-min').on('click', function(){
+    $('#chatbox-container').toggleClass('hidden');
+  });
+}
