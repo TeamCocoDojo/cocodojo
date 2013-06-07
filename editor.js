@@ -1,8 +1,8 @@
-CodeSession = new Meteor.Collection("codeSession");
 if(Meteor.isClient){
 
   var cocodojo = cocodojo || {};
   Template.editor.rendered = function(){
+    CodeSession = new Meteor.Collection("codeSession");
     var codeSession = CodeSession.find();
     var codeSessionId = Session.get("codeSessionId");
 

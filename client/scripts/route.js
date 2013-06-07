@@ -4,17 +4,9 @@ var CocoDojoRouter = Backbone.Router.extend({
     ":session_id/sync": "sync"
   },
   dojo: function(codeSessionId) {
-    Session.set("codeSessionId", codeSessionId);
+    Session.set("codeSessionId", new Meteor.Collection.ObjectID(codeSessionId));
   },
 });
 Router = new CocoDojoRouter;
-Meteor.startup(function () {
-  Backbone.history.start({pushState: true});
-  $(document).ready(function() {
-    if (window.location.pathname == "/") {
-      var codeSessionId = CodeSession.insert({name: "New Dojo"});
-      Router.navigate(codeSessionId, false);
-    }
-  }); 
-});
+
 
