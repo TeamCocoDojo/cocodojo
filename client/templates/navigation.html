@@ -2,9 +2,7 @@
 <template name="navigation">
   <div class="navbar navbar-inverse">
     <div class="navbar-inner">
-      <div class="images">
         <img src="githubIconTransparent.png" width="20px" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
-      </div>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -12,7 +10,7 @@
       <div id="navbarLeft">
         <ul>
           <li><a href="index.html"><img src="logo.png" width="99px"></a></li>
-          <!-- <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">Getting Started</a></li> -->
+          <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">Getting Started</a></li>
           <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#about">About</a></li>
           <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#meetTheTeam">Meet the Team</a></li>
           <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#contact">Contact</a></li>
@@ -20,7 +18,6 @@
       </div>
     </div>
   </div>
-
 
 <!-- MODAL BOXES-->
 
@@ -32,9 +29,12 @@
       <h2>Getting Started</h2>
     </div>
     <div class="modal-body">
-    <p>
-      All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! All the content here!!!!! 
-    </p>
+      <ul>
+        <li>Collaborative Code Editor</li>
+        <li>Whiteboard</li>
+        <li>GitHub Integration</li>
+        <li>Communications</li>
+      </ul>
     </div>
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal">Close</button>
@@ -49,16 +49,14 @@
       <h2>About Coco Dojo</h2>
     </div>
     <div class="modal-body">
-        <h3>Inception:</h3>
-        <p>The idea for Coco Dojo came from our team trying to think of a way to showcase Meteor's framework and ultimately win an HTML5 hackathon.  Since Meteor's product is designed to synchronize data effectively we created a collaborative coding space and drawing whiteboard. Team Coco Dojo ended up winning overall first place as well as "Audience Favorite."  After the hackathon win we were approached by many developers and companies pushing us to keep developing our product.  There was instantly value for developers and many wanted to already start using our software!  That is how it all started</p>
-        <h3>Our continued adventure:</h3>
-        <p>Coco Dojo version 2.0 has started development in May 2013 with partner MadEye contributing to vision and technical guidance.  Our current collaborate coding platform, whiteboard, and chat box are being developed for ease of use, synchronization efficiency, and upgraded communication channels.  We are continuously releasing new features and enhancements.  Please let us know what you think and what else you want!</p>
-        <strong>
-          <p>Press Release from SF Gate newspaper<br>
-          <a href="http://www.prweb.com/releases/2013/4/prweb10673889.htm">http://www.prweb.com/releases/2013/4/prweb10673889.htm</a></p>
-          Article from Carnegie Mellon Silicon Valley site<br>
-          <a href="http://www.cmu.edu/silicon-valley/news-events/news/2013/post-hackathon.html">http://www.cmu.edu/silicon-valley/news-events/news/2013/post-hackathon.html</a>
-        </strong>
+      <strong><p>Press Release from SF Gate newspaper<br>
+      <a href="http://www.prweb.com/releases/2013/4/prweb10673889.htm" target="_blank">http://www.prweb.com/releases/2013/4/prweb10673889.htm</a></p>
+      Article from Carnegie Mellon Silicon Valley site<br>
+      <a href="http://www.cmu.edu/silicon-valley/news-events/news/2013/post-hackathon.html" target="_blank">http://www.cmu.edu/silicon-valley/news-events/news/2013/post-hackathon.html</a></strong>
+      <h3>Inception:</h3>
+      <p>The idea for Coco Dojo came from our team trying to think of a way to showcase Meteor's framework and ultimately win an HTML5 hackathon.  Since Meteor's product is designed to synchronize data effectively we created a collaborative coding space and drawing whiteboard. Team Coco Dojo ended up winning overall first place as well as "Audience Favorite."  After the hackathon win we were approached by many developers and companies pushing us to keep developing our product.  There was instantly value for developers and many wanted to already start using our software!  That is how it all started</p>
+      <h3>Our continued adventure:</h3>
+      <p>Coco Dojo version 2.0 has started development in May 2013 with partner MadEye contributing to vision and technical guidance.  Our current collaborate coding platform, whiteboard, and chat box are being developed for ease of use, synchronization efficiency, and upgraded communication channels.  We are continuously releasing new features and enhancements.  Please let us know what you think and what else you want!</p>
     </div>
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal">Close</button>
@@ -92,16 +90,14 @@
       <hr>
       <h3><font color="#005580">Partners</font></h3>
       <ul>
-        <li>Carnegie Mellon, Silicon Valley<br>
-        <a href="http://www.cmu.edu/silicon-valley/index.html">http://www.cmu.edu/silicon-valley/index.html</a></li>
-        <li>MadEye<br>
-        <a href="http://madeye.io/">http://madeye.io/</a></li>
-        <li>Meteor<br>
-        <a href="http://meteor.com/">http://meteor.com/</a></li>
-        <li>apportable<br>
-        <a href="http://www.apportable.com/">http://www.apportable.com/</a></li>
+        <li><a href="http://www.cmu.edu/silicon-valley/index.html" target="_blank"><img src="cmu_logo.png"></a></li>
+        <li><span style="font-family:Helvetica; font-size:38.8px;">MadEye </span><span style="color:#999; font-family:Helvetica; font-size:24.5px;">Remote pair programming</span>
+        <a href="http://madeye.io/" target="_blank">http://madeye.io/</a></li>
+        <li><a href="http://www.apportable.com/" target="_blank"><img src="apportable.png"></a></li>
+        <li><span style="font-family:Helvetica; font-size:39px; font-weight:900; letter-spacing:-2px;">Meteor</span><br>
+        <a href="http://meteor.com/" target="_blank">http://meteor.com/</a></li>
         <li>Wendy Fong<br>
-        <a href="http://www.cmu.edu/silicon-valley/faculty-staff/fong-wendy.html">http://www.cmu.edu/fong-wendy.html</a></li>
+        <a href="http://www.cmu.edu/silicon-valley/faculty-staff/fong-wendy.html" target="_blank">http://www.cmu.edu/fong-wendy.html</a></li>
       </ul>
     </div>
     <div class="modal-footer">
