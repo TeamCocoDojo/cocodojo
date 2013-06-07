@@ -1,5 +1,16 @@
 <template name="video">
   <div id="video-container">
+
+    <div class="video-instance" id="opentok_console"></div>
+    <div id="links">
+      <input type="button" value="Connect" id ="connectLink" />
+      <input type="button" value="Leave" id ="disconnectLink" />
+      <input type="button" value="Start Publishing" id ="publishLink" />
+      <input type="button" value="Stop Publishing" id ="unpublishLink" />
+    </div>
+    <div id="myCamera" class="publisherContainer"></div>
+    <div id="subscribers"></div>
+
     <div class="video-instance">
       <img src="https://graph.facebook.com/clydeli/picture?width=160&height=120">
     </div>
