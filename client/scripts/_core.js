@@ -1,13 +1,12 @@
-var
-  CodeSession = new Meteor.Collection("codesession"),
-  Chatbox = new Meteor.Collection("chatbox"),
-  Whiteboard = new Meteor.Collection("whiteboard");
 
+CodeSession = new Meteor.Collection("codesession");
+Chatbox = new Meteor.Collection("chatbox");
+Whiteboard = new Meteor.Collection("whiteboard");
 
 if(Meteor.isClient) {
 
   // Subscribe to the Collections according to codeSessionId
-  Meteor.autorun(function() {
+  Deps.autorun(function() {
     Meteor.subscribe("codesession", Session.get("codeSessionId"));
     Meteor.subscribe("chatbox", Session.get("codeSessionId"));
     Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
@@ -25,11 +24,12 @@ if(Meteor.isClient) {
   Meteor.startup(function () {
     Backbone.history.start({pushState: true});
     $(document).ready(function() {
-      // Handler for when no sessionId is specified
        if (window.location.pathname == "/") {
+          // Create new dojo when no sessionId is specified
           var codeSessionId = CodeSession.insert({
             name : "New Dojo",
-            users : {}
+            users : [],
+            password : ""
           });
           Router.navigate(codeSessionId, false);
        }
