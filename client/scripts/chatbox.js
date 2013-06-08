@@ -13,6 +13,7 @@ Template.chatbox.events = {
     if(e.which === 13) {
       if($("#chatbox-input").val() == ""){ return; }
       Chatbox.insert({
+        "codeSessionId": Session.get("codeSessionId"),
         "user": "Anonymous",
         "timestamp": (new Date()).toUTCString(),
         "text": $("#chatbox-input").val()

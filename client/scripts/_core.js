@@ -29,11 +29,11 @@ if(Meteor.isClient) {
        if (window.location.pathname == "/") {
           // Create new dojo when no sessionId is specified
           var codeSessionId = CodeSession.insert({
-            name : "New Dojo",
+            sessionName : "New Dojo",
             users : [],
             password : ""
           });
-          //Router.navigate(codeSessionId, false);
+          Session.set("codeSessionId", codeSessionId);
           editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });
