@@ -9,9 +9,8 @@
 
 if (typeof ot === 'undefined') {
   // Export for browsers
-  ot = {};
+  var ot = {};
 }
-
 ot.TextOperation = (function () {
   'use strict';
 
@@ -831,7 +830,7 @@ ot.Client = (function (global) {
     this.revision++;
     this.setState(this.state.serverAck(this));
   };
-
+  
   Client.prototype.serverReconnect = function () {
     if (typeof this.state.resend === 'function') { this.state.resend(this); }
   };
@@ -1783,7 +1782,7 @@ ot.EditorClient = (function () {
   // Remove an element from the DOM.
   function removeElement (el) {
     if (el.parentNode) {
-      el.parentNode.removeChild(el);
+      el.parentNode.removechild(el);
     }
   }
 
