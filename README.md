@@ -1,7 +1,7 @@
 Coco Dojo
 ========
 
-This is the new Coco Dojo
+This is the new Coco Dojo repository.
 
 ###Requirement
 + Meteor Release 0.6.3.1
@@ -11,10 +11,10 @@ This is the new Coco Dojo
 + accounts-ui
 + jquery
 + backbone
-+ bootstrap
 
 ###Technical Stacks
 + Meteor
 + Github API
-+ ACE Editor
++ ot.js
++ CodeMirror
 + Bootstrap
