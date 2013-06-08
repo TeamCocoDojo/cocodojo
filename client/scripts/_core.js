@@ -30,8 +30,7 @@ if(Meteor.isClient) {
           // Create new dojo when no sessionId is specified
           var codeSessionId = CodeSession.insert({
             sessionName : "New Dojo",
-            users : [],
-            password : ""
+            users : []
           });
           Session.set("codeSessionId", codeSessionId);
           editorSocket.on("doneCreate", function(){

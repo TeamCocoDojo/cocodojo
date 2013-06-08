@@ -2,12 +2,6 @@ Template.chatbox.messages = function(){
   return Chatbox.find({});
 }
 
-Template.chatbox.rendered = function(){
-  $('#chatbox-container .chatbox-min').on('click', function(){
-    $('#chatbox-container').toggleClass('hidden');
-  });
-}
-
 Template.chatbox.events = {
   'keydown #chatbox-input': function(e) {
     if(e.which === 13) {
@@ -15,10 +9,13 @@ Template.chatbox.events = {
       Chatbox.insert({
         "codeSessionId": Session.get("codeSessionId"),
         "user": "Anonymous",
-        "timestamp": (new Date()).toUTCString(),
+        "timestamp": new Date(),
         "text": $("#chatbox-input").val()
       });
       $("#chatbox-input").val("");
     }
+  },
+  'click .chatbox-min': function(e) {
+    $('#chatbox-container').toggleClass('hidden');
   }
 }
