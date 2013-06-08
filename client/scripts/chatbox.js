@@ -8,7 +8,7 @@ Template.chatbox.events = {
       if($("#chatbox-input").val() == ""){ return; }
       Chatbox.insert({
         "codeSessionId": Session.get("codeSessionId"),
-        "user": "Anonymous",
+        "user": localStorage['username'],
         "timestamp": new Date(),
         "text": $("#chatbox-input").val()
       });

@@ -1,6 +1,6 @@
 .modal-body{
   font-family:"Courier New",Courier,monospace;
-  font-size: 100%; 
+  font-size: 100%;
 }
 
 .modal-body.ul.first-line{
@@ -31,40 +31,42 @@
 .modal-footer{
 }
 
-#navbarRight {
+.navbar { font-weight: 700; }
+
+/*#navbarRight {
 	float:right;
 }
 
 
-#navbarRight ul { 
-  margin: 0; 
-  padding: 5px; 
-  list-style-type: none; 
-  text-align: right; 
-} 
- 
-#navbarRight ul li {  
-  display: inline; 
-} 
+#navbarRight ul {
+  margin: 0;
+  padding: 5px;
+  list-style-type: none;
+  text-align: right;
+}
+
+#navbarRight ul li {
+  display: inline;
+}
 
 #navbarLeft{
 	float: left;
 }
 
-#navbarLeft ul { 
-  margin: 0; 
-  padding: 5px; 
-  list-style-type: none; 
-  text-align: left; 
-} 
- 
-#navbarLeft ul li {  
-  display: inline; 
+#navbarLeft ul {
+  margin: 0;
+  padding: 5px;
+  list-style-type: none;
+  text-align: left;
+}
+
+#navbarLeft ul li {
+  display: inline;
   padding-left: 20px;
   font-family:"Courier New",Courier,monospace;
   font-weight: bold;
-} 
-
+}
+*/
 
 #info-container {
   position: absolute; top: 100; left: 100;

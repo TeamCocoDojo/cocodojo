@@ -19,3 +19,17 @@
   width: 160px; height: 120px;
   opacity: 1;
 }
+
+#join-video {
+  position: absolute;
+  bottom: 0; right: 0.5em;
+  z-index: 2;
+  background-color: #333; color: #eee;
+  height: 2em; font-weight: 700;
+  border-radius: 2px 2px 0 0;
+}
+
+#join-video div {
+  margin: 3px;
+  cursor: pointer;
+}
