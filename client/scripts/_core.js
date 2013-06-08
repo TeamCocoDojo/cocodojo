@@ -3,6 +3,8 @@ CodeSession = new Meteor.Collection("codesession");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
+var editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
+
 if(Meteor.isClient) {
 
   // Subscribe to the Collections according to codeSessionId
@@ -31,7 +33,11 @@ if(Meteor.isClient) {
             users : [],
             password : ""
           });
-          Router.navigate(codeSessionId, false);
+          //Router.navigate(codeSessionId, false);
+          editorSocket.on("doneCreate", function(){
+            Router.navigate(codeSessionId, false);
+          });
+          editorSocket.emit("create", {codeSessionId: codeSessionId});
        }
     });
   });

@@ -1,92 +1,51 @@
-Template.editor.rendered = function(){
-  //var codeSession = CodeSession.find();
-  //var codeSessionId = Session.get("codeSessionId");
 
-  /* create cocodojo object*/
-  editor = {};
-  editor.updateDue = false;
-  editor.disableInput = false;
-  editor.currentDelta = 0;
-  editor.local_uid = (((1+Math.random())*0x10000)|0).toString(16).slice(1);
-  editor.editorInstance = ace.edit("editorInstance");
-  editor.editorInstance.setTheme("ace/theme/monokai");
-  editor.editorInstance.getSession().setMode("ace/mode/javascript");
-  // editor.editorInstance.getSession().getDocument().on("change", function(e){
-  //    if(editor.updateDue) return;
-  //    console.log("changedd");
-  //    CodeSession.update(
-  //       {_id: Session.get("codeSessionId")},
-  //       { $push:
-  //          {
-  //          Deltas: { delta: e.data , sender_uid: editor.local_uid}
-  //       }
-  //       }
-  //    );
-  // });
+// var cocodojo = cocodojo || {};
+// var EditorClient = ot.EditorClient;
+// var SocketIOAdapter = ot.SocketIOAdapter;
+// var CodeMirrorAdapter = ot.CodeMirrorAdapter;
+// //CodeSession = new Meteor.Collection("codeSession");
+// var socket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
 
-  // // Fix me: typing simutaneously is not working very good. It should be something related to filter deltas.
-  // editor.update = function(deltas){
-  //    if(deltas === undefined){ return false; }
-  //    var pendDeltas = [];
-  //    for(var i=editor.currentDelta; i<deltas.length; ++i){
-  //       if(deltas[i].sender_uid != editor.local_uid){
-  //          pendDeltas.push(deltas[i].delta);
-  //       }
-  //    }
-  //    if(pendDeltas.length > 0){
-  //       editor.updateDue = true;
-  //       editor.editorInstance.getSession().getDocument().applyDeltas(pendDeltas);
-  //    }
-  //    editor.currentDelta = deltas.length;
-  //    editor.updateDue = false;
-  // };
+// Meteor.startup(function () {
+//   Backbone.history.start({pushState: true});
+//   var me = this;
+//   $(document).ready(function() {
+//     if (window.location.pathname == "/") {
+//       var codeSessionId = me.cocodojo.CodeSession.insert({_id: new Meteor.Collection.ObjectID(), "name": "new dojo"});
+//       //Fix me: When first time create the code session. It would not set the code session id to the session.
+//       Session.set("codeSessionId", codeSessionId);
+//       socket.on("doneCreate", function(){
+//         Router.navigate(codeSessionId.toHexString(), false);
+//       });
+//       socket.emit("create", {codeSessionId: codeSessionId.toHexString()});
+//     }
+//   });
+// });
 
-  // /*** Initialization ***/
-  // // Fix me: Directly do "CodeSession.findOne" always return undefined. Maybe we should find a event to bind
-  // // Fix me: After several reloads, the CodeSession.findOne will always return undefined. Not yet figure out the cause.
-  // editor.init = function(){
-  //    var deltas = CodeSession.findOne({_id: Session.get("codeSessionId")});
-  //    if( typeof deltas != "undefined"){
-  //       //apply latest changes
-  //       editor.update(deltas.Deltas);
+var
+  EditorClient = ot.EditorClient,
+  SocketIOAdapter = ot.SocketIOAdapter,
+  CodeMirrorAdapter = ot.CodeMirrorAdapter,
+  editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
 
-  //       // add online users
-  //       /*
-  //       CodeSession.update(
-  //          {_id: Session.get("codeSessionId")},
-  //          { $push:
-  //             { OnlineUsers: {name: editor.local_uid} }
-  //          }
-  //       );*/
+Template.codeMirror.rendered = function(){
+  var cmClient;
+  var editorWrapper = document.getElementById('editorInstance');
+  var cm = window.cm = CodeMirror(editorWrapper, {
+    lineNumbers: true,
+    lineWrapping: true,
+    theme: 'blackboard',
+    mode: 'javascript'
+  });
 
-  //    }
-  //    else{
-  //       console.log("unable to connect to the server, retry in 1 second");
-  //       setTimeout("editor.init()", 1000);
-  //    }
+  editorSocket.emit("join", {codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
+    cm.setValue(obj.str);
+    cmClient = window.cmClient = new EditorClient(
+      obj.revision,
+      obj.clients,
+      new SocketIOAdapter(editorSocket),
+      new CodeMirrorAdapter(cm)
+    );
+  });
+}
 
-  // };
-  // setTimeout("editor.init()", 1000);
-
-  // var mongoQuery = CodeSession.find({_id: Session.get("codeSessionId")});
-  // mongoQuery.observe({
-  //    changed : function(newDoc, oldIndex, oldDoc) {
-  //       console.log("observed");
-  //       editor.update(newDoc.Deltas);
-  //       //editor.addComment(newDoc.Comments);
-  //       console.log(newDoc.OnlineUsers);
-  //    }
-  // });
-
-  // // Fix me: not working, should do server side validation
-  // // before leaves, update online user lists
-  // $(window).unload( function() {
-  //    CodeSession.update(
-  //       {_id: Session.get("codeSessionId")},
-  //       { $pull:
-  //          { OnlineUsers: {name: editor.local_uid} }
-
-  //       }
-  //    );
-  // });
-};
