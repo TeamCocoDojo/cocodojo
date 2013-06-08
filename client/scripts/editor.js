@@ -12,7 +12,8 @@ Meteor.startup(function () {
   $(document).ready(function() {
     if (window.location.pathname == "/") {
       var codeSessionId = me.cocodojo.CodeSession.insert({_id: new Meteor.Collection.ObjectID(), "name": "new dojo"});
-      console.log(codeSessionId );
+      //Fix me: When first time create the code session. It would not set the code session id to the session.
+      Session.set("codeSessionId", codeSessionId);
       socket.on("doneCreate", function(){
         Router.navigate(codeSessionId.toHexString(), false);
       });
@@ -32,8 +33,6 @@ Template.codeMirror.rendered = function(){
   });
 
   socket.emit("join", {codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
-    console.log("receive 'doc' event from server:");
-    console.log(obj);
     cm.setValue(obj.str);
     cmClient = window.cmClient = new EditorClient(
       obj.revision,
