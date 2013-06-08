@@ -4,8 +4,7 @@ var EditorClient = ot.EditorClient;
 var SocketIOAdapter = ot.SocketIOAdapter;
 var CodeMirrorAdapter = ot.CodeMirrorAdapter;
 CodeSession = new Meteor.Collection("codeSession");
-var socket = io.connect('10.0.22.69', {port: 3333});
-
+var socket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
 
 Meteor.startup(function () {
   Backbone.history.start({pushState: true});
@@ -21,7 +20,6 @@ Meteor.startup(function () {
   }); 
 });
 
-//CodeSession = new Meteor.Collection("codeSession");
 Template.codeMirror.rendered = function(){
   var cmClient;
   var editorWrapper = document.getElementById('editorInstance');
@@ -43,40 +41,5 @@ Template.codeMirror.rendered = function(){
       new CodeMirrorAdapter(cm)
     );
   });
-  /* create cocodojo object*/
-  //console.log(backend);
-  editor = {};
-  editor.updateDue = false;
-  editor.disableInput = false;
-  editor.currentDelta = 0;
-  editor.local_uid = (((1+Math.random())*0x10000)|0).toString(16).slice(1);
-
-
-  /*editor.client.sendOperation = function (operation, inverse){
-    backend.syncToServer(Session.get("codeSessionId"), editor, operation);
-  };
-  
-  editor.client.applyOperation = function (operation) {
-    editor.cmAdapter.applyOperation(operation);
-    editor.cmAdapter.ignoreNextChange = false;
-  };
-
-  var mongoQuery = CodeSession.find({_id: Session.get("codeSessionId")});
-  mongoQuery.observe({
-    added: function(id, field){
-      console.log("added");
-    },
-
-    changed : function(newDoc, oldDoc, atIndex) {
-      console.log("observed Change:");
-      console.log(newDoc);
-      console.log(oldDoc);
-      console.log(atIndex);
-
-      var operations = new ot.TextOperation(newDoc.operations.slice(atIndex, newDoc.length));
-      editor.client.applyServer(operations);
-    }
-  }); */
-
 }
 
