@@ -1,6 +1,6 @@
 Template.chatbox.messages = function(){
   return Chatbox.find({});
-}
+};
 
 Template.chatbox.events = {
   'keydown #chatbox-input': function(e) {
@@ -8,7 +8,7 @@ Template.chatbox.events = {
       if($("#chatbox-input").val() == ""){ return; }
       Chatbox.insert({
         "codeSessionId": Session.get("codeSessionId"),
-        "user": localStorage['username'],
+        "user": Session.get('username'),
         "timestamp": new Date(),
         "text": $("#chatbox-input").val()
       });
@@ -18,4 +18,4 @@ Template.chatbox.events = {
   'click .chatbox-min': function(e) {
     $('#chatbox-container').toggleClass('hidden');
   }
-}
+};
