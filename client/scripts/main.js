@@ -1,24 +1,8 @@
-if (Meteor.isClient) {
-
-  Meteor.loginWithGithub({
-    requestPermissions: {
-      github: ['user', 'public_repo']
-    },
-    requestOfflineToken: {
-      github: true
-    }
+Meteor.startup(function () {
+  $(document).ready(function() {
+    $('#content').css('height', $('body').height()-62+'px');
+    $(window).resize(function() {
+      $('#content').css('height', $('body').height()-62+'px');
+    });
   });
-
-
-}
-
-$(document).on('ready', function(){
-
 });
-
-
-Template.chatbox.rendered = function(){
-  $('#chatbox-container .chatbox-min').on('click', function(){
-    $('#chatbox-container').toggleClass('hidden');
-  });
-}
