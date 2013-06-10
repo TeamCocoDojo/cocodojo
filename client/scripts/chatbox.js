@@ -2,6 +2,10 @@ Template.chatbox.messages = function(){
   return Chatbox.find({});
 };
 
+Template.chatbox.rendered = function(){
+  $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
+}
+
 Template.chatbox.events = {
   'keydown #chatbox-input': function(e) {
     if(e.which === 13) {
@@ -15,7 +19,8 @@ Template.chatbox.events = {
       $("#chatbox-input").val("");
     }
   },
-  'click .chatbox-min': function(e) {
+  'click .chatbox-header': function(e) {
     $('#chatbox-container').toggleClass('hidden');
+    $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
   }
 };
