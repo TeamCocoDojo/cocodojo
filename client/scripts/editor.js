@@ -1,9 +1,8 @@
 
-var cocodojo = cocodojo || {}; 
+var cocodojo = cocodojo || {};
 var EditorClient = ot.EditorClient;
 var SocketIOAdapter = ot.SocketIOAdapter;
 var CodeMirrorAdapter = ot.CodeMirrorAdapter;
-//CodeSession = new Meteor.Collection("codeSession");
 var socket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
 
 Meteor.startup(function () {
@@ -19,17 +18,17 @@ Meteor.startup(function () {
       });
       socket.emit("create", {codeSessionId: codeSessionId.toHexString()});
     }
-  }); 
+  });
 });
 
-Template.codeMirror.rendered = function(){
+Template.codeMirror.rendered = function() {
   var cmClient;
   var editorWrapper = document.getElementById('editorInstance');
   var cm = window.cm = CodeMirror(editorWrapper, {
     lineNumbers: true,
     lineWrapping: true,
     theme: 'blackboard',
-    mode: 'javascript' 
+    mode: 'javascript'
   });
 
   socket.emit("join", {codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
