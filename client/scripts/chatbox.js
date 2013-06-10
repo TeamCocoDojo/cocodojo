@@ -15,7 +15,12 @@ Template.chatbox.events = {
       $("#chatbox-input").val("");
     }
   },
-  'click .chatbox-min': function(e) {
+  'click .chatbox-header': function(e) {
     $('#chatbox-container').toggleClass('hidden');
+    $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
   }
 };
+
+Template.chatbox.rendered = function(){
+  $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
+}

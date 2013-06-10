@@ -7,3 +7,9 @@ Template.navigation.events = {
     }
   }
 }
+
+Template.navigation.rendered = function() {
+  $(".navbar-inner img").click(function(e) {
+    e.stopPropagation();
+  });
+}

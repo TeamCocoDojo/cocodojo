@@ -2,12 +2,12 @@
   <div id="chatbox-container" class="span3 hidden">
     <div class="chatbox-header">
       <div class="chatbox-title">Chat Box</div>
-      <div class="chatbox-min">一</div>
+      <div class="chatbox-min"><!-- 一 --></div>
     </div>
     <div class="chatbox-content">
       <ul>
         {{#each messages}}
-          <li><span>{{user}} [{{timestamp}}]:</span> {{text}}</li>
+          <li><span><b>{{user}}</b> <!-- [{{timestamp}}] -->:</span> {{text}}</li>
         {{/each}}
       </ul>
     </div>
