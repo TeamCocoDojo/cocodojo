@@ -1,12 +1,12 @@
 
-Meteor.loginWithGithub({
-  requestPermissions: {
-    github: ['user', 'public_repo']
-  },
-  requestOfflineToken: {
-    github: true
-  }
-});
+// Meteor.loginWithGithub({
+//   requestPermissions: {
+//     github: ['user', 'public_repo']
+//   },
+//   requestOfflineToken: {
+//     github: true
+//   }
+// });
 
 
 var cocodojo = cocodojo || {};

@@ -9,7 +9,6 @@ if(Meteor.isClient) {
   var Router = new (Backbone.Router.extend({
     routes:{ ":session_id": "sessionId" },
     sessionId: function (code_session_id) {
-      console.log(code_session_id);
       Session.set("codeSessionId", code_session_id);
       CodeSession.update(
         {_id: code_session_id},
@@ -49,7 +48,7 @@ if(Meteor.isClient) {
           Session.set("codeSessionId", codeSessionId);
 
           // Set a new editor sync session
-          var editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
+          var editorSocket = io.connect('test-cocodojo.meteor.com', {port: 3333});
           editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });

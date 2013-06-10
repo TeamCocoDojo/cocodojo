@@ -1,5 +1,4 @@
 Template.video.users = function(){
-  console.log(CodeSession.findOne({}));
   var 
     session = CodeSession.findOne({}),
     html = "";

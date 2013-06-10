@@ -5,7 +5,7 @@
 
 insecure
 preserve-inputs
-accounts-github
 accounts-ui
 jquery
 backbone
+accounts-github

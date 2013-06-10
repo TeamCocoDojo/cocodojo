@@ -4,7 +4,7 @@ var
   EditorClient = ot.EditorClient,
   SocketIOAdapter = ot.SocketIOAdapter,
   CodeMirrorAdapter = ot.CodeMirrorAdapter,
-  editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
+  editorSocket = io.connect('http://test-cocodojo.meteor.com/', {port: 3333});
 
 
 Template.codeMirror.rendered = function() {
