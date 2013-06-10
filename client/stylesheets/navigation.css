@@ -23,6 +23,12 @@
   margin-bottom: 28px;
 }
 
+.modal-body h5{
+  font-style: italic;
+  font-weight: 700;
+  font-size: 100%;
+}
+
 .modal-header{
   font-family:"Courier New",Courier,monospace;
   color: #005580;
