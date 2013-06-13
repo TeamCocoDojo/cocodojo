@@ -90,11 +90,18 @@ Drawing.prototype.remove = function () {
     this.element.remove();
     delete this;
 }
-
+Drawing.adjustMousePosition = function(paper, x, y){
+    console.log("befor: " + JSON.stringify({x:x, y:y}));
+    console.log($("#whiteboard-container").offset());
+    x -= paper.canvas.offsetLeft + $("#whiteboard-container").offset().left;
+    y -= paper.canvas.offsetTop +  $("#whiteboard-container").offset().top;
+    console.log("befor: " + JSON.stringify({x:x, y:y}));
+    return {x: x, y:y};
+};
 Template.whiteboard.rendered = function () {
 
     var width = "100%";
-    var height = 482;
+    var height = "95%";
     var dataRef = new Firebase('https://sean-firebase.firebaseio.com/');
     var paper = Raphael(document.getElementById("canvas"), width, height);
 
@@ -115,72 +122,69 @@ Template.whiteboard.rendered = function () {
     var line = null;
     var lastDate = new Date();
     $("#lineButton").click(function (event) {
-
         line = null;
         background.drag(function (dx, dy, x, y, event) {
-            x -= paper.canvas.offsetLeft;
-            y -= paper.canvas.offsetTop;
-            if (!line.hasOwnProperty("element")) {
-                line.element = new Drawing("line", [paper, line.x, line.y, x, y]);
-            }
-            else {
-                line.element.updateAttrs("path", "M" + line.x + "," + line.y + "L" + x + "," + y);
-            }
+          console.log(paper);
+          var position = Drawing.adjustMousePosition(paper, x, y);
+          if (!line.hasOwnProperty("element")) {
+            line.element = new Drawing("line", [paper, line.x, line.y, position.x, position.y]);
+          }
+          else {
+            line.element.updateAttrs("path", "M" + line.x + "," + line.y + "L" + position.x + "," + position.y);
+          }
         }, function (x, y, event) {
-            //drag Start
+          //drag Start
 
-            x -= paper.canvas.offsetLeft;
-            y -= paper.canvas.offsetTop;
-            line = {x:x, y:y};
+          line = Drawing.adjustMousePosition(paper,x, y);
         }, function (x, y, event) {
 
-            var newPushRef = dataRef.push();
-            newPushRef.set(line.element.simplify());
+          var newPushRef = dataRef.push();
+          newPushRef.set(line.element.simplify());
         });
     });
 
     var deleteHandler = function (event) {
-        paper.forEach(function (el2) {
-            el2.unclick(deleteHandler);
-            el2.unhover(highlightHandler, unHighlightHandler);
-        });
-        this.data("mother").element.g.remove();
-        this.data("mother").remove();
+      paper.forEach(function (el2) {
+        el2.unclick(deleteHandler);
+        el2.unhover(highlightHandler, unHighlightHandler);
+      });
+      this.data("mother").element.g.remove();
+      this.data("mother").remove();
     };
 
     var highlightHandler = function () {
-        this.data("mother").element.g = this.data("mother").element.glow({
-            color:"#0FF",
-            width:100
-        });
+      this.data("mother").element.g = this.data("mother").element.glow({
+        color:"#0FF",
+        width:100
+      });
     };
     var unHighlightHandler = function () {
-        this.data("mother").element.g.remove();
+      this.data("mother").element.g.remove();
     };
-    
+
     $("#trashButton").click(function (event) {
-        paper.clear();
-        background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
-        dataRef.remove();
+      paper.clear();
+      background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
+      dataRef.remove();
     });
 
     dataRef.on('child_removed', function() {
-        paper.clear();
-        background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
+      paper.clear();
+      background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
     });
 
 }
 
 var CocoDojoRouter = Backbone.Router.extend({
 
-    routes:{
-               ":session_id":"dojo"
-           },
-    dojo:function (codeSessionId) {
-             Session.set("codeSessionId", codeSessionId);
-         },
-    setCodeSession:function (codeSessionId) {
-                       this.navigate(codeSessionId, true);
-                   }
+  routes:{
+    ":session_id":"dojo"
+  },
+  dojo:function (codeSessionId) {
+    Session.set("codeSessionId", codeSessionId);
+  },
+  setCodeSession:function (codeSessionId) {
+    this.navigate(codeSessionId, true);
+  }
 });
 Router = new CocoDojoRouter;
