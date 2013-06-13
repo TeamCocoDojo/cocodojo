@@ -5,5 +5,10 @@ Template.navigation.events = {
       Session.set("username", newUsername);
       localStorage['username'] = newUsername;
     }
+  },
+
+  'click #logout': function(e) {
+    Meteor.logout();
   }
 }
+

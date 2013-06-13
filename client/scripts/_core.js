@@ -4,6 +4,10 @@ Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
 if(Meteor.isClient) {
+  // Accounts.loginServiceConfiguration.remove({
+  //   service: "github"
+  // });
+  
 
   // Backbone Router Setup
   var Router = new (Backbone.Router.extend({
@@ -48,7 +52,7 @@ if(Meteor.isClient) {
           Session.set("codeSessionId", codeSessionId);
 
           // Set a new editor sync session
-          var editorSocket = io.connect('test-cocodojo.meteor.com', {port: 3333});
+          var editorSocket = io.connect('localhost', {port: 3333});
           editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });
@@ -62,6 +66,16 @@ if(Meteor.isClient) {
   // Helper for using session variable in templates
   Handlebars.registerHelper('session',function(input){
     return Session.get(input);
+  });
+
+  Meteor.loginWithGithub(
+    {
+    requestPermissions: {
+      github: ['user', 'public_repo']
+    },
+    requestOfflineToken: {
+      github: true
+    }
   });
 
 }

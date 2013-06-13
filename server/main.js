@@ -16,8 +16,6 @@ if(Meteor.isServer) {
     return Whiteboard.find({codeSessionId: code_session_id});
   });
 
-
-
   var io = socketIO.listen(3333);
   var syncServers = {};
   io.set('origins', process.env.origin || '*:*');
@@ -40,15 +38,3 @@ if(Meteor.isServer) {
   });
 
 }
-
-// Meteor.methods({
-//   start_new_session: function (users) {
-//     var codeSessionId = CodeSession.insert({
-//       "sessionName" : "New Dojo",
-//       "users" : users,
-//       "password" : "",
-//       "github_host" : ""
-//     });
-//     return codeSessionId;
-//   }
-// });
