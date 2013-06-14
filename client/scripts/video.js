@@ -1,11 +1,14 @@
-// uncomment later for multi people chatting dev
+// for user list
 // Template.video.users = function(){
 //   console.log("session User: " + SessionUsers.find({}).fetch());
 //   return SessionUsers.find({});
 // };
 
 var session;
+var VIDEO_WIDTH = 320;
+var VIDEO_HEIGHT = 240;
 
+// for tokbox
 Template.video.rendered = function () {
   var apiKey = "31556702";
   var sessionId = "2_MX4zMTU1NjcwMn4xMjcuMC4wLjF-RnJpIEp1biAwNyAxNDoyOToxMiBQRFQgMjAxM34wLjkwNjI3NzN-";
@@ -13,8 +16,6 @@ Template.video.rendered = function () {
 
   var publisher;
   var subscribers = {};
-  var VIDEO_WIDTH = 320;
-  var VIDEO_HEIGHT = 240;
 
   TB.addEventListener("exception", exceptionHandler);
 
