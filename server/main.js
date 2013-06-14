@@ -58,4 +58,16 @@ if(Meteor.isServer) {
     });
   });
 
+
+  Meteor.methods({
+    renameUser: function(code_session_id, user_id, user_name){
+      SessionUsers.update(
+        { $and: [{ codeSessionId: code_session_id }, { userId: user_id }] },
+        { $set: { username: user_name } }
+      );
+    }
+
+  });
+
+
 }
