@@ -1,190 +1,198 @@
-Template.whiteboard.codeSession = function () {
-    var codeSessionId = Session.get("codeSessionId");
-    return CodeSession.findOne({_id:codeSessionId});
+var Drawing = function (type, options) {
+  this.type = type;
+  this.options = options;
+  this.attrs = {}
+  this.data = {};
+  this.init();
+  return this;
 };
 
-var codeSessionHandle = null;
+Drawing.adjustMousePosition = function(paper, x, y){
 
-Deps.autorun(function () {
-    var codeSessionId = Session.get('codeSessionId');
-    if (codeSessionId) {
-        codeSessionHandle = Meteor.subscribe('codeSession', codeSessionId);
-    }
-    else {
-        codeSessionHandle = null;
-    }
-});
-
-
-var Drawing = function (type, options) {
-    this.type = type;
-    this.options = options;
-    this.attrs = {}
-    this.data = {};
-    this.init();
-    return this;
-}
+  x -= paper.canvas.offsetLeft + $("#whiteboard-container").offset().left;
+  y -= paper.canvas.offsetTop +  $("#whiteboard-container").offset().top;
+  return {x: x, y:y};
+};
 
 Drawing.prototype.init = function () {
-    this.element = this[this.type].apply(this, this.options);
-    if (this.element == null) return;
+  this.element = this[this.type].apply(this, this.options);
+  if (this.element == null) return;
 
-    // connect sub object to the Drawing object
-    this.element.data("mother", this);
+  // connect sub object to the Drawing object
+  this.element.data("mother", this);
+};
 
-    //add listeners
-    this.element.drag(function (dx, dy, x, y, event) {
-        dx = this.data["adjust_position"].x + dx;
-        dy = this.data["adjust_position"].y + dy;
-        this.element.transform("t" + dx + "," + dy);
-        this.data["dx"] = dx;
-        this.data["dy"] = dy;
-    }, function () {
-        this.data["adjust_position"] = (!this.data.hasOwnProperty("dx")) ? {x:0, y:0} : {x:this.data["dx"], y:this.data["dy"]};
-
-    }, null, this, this);
-    this.element.dblclick(function () {
-    }, this);
-}
-Drawing.prototype.simplify = function () {
-    var obj = {};
-    obj.type = this.type;
-    obj.attrs = {};
-    for (var key in this.attrs) {
-        obj.attrs[key] = this.attrs[key];
-    }
-    obj.options = [];
-    for (var i = 1; i < this.options.length; i++) {
-        obj.options.push(this.options[i]);
-    }
-    return obj;
-}
-Drawing.prototype.line = function (paper, startX, startY, endX, endY) {
-    paper.setStart();
-    paper.path("M" + startX + "," + startY + "L" + endX + "," + endY).attr({"stroke-width":3});
-
-    return paper.setFinish();
-}
-Drawing.prototype.randomLine = function(paper, pts){
-    paper.setStart();
-    var path = "";
-    for(var i = 0; i < pts.length; i++){
-        if(i==0) path += "M" + pts[i].x + "," + pts[i].y;
-        else{
-            path += "L"+pts[i].x + "," + pts[i].y;
-        }
-    }
-    paper.path(path);
-    return paper.setFinish();
-}
-Drawing.prototype.getData = function (key) {
-    return this.data[key];
-}
+Drawing.prototype.stringify = function () {
+  var obj = {};
+  obj.type = this.type;
+  obj.attrs = {};
+  for (var key in this.attrs) {
+    obj.attrs[key] = this.attrs[key];
+  }
+  obj.options = [];
+  for (var i = 1; i < this.options.length; i++) {
+    obj.options.push(this.options[i]);
+  }
+  return JSON.stringify(obj);
+};
 
 Drawing.prototype.updateAttrs = function (key, value) {
-    this.element.attr(key, value);
-    this.attrs[key] = value;
-    return this;
-}
-Drawing.prototype.remove = function () {
-    this.element.remove();
-    delete this;
-}
-Drawing.adjustMousePosition = function(paper, x, y){
-    console.log("befor: " + JSON.stringify({x:x, y:y}));
-    console.log($("#whiteboard-container").offset());
-    x -= paper.canvas.offsetLeft + $("#whiteboard-container").offset().left;
-    y -= paper.canvas.offsetTop +  $("#whiteboard-container").offset().top;
-    console.log("befor: " + JSON.stringify({x:x, y:y}));
-    return {x: x, y:y};
+  this.element.attr(key, value);
+  this.attrs[key] = value;
+  return this;
 };
-Template.whiteboard.rendered = function () {
 
-    var width = "100%";
-    var height = "95%";
-    var dataRef = new Firebase('https://sean-firebase.firebaseio.com/');
-    var paper = Raphael(document.getElementById("canvas"), width, height);
+Drawing.prototype.remove = function () {
+  this.element.remove();
+  delete this;
+};
 
-    var background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
+Drawing.prototype.line = function (paper, startX, startY, endX, endY) {
+  paper.setStart();
+  var path = "M" + startX + "," + startY + "L" + endX + "," + endY;
+  paper.path("M" + startX + "," + startY + "L" + endX + "," + endY).attr({"stroke-width":3});
+  return paper.setFinish();
+};
 
-
-    var drawGraph = function (snapshot) {
-        var graphobj = snapshot.val();
-        graphobj.options.splice(0, 0, paper);
-        var drawing = new Drawing(graphobj.type, graphobj.options);
-        for (var key in graphobj.attrs) {
-            drawing.updateAttrs(key, graphobj.attrs[key]);
-        }
-    };
-
-    dataRef.on('child_added', drawGraph);
-
-    var line = null;
-    var lastDate = new Date();
-    $("#lineButton").click(function (event) {
-        line = null;
-        background.drag(function (dx, dy, x, y, event) {
-          console.log(paper);
-          var position = Drawing.adjustMousePosition(paper, x, y);
-          if (!line.hasOwnProperty("element")) {
-            line.element = new Drawing("line", [paper, line.x, line.y, position.x, position.y]);
-          }
-          else {
-            line.element.updateAttrs("path", "M" + line.x + "," + line.y + "L" + position.x + "," + position.y);
-          }
-        }, function (x, y, event) {
-          //drag Start
-
-          line = Drawing.adjustMousePosition(paper,x, y);
-        }, function (x, y, event) {
-
-          var newPushRef = dataRef.push();
-          newPushRef.set(line.element.simplify());
-        });
-    });
-
-    var deleteHandler = function (event) {
-      paper.forEach(function (el2) {
-        el2.unclick(deleteHandler);
-        el2.unhover(highlightHandler, unHighlightHandler);
-      });
-      this.data("mother").element.g.remove();
-      this.data("mother").remove();
-    };
-
-    var highlightHandler = function () {
-      this.data("mother").element.g = this.data("mother").element.glow({
-        color:"#0FF",
-        width:100
-      });
-    };
-    var unHighlightHandler = function () {
-      this.data("mother").element.g.remove();
-    };
-
-    $("#trashButton").click(function (event) {
-      paper.clear();
-      background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
-      dataRef.remove();
-    });
-
-    dataRef.on('child_removed', function() {
-      paper.clear();
-      background = paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
-    });
-
-}
-
-var CocoDojoRouter = Backbone.Router.extend({
-
-  routes:{
-    ":session_id":"dojo"
-  },
-  dojo:function (codeSessionId) {
-    Session.set("codeSessionId", codeSessionId);
-  },
-  setCodeSession:function (codeSessionId) {
-    this.navigate(codeSessionId, true);
+Drawing.prototype.randomLine = function(paper, pts){
+  paper.setStart();
+  var path = "";
+  for(var i = 0; i < pts.length; i++){
+    if (i==0) path += "M" + pts[i].x + "," + pts[i].y;
+    else{
+      path += "L"+pts[i].x + "," + pts[i].y;
+    }
   }
-});
-Router = new CocoDojoRouter;
+  paper.path(path);
+  return paper.setFinish();
+};
+
+
+function WhiteboardCanvas(elementId, width, height){
+  this.width = width;
+  this.height = height;
+  this.paper = Raphael(document.getElementById(elementId), width, height);
+  this.background = this.paper.rect(0, 0, width, height).attr({fill:"white", stroke:"white"});
+  this.drawings = {};
+  this.init();
+};
+
+WhiteboardCanvas.prototype.init = function(){
+  var me = this;
+  var dbQuery = Whiteboard.find({codeSessionId: Session.get("codeSessionId")});
+  dbQuery.observeChanges({
+    added: function(id, fields){
+      console.log("added event detected");
+      if (me.drawings[fields.drawingId] !== undefined) return;
+      var graphData = JSON.parse(fields.data);
+      graphData.options.splice(0, 0, me.paper);
+      var drawing = new Drawing(graphData.type, graphData.options);
+      for (var key in graphData.attrs) {
+        drawing.updateAttrs(key, graphData.attrs[key]);
+      }
+      me.drawings[fields.drawingId] = drawing;
+    },
+    changed: function(id, fields){
+      console.log("changed event detected");
+    },
+    removed: function(id){
+      console.log("removed event detected");
+      if (me.drawings[id.toHexString()] === undefined) return; 
+      me.drawings[id.toHexString()].remove();
+    }
+  });
+};
+
+WhiteboardCanvas.prototype.drawLineListener = function(event){
+  var line = null;
+  var me = this;
+  this.background.drag(function(dx, dy, x, y , event){
+    //During dragging;
+    var position = Drawing.adjustMousePosition(this.paper, x, y);
+    if (!line.hasOwnProperty("element")) {
+      line.element = new Drawing("line", [this.paper, line.x, line.y, position.x, position.y]);
+    }
+    else {
+      line.element.updateAttrs("path", "M" + line.x + "," + line.y + "L" + position.x + "," + position.y);
+    }
+  }, function(x, y, event){
+    //Drag Starg;
+    line = Drawing.adjustMousePosition(this.paper,x, y);
+  }, function(x, y, event){
+    //Finish Drag
+    var lineId = me.addToMongo(line.element);
+    me.background.undrag();
+  });
+};
+WhiteboardCanvas.prototype.drawRandomLineListener = function(event){
+  var randomLine = null;
+  var me = this;
+  this.background.drag(function(dx,dy,x,y,event){
+    //During dragging
+    if (!randomLine.hasOwnProperty("element")){
+      randomLine.element = new Drawing("randomLine", [me.paper, randomLine.pts]);
+    }
+    else{
+      randomLine.pts.push(Drawing.adjustMousePosition(me.paper, x, y));
+      var path = "";
+      for(var i=0;i<randomLine.pts.length; i++){
+        if (i==0){
+          path += "M" +randomLine.pts[i].x + "," + randomLine.pts[i].y;
+        }
+        else{
+          path += "L" +randomLine.pts[i].x + "," + randomLine.pts[i].y;
+        }
+      }
+      randomLine.element.updateAttrs("path", path);
+    }
+  }, function(x,y, event){
+    //drag Start
+    randomLine = {pts: [
+      Drawing.adjustMousePosition(me.paper, x, y)
+    ]};
+  },function(x,y,event){
+    //drag End
+    me.addToMongo(randomLine.element);
+    me.background.undrag();
+
+  });
+};
+
+WhiteboardCanvas.prototype.addToMongo = function(drawingObj){
+  var id = new Meteor.Collection.ObjectID();
+  this.drawings[id.toHexString()] = drawingObj;
+  Whiteboard.insert({
+    _id: id,
+    drawingId: id.toHexString(),
+    codeSessionId: Session.get("codeSessionId"),
+    data: drawingObj.stringify()
+  });
+};
+
+WhiteboardCanvas.prototype.clean = function(){
+  for(var drawingId in this.drawings){
+    console.log(drawingId);
+    console.log(typeof drawingId);
+    Whiteboard.remove(new Meteor.Collection.ObjectID(drawingId), function(){
+      console.log("removed");
+    });
+  }
+  this.drawings = {};
+  this.paper.clear();
+  this.background = this.paper.rect(0, 0, this.width, this.height).attr({fill:"white", stroke:"white"});
+};
+
+
+Template.whiteboard.rendered = function () {
+  var whiteboard = new WhiteboardCanvas("canvas", "100%", 482);
+  var lastDate = new Date();
+  $("#lineButton").click(function(){
+    whiteboard.drawLineListener();
+  });
+  $("#randomLineButton").click(function(){
+    whiteboard.drawRandomLineListener();
+  });
+  $("#trashButton").click(function(){
+    whiteboard.clean();
+  });
+};
