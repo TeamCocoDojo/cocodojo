@@ -13,7 +13,7 @@ if(Meteor.isClient) {
       console.log(Session.get('userId') );
       console.log(Session.get('username') );
       Meteor.subscribe("codesession", Session.get("codeSessionId"));
-      Meteor.subscribe("sessionusers", Session.get("codeSessionId"), Session.get('userId'), Session.get('username'));
+      Meteor.subscribe("sessionusers", Session.get("codeSessionId"), Session.get('userId'), Session.get('username'), Session.get('userSession'));
       Meteor.subscribe("chatbox", Session.get("codeSessionId"));
       Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
     });
@@ -24,12 +24,13 @@ if(Meteor.isClient) {
       sessionId: function (code_session_id) {
         console.log(code_session_id);
         Session.set("codeSessionId", code_session_id);
-        // Insert the user into the session
-        SessionUsers.insert({
-            "codeSessionId": Session.get('codeSessionId'),
-            "userId": Session.get('userId'),
-            "username": Session.get('username')
-          });
+        // Insert the user into the session userlist
+        var userSession = SessionUsers.insert({
+          "codeSessionId": Session.get('codeSessionId'),
+          "userId": Session.get('userId'),
+          "username": Session.get('username')
+        });
+        Session.set('userSession', userSession);
         // CodeSession.update(
         //   {_id: code_session_id},
         //   { $push:
@@ -57,12 +58,13 @@ if(Meteor.isClient) {
             "github_host" : ""
           });
           Session.set("codeSessionId", codeSessionId);
-          // Insert the user into the session
-          SessionUsers.insert({
+          // Insert the user into the session userlist
+          var userSession = SessionUsers.insert({
             "codeSessionId": Session.get('codeSessionId'),
             "userId": Session.get('userId'),
             "username": Session.get('username')
           });
+          Session.set('userSession', userSession);
 
           // Set a new editor sync session
           var editorSocket = io.connect('localhost', {port: 3333});
