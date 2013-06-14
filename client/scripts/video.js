@@ -1,3 +1,9 @@
+Template.video.users = function(){
+  console.log(SessionUsers.find({}).fetch());
+  return SessionUsers.find({});
+};
+
+
 Template.video.rendered = function () {
   var apiKey = "31556702";
   var sessionId = "2_MX4zMTU1NjcwMn4xMjcuMC4wLjF-RnJpIEp1biAwNyAxNDoyOToxMiBQRFQgMjAxM34wLjkwNjI3NzN-";

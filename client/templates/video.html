@@ -1,26 +1,22 @@
 <template name="video">
   <div id="video-container">
-
-    <div class="video-instance" id="opentok_console"></div>
-    <div id="links">
-      <input type="button" value="Connect" id ="connectLink" />
-      <input type="button" value="Leave" id ="disconnectLink" />
-      <input type="button" value="Start Publishing" id ="publishLink" />
-      <input type="button" value="Stop Publishing" id ="unpublishLink" />
+    <div class="video-instance" id="opentok_console">
+      <div id="links">
+        <input type="button" value="Connect" id ="connectLink" />
+        <input type="button" value="Leave" id ="disconnectLink" />
+        <input type="button" value="Start Publishing" id ="publishLink" />
+        <input type="button" value="Stop Publishing" id ="unpublishLink" />
+      </div>
+      <div id="myCamera" class="publisherContainer"></div>
+      <div id="subscribers"></div>
     </div>
-    <div id="myCamera" class="publisherContainer"></div>
-    <div id="subscribers"></div>
-
-    <div class="video-instance">
-      <img src="https://graph.facebook.com/clydeli/picture?width=160&height=120">
-    </div>
-    <br>
-    <div class="video-instance">
-      <img src="https://graph.facebook.com/sean.xiao.7370/picture?width=160&height=120">
-    </div>
-    <br>
-    <div class="video-instance">
-      <img src="https://graph.facebook.com/dan.fortner.96/picture?width=160&height=120">
-    </div>
+    
+    {{#each users}}
+      <div class="video-instance">
+        <div class="video-username"> {{username}} </div>
+      </div> <br>
+    {{/each}}
   </div>
+
+  <div id="join-video"><div>Share my Webcam</div></div>
 </template>
