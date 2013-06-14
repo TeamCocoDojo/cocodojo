@@ -170,17 +170,3 @@ Template.whiteboard.rendered = function () {
     });
 
 }
-
-var CocoDojoRouter = Backbone.Router.extend({
-
-    routes:{
-               ":session_id":"dojo"
-           },
-    dojo:function (codeSessionId) {
-             Session.set("codeSessionId", codeSessionId);
-         },
-    setCodeSession:function (codeSessionId) {
-                       this.navigate(codeSessionId, true);
-                   }
-});
-Router = new CocoDojoRouter;
