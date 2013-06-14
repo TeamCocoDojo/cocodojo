@@ -1,19 +1,15 @@
-<template name="repoview">
-  <div class="collapse-inner fuelux">
-    <div class="navbar navbar-inverse">
-      <div class="navbar-inner">
-        {{#if currentUser}}
-          <a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#repoTree">Select Repo</a>
-        {{else}}
-          {{loginButtons}}
-        {{/if}}
-      </div>
+
+<template name="repoTree">
+  <div id="repoTree" class="modal hide fade" tab index="-1">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">x</button>
+      <h2>Select Github Repository</h2>
     </div>
-    <div id="ex-tree" class="tree">
+    <div class="modal-body entrance">
+      <div id="repo-tree" class="tree">
       <div class="tree-folder" style="display:none;">
         <div class="tree-folder-header">
           <i class="icon-folder-close"></i>
-
           <div class="tree-folder-name"></div>
         </div>
         <div class="tree-folder-content"></div>
@@ -24,6 +20,10 @@
         <i class="tree-dot"></i>
         <div class="tree-item-name"></div>
       </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Close</button>
     </div>
   </div>
 </template>

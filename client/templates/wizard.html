@@ -1,0 +1,24 @@
+
+<template name="wizard">
+  <div id="wizard" class="modal hide fade" tab index="-1">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">x</button>
+      <h2>Get Started</h2>
+    </div>
+    <div class="modal-body entrance">
+      <div class='align-center'>
+        <button class="btn btn-large">Quick Start</button>
+      </div>
+      <div class="align-center">
+      {{#if currentUser}}
+        <button class="btn btn-large">Choose Repo</button>
+      {{else}}
+          {{loginButtons}}
+      {{/if}}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+</template>

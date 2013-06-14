@@ -1,0 +1,9 @@
+.entrance .align-center {
+    margin: 15px auto;
+    display: block;
+    width: 170px;
+}
+
+.entrance .align-center button {
+    width: 170px;
+}
