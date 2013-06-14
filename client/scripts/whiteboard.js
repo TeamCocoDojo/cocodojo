@@ -50,7 +50,6 @@ Drawing.prototype.remove = function () {
 Drawing.prototype.line = function (paper, startX, startY, endX, endY) {
   paper.setStart();
   var path = "M" + startX + "," + startY + "L" + endX + "," + endY;
-  console.log(path);
   paper.path("M" + startX + "," + startY + "L" + endX + "," + endY).attr({"stroke-width":3});
   return paper.setFinish();
 };
@@ -79,13 +78,11 @@ function WhiteboardCanvas(elementId, width, height){
 };
 
 WhiteboardCanvas.prototype.init = function(){
-  console.log("init: " + Session.get("codeSessionId"));
   var me = this;
   var dbQuery = Whiteboard.find({codeSessionId: Session.get("codeSessionId")});
   dbQuery.observeChanges({
     added: function(id, fields){
       console.log("added event detected");
-      console.log(me.drawings[fields.drawingId]);
       if(me.drawings[fields.drawingId] !== undefined) return;
       var graphData = JSON.parse(fields.data);
       graphData.options.splice(0, 0, me.paper);
@@ -97,11 +94,9 @@ WhiteboardCanvas.prototype.init = function(){
     },
     changed: function(id, fields){
       console.log("changed event detected");
-      console.log(fields);
     },
     removed: function(id){
       console.log("removed event detected");
-      console.log(me.drawings[id]);
       me.drawings[id].remove();
     }
   });
@@ -175,7 +170,6 @@ WhiteboardCanvas.prototype.addToMongo = function(drawingObj){
 
 WhiteboardCanvas.prototype.clean = function(){
   for(var drawingId in this.drawings){
-    console.log(drawingId);
     Whiteboard.remove(drawingId, function(){
       console.log("removed");
     });
@@ -187,7 +181,7 @@ WhiteboardCanvas.prototype.clean = function(){
 
 
 Template.whiteboard.rendered = function () {
-  var whiteboard = new WhiteboardCanvas("canvas", "100%", "95%");
+  var whiteboard = new WhiteboardCanvas("canvas", "100%", 482);
   var lastDate = new Date();
   $("#lineButton").click(function(){
     whiteboard.drawLineListener();
