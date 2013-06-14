@@ -1,8 +1,8 @@
-Template.video.users = function(){
-  console.log(SessionUsers.find({}).fetch());
-  return SessionUsers.find({});
-};
-
+// uncomment later for multi people chatting dev
+// Template.video.users = function(){
+//   console.log("session User: " + SessionUsers.find({}).fetch());
+//   return SessionUsers.find({});
+// };
 
 Template.video.rendered = function () {
   var apiKey = "31556702";
@@ -92,27 +92,6 @@ var tokboxRouter = Backbone.Router.extend({
  }
 });
 Router = new tokboxRouter;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //--------------------------------------
