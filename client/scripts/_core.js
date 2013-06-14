@@ -9,7 +9,6 @@ if(Meteor.isClient) {
   var Router = new (Backbone.Router.extend({
     routes:{ ":session_id": "sessionId" },
     sessionId: function (code_session_id) {
-      console.log(code_session_id);
       Session.set("codeSessionId", code_session_id);
       CodeSession.update(
         {_id: code_session_id},
