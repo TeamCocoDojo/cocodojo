@@ -7,9 +7,8 @@ var
   editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
   var syntax = 'text/x-python';
   var cm;
-  //editorSocket = io.connect('localhost', {port: 3333});
 
-Template.codeMirror.rendered = function() {
+  Template.codeMirror.rendered = function() {
   var cmClient;
   var editorWrapper = document.getElementById('editorInstance');
   cm = window.cm = CodeMirror(editorWrapper, {
