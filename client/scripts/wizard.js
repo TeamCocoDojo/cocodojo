@@ -1,0 +1,4 @@
+Template.wizard.rendered = function() {
+
+};
+
