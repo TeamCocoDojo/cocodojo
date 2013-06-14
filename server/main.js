@@ -1,4 +1,5 @@
 CodeSession = new Meteor.Collection("codesession");
+SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
@@ -6,6 +7,26 @@ if(Meteor.isServer) {
   Meteor.publish("codesession", function(code_session_id) {
     check(code_session_id, String);
     return CodeSession.find({_id: code_session_id});
+  });
+  Meteor.publish("sessionusers", function(code_session_id, user_id, user_name) {
+    check(code_session_id, String);
+    check(user_id, String);
+    check(user_name, String);
+    if(this._session.socket._events.data.length === 1) {
+      // this._session.socket.on("data", Meteor.bindEnvironment(function(data) {
+      //   if( SessionUsers.find({ $and: [{ codeSessionId: code_session_id }, { userId: user_id }] }).count() == 0 ){
+      //     SessionUsers.insert({
+      //       "codeSessionId": code_session_id,
+      //       "userId": user_id,
+      //       "username": user_name
+      //     });
+      //   }
+      // }, function(e){ console.log(e); }));
+      this._session.socket.on("close", Meteor.bindEnvironment(function() {
+        SessionUsers.remove({ $and: [{ codeSessionId: code_session_id }, { userId: user_id }] });
+      }, function(e) { console.log("close error", e); }));
+    }
+    return SessionUsers.find({codeSessionId: code_session_id});
   });
   Meteor.publish("chatbox", function(code_session_id) {
     check(code_session_id, String);
