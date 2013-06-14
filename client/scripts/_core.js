@@ -65,7 +65,7 @@ if(Meteor.isClient) {
           });
 
           // Set a new editor sync session
-          var editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
+          var editorSocket = io.connect('localhost', {port: 3333});
           editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });
@@ -79,6 +79,16 @@ if(Meteor.isClient) {
   // Helper for using session variable in templates
   Handlebars.registerHelper('session',function(input){
     return Session.get(input);
+  });
+
+  Meteor.loginWithGithub(
+    {
+    requestPermissions: {
+      github: ['user', 'public_repo']
+    },
+    requestOfflineToken: {
+      github: true
+    }
   });
 
 }

@@ -1,4 +1,5 @@
 Template.video.users = function(){
+
   console.log(SessionUsers.find({}).fetch());
   var
     session = SessionUsers.findOne({}),

@@ -8,7 +8,6 @@
   }
 });*/
 
-
 var cocodojo = cocodojo || {};
 
 cocodojo.githubAPI = cocodojo.githubAPI || {};
@@ -32,7 +31,7 @@ cocodojo.githubAPI.getRepos = function(callback) {
   if (accessToken) {
     Meteor.http.get("https://api.github.com/user/repos?access_token=" + accessToken,
       function (error, result) {
-        if (result.statusCode === 200) {
+        if (result.statusCode === 200 && callback) {
           callback(result);
         }
       }
@@ -92,34 +91,7 @@ Template.repoview.userName = function() {
   return cocodojo.githubAPI.getUsername();
 };
 
-Template.repoview.events({
-  'click input' : function () {
-    cocodojo.githubAPI.getRepos();
-  }
-});
-
 Template.repoview.rendered = function() {
 
-  cocodojo.githubAPI.getRepos(function(repos) {
-    var allRepo = [];
-    for (var i = 0; i < repos.data.length; i++) {
-        var repo = {
-          name: repos.data[i].name,
-          type: "folder",
-        };
-        allRepo.push(repo);
-    }
-    var dataSourceTree = new TreeDataSource({
-      data: allRepo,
-      delay: 400
-    });
-
-    $('#ex-tree').tree({
-      dataSource: dataSourceTree,
-      loadingHTML: '<div class="static-loader">Loading...</div>',
-      multiSelect: true,
-      cacheItems: true
-    });
-  });
 };
 
