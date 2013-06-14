@@ -1,7 +1,7 @@
 <template name='codeMirror'>
   <div id='editorInstance'></div>
-  <div>
-  	<select id="syntaxHighlight">
+  <div class="selection-box">
+    <select id="syntaxHighlight">
       <option value="text/x-python">Python</option>
       <option value="text/x-java">Java</option>
       <option value="text/x-c++src">C&#43&#43</option>
@@ -12,6 +12,29 @@
       <option value="text/x-csharp">C&#35</option>
       <option value="text/x-perl">Perl</option>
       <option value="text/css">CSS</option>
+    </select>
+  </div>
+  <div class="selection-box">
+    <select id="themeHighlight">
+      <option>blackboard</option>
+      <option>ambiance</option>
+      <option>default</option>
+      <option>cobalt</option>
+      <option>eclipse</option>
+      <option>elegant</option>
+      <option>erlang-dark</option>
+      <option>lesser-dark</option>
+      <option>midnight</option>
+      <option>monokai</option>
+      <option>neat</option>
+      <option>night</option>
+      <option>rubyblue</option>
+      <option>solarized dark</option>
+      <option>solarized light</option>
+      <option>twilight</option>
+      <option>vibrant-ink</option>
+      <option>xq-dark</option>
+      <option>xq-light</option>
     </select>
   </div>
 </template>

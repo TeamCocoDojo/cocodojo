@@ -37,8 +37,16 @@
 .modal-footer{
 }
  
-.navbar { font-weight: 700; }
- 
+.navbar {
+  font-weight: 700; 
+}
+
+.navbar a{
+  color: #999;
+  padding-left: 10px;
+}
+
+
 /*#navbarRight {
     float:right;
 }

@@ -1,6 +1,21 @@
 #syntaxHighlight{
 	float: right;
 	right: 40px;
-	top:40px;
+	top:70px;
+	z-index: 10;
 	position: fixed;
+}
+#themeHighlight{
+	float: right;
+	right: 40px;
+	top:110px;
+	z-index: 10;
+	position: fixed;
+}
+.selection-box select{
+	width: 150px;
+	color: black;
+	font-family:"Courier New",Courier,monospace;
+	font-weight: bold;
+	border: 2px solid #666;
 }

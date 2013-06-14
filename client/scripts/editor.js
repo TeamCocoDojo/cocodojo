@@ -6,6 +6,7 @@ var
   CodeMirrorAdapter = ot.CodeMirrorAdapter;
   editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
   var syntax = 'text/x-python';
+  var selectedTheme = 'blackboard';
   var cm;
 
   Template.codeMirror.rendered = function() {
@@ -14,7 +15,7 @@ var
   cm = window.cm = CodeMirror(editorWrapper, {
     lineNumbers: true,
     lineWrapping: true,
-    theme: 'blackboard',
+    theme: selectedTheme,
     mode: syntax
   });
 
@@ -33,5 +34,9 @@ Template.codeMirror.events = {
   'change #syntaxHighlight': function(e) {
     syntax = e.target.value;
     cm.setOption("mode", syntax);
-  }
+  },
+  'change #themeHighlight': function(e) {
+      selectedTheme = e.target.value;
+      cm.setOption("theme", selectedTheme);
+    }
 }
