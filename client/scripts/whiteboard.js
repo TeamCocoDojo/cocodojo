@@ -58,7 +58,7 @@ Drawing.prototype.randomLine = function(paper, pts){
   paper.setStart();
   var path = "";
   for(var i = 0; i < pts.length; i++){
-    if(i==0) path += "M" + pts[i].x + "," + pts[i].y;
+    if (i==0) path += "M" + pts[i].x + "," + pts[i].y;
     else{
       path += "L"+pts[i].x + "," + pts[i].y;
     }
@@ -83,7 +83,7 @@ WhiteboardCanvas.prototype.init = function(){
   dbQuery.observeChanges({
     added: function(id, fields){
       console.log("added event detected");
-      if(me.drawings[fields.drawingId] !== undefined) return;
+      if (me.drawings[fields.drawingId] !== undefined) return;
       var graphData = JSON.parse(fields.data);
       graphData.options.splice(0, 0, me.paper);
       var drawing = new Drawing(graphData.type, graphData.options);
@@ -97,7 +97,8 @@ WhiteboardCanvas.prototype.init = function(){
     },
     removed: function(id){
       console.log("removed event detected");
-      me.drawings[id].remove();
+      if (me.drawings[id.toHexString()] === undefined) return; 
+      me.drawings[id.toHexString()].remove();
     }
   });
 };
@@ -128,14 +129,14 @@ WhiteboardCanvas.prototype.drawRandomLineListener = function(event){
   var me = this;
   this.background.drag(function(dx,dy,x,y,event){
     //During dragging
-    if(!randomLine.hasOwnProperty("element")){
+    if (!randomLine.hasOwnProperty("element")){
       randomLine.element = new Drawing("randomLine", [me.paper, randomLine.pts]);
     }
     else{
       randomLine.pts.push(Drawing.adjustMousePosition(me.paper, x, y));
       var path = "";
       for(var i=0;i<randomLine.pts.length; i++){
-        if(i==0){
+        if (i==0){
           path += "M" +randomLine.pts[i].x + "," + randomLine.pts[i].y;
         }
         else{
@@ -159,10 +160,10 @@ WhiteboardCanvas.prototype.drawRandomLineListener = function(event){
 
 WhiteboardCanvas.prototype.addToMongo = function(drawingObj){
   var id = new Meteor.Collection.ObjectID();
-  this.drawings[id] = drawingObj;
+  this.drawings[id.toHexString()] = drawingObj;
   Whiteboard.insert({
     _id: id,
-    drawingId: id,
+    drawingId: id.toHexString(),
     codeSessionId: Session.get("codeSessionId"),
     data: drawingObj.stringify()
   });
@@ -170,7 +171,9 @@ WhiteboardCanvas.prototype.addToMongo = function(drawingObj){
 
 WhiteboardCanvas.prototype.clean = function(){
   for(var drawingId in this.drawings){
-    Whiteboard.remove(drawingId, function(){
+    console.log(drawingId);
+    console.log(typeof drawingId);
+    Whiteboard.remove(new Meteor.Collection.ObjectID(drawingId), function(){
       console.log("removed");
     });
   }
