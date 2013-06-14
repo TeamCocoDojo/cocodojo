@@ -8,22 +8,14 @@ if(Meteor.isServer) {
     check(code_session_id, String);
     return CodeSession.find({_id: code_session_id});
   });
-  Meteor.publish("sessionusers", function(code_session_id, user_id, user_name) {
+  Meteor.publish("sessionusers", function(code_session_id, user_id, user_name, user_session) {
     check(code_session_id, String);
     check(user_id, String);
     check(user_name, String);
+    // Remove user from userlist when disconnected
     if(this._session.socket._events.data.length === 1) {
-      // this._session.socket.on("data", Meteor.bindEnvironment(function(data) {
-      //   if( SessionUsers.find({ $and: [{ codeSessionId: code_session_id }, { userId: user_id }] }).count() == 0 ){
-      //     SessionUsers.insert({
-      //       "codeSessionId": code_session_id,
-      //       "userId": user_id,
-      //       "username": user_name
-      //     });
-      //   }
-      // }, function(e){ console.log(e); }));
       this._session.socket.on("close", Meteor.bindEnvironment(function() {
-        SessionUsers.remove({ $and: [{ codeSessionId: code_session_id }, { userId: user_id }] });
+        SessionUsers.remove(user_session);
       }, function(e) { console.log("close error", e); }));
     }
     return SessionUsers.find({codeSessionId: code_session_id});

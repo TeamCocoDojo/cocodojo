@@ -1,9 +1,10 @@
-// uncomment later for multi people chatting dev
-// Template.video.users = function(){
-//   console.log("session User: " + SessionUsers.find({}).fetch());
-//   return SessionUsers.find({});
-// };
+// for user list
+Template.video.users = function(){
+  console.log("session User: " + SessionUsers.find({}).fetch());
+  return SessionUsers.find({});
+};
 
+// for tokbox
 Template.video.rendered = function () {
   var apiKey = "31556702";
   var sessionId = "2_MX4zMTU1NjcwMn4xMjcuMC4wLjF-RnJpIEp1biAwNyAxNDoyOToxMiBQRFQgMjAxM34wLjkwNjI3NzN-";

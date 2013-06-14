@@ -6,7 +6,7 @@
 }
 
 .video-instance {
-  float: right; /*width: 144px;*/
+  float: right; width: 144px;
   margin: 6px;  border-radius: 2px;
   color: #333; background-color: #ccc;
   opacity: 0.85; overflow: hidden;
@@ -17,8 +17,8 @@
 
 .video-instance:hover {
   /*width: 160px; height: 120px;*/
-  /*width: 160px;
-  opacity: 1;*/
+  width: 160px;
+  opacity: 1;
 }
 
 .video-username {
