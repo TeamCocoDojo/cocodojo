@@ -6,3 +6,8 @@ Meteor.startup(function () {
     });
   });
 });
+
+Meteor.call("githubToken", function(error, accessToken){
+  cocodojo.githubAPIObj = new cocodojo.githubAPI(accessToken);
+});
+
