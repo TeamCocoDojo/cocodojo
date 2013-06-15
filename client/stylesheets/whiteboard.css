@@ -5,7 +5,7 @@
 	transition: all 390ms ease;
 	z-index: 2;
 }
-#whiteboard-container:hover {
+#whiteboard-container {
 	width: 85%; height: 80%;
 	position: absolute; top: 0; left: 20%;
 }
