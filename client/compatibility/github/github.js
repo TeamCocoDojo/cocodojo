@@ -17,7 +17,7 @@ cocodojo.githubAPI = function(token) {
 };
 
 cocodojo.githubAPI.prototype.getRepos = function(callback) {
-  Meteor.http.get("https://api.github.com/user/repos?access_token=" + token,
+  Meteor.http.get("https://api.github.com/user/repos?access_token=" + this.token,
     function (error, result) {
       if (result.statusCode === 200 && callback) {
         callback(result);
