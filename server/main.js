@@ -58,6 +58,13 @@ if(Meteor.isServer) {
         { $set: { username: user_name } }
       );
     },
+    githubUser  : function() {
+      try{
+        return Meteor.user().services.github;
+      }catch(e) {
+        return null;
+      }
+    },
 
     githubToken : function() {
       try {

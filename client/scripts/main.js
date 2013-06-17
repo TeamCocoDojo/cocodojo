@@ -7,7 +7,9 @@ Meteor.startup(function () {
   });
 });
 
-Meteor.call("githubToken", function(error, accessToken){
-  cocodojo.githubAPIObj = new cocodojo.githubAPI(accessToken);
+Meteor.call("githubUser", function(error, user){
+  cocodojo.githubObj = new Github({
+    token: user.accessToken,
+    auth: "oauth"
+  }); 
 });
-
