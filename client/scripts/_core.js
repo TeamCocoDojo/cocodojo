@@ -31,13 +31,7 @@ if(Meteor.isClient) {
           "username": Session.get('username')
         });
         Session.set('userSession', userSession);
-        // CodeSession.update(
-        //   {_id: code_session_id},
-        //   { $push:
-        //     { users:  Session.get('userId') }
-        //   }
-        // );
-      }
+       }
     }));
 
     // Check and create some user data in localstorage
@@ -67,7 +61,7 @@ if(Meteor.isClient) {
           Session.set('userSession', userSession);
 
           // Set a new editor sync session
-          var editorSocket = io.connect('localhost', {port: 3333});
+          var editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
           editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });
