@@ -525,3 +525,4 @@
     window.Github = Github;
   }
 }).call(this);
+var cocodojo = cocodojo || {};
