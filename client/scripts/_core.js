@@ -24,20 +24,16 @@ if(Meteor.isClient) {
       sessionId: function (code_session_id) {
         console.log(code_session_id);
         Session.set("codeSessionId", code_session_id);
-        // Insert the user into the session userlist
-        var userSession = SessionUsers.insert({
-          "codeSessionId": Session.get('codeSessionId'),
-          "userId": Session.get('userId'),
-          "username": Session.get('username')
-        });
-        Session.set('userSession', userSession);
-        // CodeSession.update(
-        //   {_id: code_session_id},
-        //   { $push:
-        //     { users:  Session.get('userId') }
-        //   }
-        // );
-      }
+        // Insert the user into the session userlist if he is not the creater
+        if(Session.get('userSession') == undefined){
+          var userSession = SessionUsers.insert({
+            "codeSessionId": Session.get('codeSessionId'),
+            "userId": Session.get('userId'),
+            "username": Session.get('username')
+          });
+          Session.set('userSession', userSession);
+        }
+       }
     }));
 
     // Check and create some user data in localstorage
