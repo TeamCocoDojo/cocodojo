@@ -76,14 +76,4 @@ if(Meteor.isClient) {
     return Session.get(input);
   });
 
-  Meteor.loginWithGithub(
-    {
-    requestPermissions: {
-      github: ['user', 'public_repo']
-    },
-    requestOfflineToken: {
-      github: true
-    }
-  });
-
 }
