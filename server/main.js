@@ -57,8 +57,22 @@ if(Meteor.isServer) {
         { _id: user_session },
         { $set: { username: user_name } }
       );
-    }
+    },
+    githubUser  : function() {
+      try{
+        return Meteor.user().services.github;
+      }catch(e) {
+        return null;
+      }
+    },
 
+    githubToken : function() {
+      try {
+        return Meteor.user().services.github.accessToken;
+      } catch(e) {
+        return null;
+      }
+    }
   });
 
 
