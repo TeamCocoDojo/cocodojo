@@ -44,7 +44,6 @@ if(Meteor.isClient) {
     $(document).ready(function() {
        if (window.location.pathname == "/") {
           // Create new dojo when no sessionId is specified
-          //var codeSessionId = Meteor.call('start_new_session', [Session.get("userId")]);
           var codeSessionId = CodeSession.insert({
             "sessionName" : "New Dojo",
             //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
