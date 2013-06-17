@@ -24,13 +24,15 @@ if(Meteor.isClient) {
       sessionId: function (code_session_id) {
         console.log(code_session_id);
         Session.set("codeSessionId", code_session_id);
-        // Insert the user into the session userlist
-        var userSession = SessionUsers.insert({
-          "codeSessionId": Session.get('codeSessionId'),
-          "userId": Session.get('userId'),
-          "username": Session.get('username')
-        });
-        Session.set('userSession', userSession);
+        // Insert the user into the session userlist if he is not the creater
+        if(Session.get('userSession') == undefined){
+          var userSession = SessionUsers.insert({
+            "codeSessionId": Session.get('codeSessionId'),
+            "userId": Session.get('userId'),
+            "username": Session.get('username')
+          });
+          Session.set('userSession', userSession);
+        }
        }
     }));
 
@@ -61,7 +63,7 @@ if(Meteor.isClient) {
           Session.set('userSession', userSession);
 
           // Set a new editor sync session
-          var editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
+          var editorSocket = io.connect('localhost', {port: 3333});
           editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });
