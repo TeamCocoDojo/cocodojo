@@ -1,8 +1,8 @@
 // for user list
-// Template.video.users = function(){
-//   console.log("session User: " + SessionUsers.find({}).fetch());
-//   return SessionUsers.find({});
-// };
+Template.video.users = function(){
+  console.log("session User: " + SessionUsers.find({}).fetch());
+  return SessionUsers.find({});
+};
 
 var session;
 var VIDEO_WIDTH = 320;
