@@ -6,7 +6,7 @@ Whiteboard = new Meteor.Collection("whiteboard");
 
 if (Meteor.isClient) {
   cocodojo.editorSocket = io.connect(document.location.hostname, {port: 3333});
-          
+
   Meteor.startup(function () {
 
     // Subscribe to the Collections according to codeSessionId
@@ -19,7 +19,7 @@ if (Meteor.isClient) {
 
     // (c) 2012-2013 Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)
     // Extracted from ot.js - function for generating random user color
-    function generateColor(){
+    function generateColor(hue){
       function rgb2hex (r, g, b) {
         function digits (n) {
           var m = Math.round(255*n).toString(16);
@@ -43,16 +43,18 @@ if (Meteor.isClient) {
         return rgb2hex(hue2rgb(h+1/3), hue2rgb(h), hue2rgb(h-1/3));
       }
 
-      return hsl2hex(Math.random(), 0.75, 0.5);
+      return hsl2hex(hue, 0.75, 0.5);
     }
 
     // Function for creating new user session
+    var userHue = Math.random();
     function createUserSession(){
       return SessionUsers.insert({
         "codeSessionId": Session.get('codeSessionId'),
         "userId": Session.get('userId'),
         "username": Session.get('username'),
-        "userColor": generateColor()
+        "userColor": generateColor(userHue),
+        "userHue": userHue
       });
     }
 
