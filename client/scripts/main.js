@@ -8,8 +8,10 @@ Meteor.startup(function () {
 });
 
 Meteor.call("githubUser", function(error, user){
-  cocodojo.githubObj = new Github({
-    token: user.accessToken,
-    auth: "oauth"
-  }); 
+  if(user){
+    cocodojo.githubObj = new GithubLib({
+      token: user.accessToken,
+      auth: "oauth"
+    });
+  }
 });

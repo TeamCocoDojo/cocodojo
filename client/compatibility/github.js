@@ -1,3 +1,4 @@
+var meteor_Github = Github; 
 // Github.js 0.8.0
 // (c) 2013 Michael Aufreiter, Development Seed
 // Github.js is freely distributable under the MIT license.
@@ -525,4 +526,6 @@
     window.Github = Github;
   }
 }).call(this);
+var GithubLib = Github;
+var Github = meteor_Github;
 var cocodojo = cocodojo || {};

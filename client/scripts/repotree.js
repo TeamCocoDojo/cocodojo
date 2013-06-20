@@ -1,4 +1,5 @@
 Template.repoTree.rendered = function() {
+  //console.log(new Git());
   $('#repoTree').on('show', function () {
     var user = cocodojo.githubObj.getUser();
     user.repos(function(err, repos) {
