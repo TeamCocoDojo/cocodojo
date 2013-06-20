@@ -7,11 +7,3 @@ Meteor.startup(function () {
   });
 });
 
-Meteor.call("githubUser", function(error, user){
-  if(user){
-    cocodojo.githubObj = new GithubLib({
-      token: user.accessToken,
-      auth: "oauth"
-    });
-  }
-});
