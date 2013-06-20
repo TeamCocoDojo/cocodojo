@@ -198,4 +198,9 @@ Template.whiteboard.rendered = function () {
   $('#wb-pin-btn').click(function(){
     $('#whiteboard-container').toggleClass('pinned');
   });
+  $('.wb-btn').click(function(){
+    $('.wb-btn').removeClass('active');
+    $(this).addClass('active');
+  });
+
 };
