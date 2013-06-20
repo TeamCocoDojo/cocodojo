@@ -25,6 +25,14 @@
   opacity: 0;
 }
 
-#whiteboard-container:hover #wb-pin-btn, #whiteboard-container.pinned #wb-pin-btn{
+#whiteboard-container #wb-pin-btn img{
+  width: 1.5em; height: 1.5em;
+  opacity: 0.6;
+}
+
+#whiteboard-container:hover #wb-pin-btn,
+#whiteboard-container #wb-pin-btn img:hover,
+#whiteboard-container.pinned #wb-pin-btn,
+#whiteboard-container.pinned #wb-pin-btn img {
   opacity: 1;
 }
