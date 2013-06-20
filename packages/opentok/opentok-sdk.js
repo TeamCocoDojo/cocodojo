@@ -1,0 +1,1 @@
+openTok = Npm.require("opentok");
