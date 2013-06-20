@@ -11,8 +11,6 @@ if (Meteor.isClient) {
 
     // Subscribe to the Collections according to codeSessionId
     Deps.autorun(function() {
-      console.log(Session.get('userId') );
-      console.log(Session.get('username') );
       Meteor.subscribe("codesession", Session.get("codeSessionId"));
       Meteor.subscribe("sessionusers", Session.get("codeSessionId"), Session.get('userId'), Session.get('username'), Session.get('userSession'));
       Meteor.subscribe("chatbox", Session.get("codeSessionId"));
@@ -62,7 +60,6 @@ if (Meteor.isClient) {
     var Router = new (Backbone.Router.extend({
       routes:{ ":session_id": "sessionId" },
       sessionId: function (code_session_id) {
-        console.log(code_session_id);
         Session.set("codeSessionId", code_session_id);
         // Insert the user into the session userlist if he is not the creater
         if(Session.get('userSession') == undefined){
