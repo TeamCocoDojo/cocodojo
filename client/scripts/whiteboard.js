@@ -97,7 +97,7 @@ WhiteboardCanvas.prototype.init = function(){
     },
     removed: function(id){
       console.log("removed event detected");
-      if (me.drawings[id.toHexString()] === undefined) return; 
+      if (me.drawings[id.toHexString()] === undefined) return;
       me.drawings[id.toHexString()].remove();
     }
   });
@@ -193,5 +193,9 @@ Template.whiteboard.rendered = function () {
   });
   $("#trashButton").click(function(){
     whiteboard.clean();
+  });
+
+  $('#wb-pin-btn').click(function(){
+    $('#whiteboard-container').toggleClass('pinned');
   });
 };

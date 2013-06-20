@@ -2,14 +2,14 @@
 	float: right;
 	right: 40px;
 	top:70px;
-	z-index: 10;
+	z-index: 3;
 	position: fixed;
 }
 #themeHighlight{
 	float: right;
 	right: 40px;
 	top:110px;
-	z-index: 10;
+	z-index: 3;
 	position: fixed;
 }
 .selection-box select{
