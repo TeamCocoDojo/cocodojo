@@ -73,8 +73,15 @@ if(Meteor.isServer) {
 
     getSocketIOPort: function() {
       return process.env.SOCKETIO_PORT || 3333;
-    }
+    },
 
+    githubUser  : function() {
+      try{
+        return Meteor.user().services.github;
+      }catch(e) {
+        return null;
+      }
+    }
   });
 
 

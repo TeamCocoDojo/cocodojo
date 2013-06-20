@@ -4,7 +4,9 @@ SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
-if(Meteor.isClient) {
+if (Meteor.isClient) {
+  console.log(Meteor.call('getSocketIOHost'));
+  console.log(Meteor.call('getSocketIOPort'));
   cocodojo.editorSocket = io.connect('localhost', {port: 3333});
           
   Meteor.startup(function () {
@@ -19,20 +21,56 @@ if(Meteor.isClient) {
       Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
     });
 
+    // (c) 2012-2013 Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)
+    // Extracted from ot.js - function for generating random user color
+    function generateColor(){
+      function rgb2hex (r, g, b) {
+        function digits (n) {
+          var m = Math.round(255*n).toString(16);
+          return m.length === 1 ? '0'+m : m;
+        }
+        return '#' + digits(r) + digits(g) + digits(b);
+      }
+
+      function hsl2hex (h, s, l) {
+        if (s === 0) { return rgb2hex(l, l, l); }
+        var var2 = l < 0.5 ? l * (1+s) : (l+s) - (s*l);
+        var var1 = 2 * l - var2;
+        var hue2rgb = function (hue) {
+          if (hue < 0) { hue += 1; }
+          if (hue > 1) { hue -= 1; }
+          if (6*hue < 1) { return var1 + (var2-var1)*6*hue; }
+          if (2*hue < 1) { return var2; }
+          if (3*hue < 2) { return var1 + (var2-var1)*6*(2/3 - hue); }
+          return var1;
+        };
+        return rgb2hex(hue2rgb(h+1/3), hue2rgb(h), hue2rgb(h-1/3));
+      }
+
+      return hsl2hex(Math.random(), 0.75, 0.5);
+    }
+
+    // Function for creating new user session
+    function createUserSession(){
+      return SessionUsers.insert({
+        "codeSessionId": Session.get('codeSessionId'),
+        "userId": Session.get('userId'),
+        "username": Session.get('username'),
+        "userColor": generateColor()
+      });
+    }
+
     // Backbone Router Setup
     var Router = new (Backbone.Router.extend({
       routes:{ ":session_id": "sessionId" },
       sessionId: function (code_session_id) {
         console.log(code_session_id);
         Session.set("codeSessionId", code_session_id);
-        // Insert the user into the session userlist
-        var userSession = SessionUsers.insert({
-          "codeSessionId": Session.get('codeSessionId'),
-          "userId": Session.get('userId'),
-          "username": Session.get('username')
-        });
-        Session.set('userSession', userSession);
-       }
+        // Insert the user into the session userlist if he is not the creater
+        if(Session.get('userSession') == undefined){
+          Session.set('userSession', createUserSession());
+        }
+      }
     }));
 
     // Check and create some user data in localstorage
@@ -43,32 +81,25 @@ if(Meteor.isClient) {
 
     Backbone.history.start({pushState: true});
     $(document).ready(function() {
-       if (window.location.pathname == "/") {
-          // Create new dojo when no sessionId is specified
-          var codeSessionId = CodeSession.insert({
-            "sessionName" : "New Dojo",
-            //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
-            "password" : "",
-            "github_host" : ""
-          });
-          Session.set("codeSessionId", codeSessionId);
-          // Insert the user into the session userlist
-          var userSession = SessionUsers.insert({
-            "codeSessionId": Session.get('codeSessionId'),
-            "userId": Session.get('userId'),
-            "username": Session.get('username')
-          });
-          Session.set('userSession', userSession);
+      if (window.location.pathname == "/") {
+        // Create new dojo when no sessionId is specified
+        var codeSessionId = CodeSession.insert({
+          "sessionName" : "New Dojo",
+          //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
+          "password" : "",
+          "github_host" : ""
+        });
+        Session.set("codeSessionId", codeSessionId);
+        // Insert the user into the session userlist
+        Session.set('userSession', createUserSession());
 
-          // Set a new editor sync session
-          cocodojo.editorSocket.on("doneCreate", function(){
-            Router.navigate(codeSessionId, false);
-          });
-          cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
-       }
+        // Set a new editor sync session
+        cocodojo.editorSocket.on("doneCreate", function(){
+          Router.navigate(codeSessionId, false);
+        });
+        cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
+      }
     });
-
-
   });
 
   // Helper for using session variable in templates

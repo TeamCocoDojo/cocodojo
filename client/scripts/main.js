@@ -6,3 +6,10 @@ Meteor.startup(function () {
     });
   });
 });
+
+Meteor.call("githubUser", function(error, user){
+  cocodojo.githubObj = new Github({
+    token: user.accessToken,
+    auth: "oauth"
+  }); 
+});
