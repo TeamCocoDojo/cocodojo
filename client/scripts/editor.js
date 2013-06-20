@@ -3,8 +3,8 @@ EditorClient = ot.EditorClient,
 SocketIOAdapter = ot.SocketIOAdapter,
 CodeMirrorAdapter = ot.CodeMirrorAdapter;
 editorSocket = io.connect('localhost', {port: 3333});
-var syntax = 'text/x-python';
-var selectedTheme = 'blackboard';
+var syntax = 'javascript';
+var selectedTheme = 'ambiance';
 var cm;
 var cmClient;
 
