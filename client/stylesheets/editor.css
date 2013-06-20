@@ -12,10 +12,17 @@
 	z-index: 10;
 	position: fixed;
 }
-.selection-box select{
+.selection-box select {
 	width: 150px;
 	color: black;
 	font-family:"Courier New",Courier,monospace;
 	font-weight: bold;
 	border: 2px solid #666;
+}
+
+.session-actions {
+	display: block;
+	position: fixed;
+	right: 40px;
+	top: 250px;
 }
