@@ -57,6 +57,22 @@ if(Meteor.isServer) {
         { _id: user_session },
         { $set: { username: user_name } }
       );
+    },
+
+    githubToken: function() {
+      try {
+        return Meteor.user().services.github.accessToken;
+      } catch(e) {
+        return null;
+      }
+    },
+
+    getSocketIOHost: function() {
+      return process.env.SOCKETIO_HOST || "localhost";
+    },
+
+    getSocketIOPort: function() {
+      return process.env.SOCKETIO_PORT || 3333;
     }
 
   });

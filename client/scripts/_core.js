@@ -5,7 +5,8 @@ Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
 if(Meteor.isClient) {
-
+  cocodojo.editorSocket = io.connect('localhost', {port: 3333});
+          
   Meteor.startup(function () {
 
     // Subscribe to the Collections according to codeSessionId
@@ -60,11 +61,10 @@ if(Meteor.isClient) {
           Session.set('userSession', userSession);
 
           // Set a new editor sync session
-          var editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
-          editorSocket.on("doneCreate", function(){
+          cocodojo.editorSocket.on("doneCreate", function(){
             Router.navigate(codeSessionId, false);
           });
-          editorSocket.emit("create", {codeSessionId: codeSessionId});
+          cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
        }
     });
 
