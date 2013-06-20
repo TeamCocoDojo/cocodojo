@@ -40,7 +40,5 @@ Template.codeMirror.events = {
 }
 
 $(document).on("repoFileSelected", function(event, data){
-  console.log("triggerd");
-  console.log(data);
   cm.setValue(data.content);
 });

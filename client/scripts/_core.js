@@ -4,8 +4,9 @@ SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
-if(Meteor.isClient) {
-
+if (Meteor.isClient) {
+  cocodojo.editorSocket = io.connect(document.location.hostname, {port: 3333});
+          
   Meteor.startup(function () {
 
     // Subscribe to the Collections according to codeSessionId
@@ -64,7 +65,7 @@ if(Meteor.isClient) {
         if(Session.get('userSession') == undefined){
           Session.set('userSession', createUserSession());
         }
-       }
+      }
     }));
 
     // Check and create some user data in localstorage
@@ -75,33 +76,29 @@ if(Meteor.isClient) {
 
     Backbone.history.start({pushState: true});
     $(document).ready(function() {
-       if (window.location.pathname == "/") {
-          // Create new dojo when no sessionId is specified
-          //var codeSessionId = Meteor.call('start_new_session', [Session.get("userId")]);
-          var codeSessionId = CodeSession.insert({
-            "sessionName" : "New Dojo",
-            //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
-            "password" : "",
-            "github_host" : ""
-          });
-          Session.set("codeSessionId", codeSessionId);
-          // Insert the user into the session userlist
-          Session.set('userSession', createUserSession());
+      if (window.location.pathname == "/") {
+        // Create new dojo when no sessionId is specified
+        var codeSessionId = CodeSession.insert({
+          "sessionName" : "New Dojo",
+          //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
+          "password" : "",
+          "github_host" : ""
+        });
+        Session.set("codeSessionId", codeSessionId);
+        // Insert the user into the session userlist
+        Session.set('userSession', createUserSession());
 
-          // Set a new editor sync session
-          var editorSocket = io.connect('localhost', {port: 3333});
-          editorSocket.on("doneCreate", function(){
-            Router.navigate(codeSessionId, false);
-          });
-          editorSocket.emit("create", {codeSessionId: codeSessionId});
-       }
+        // Set a new editor sync session
+        cocodojo.editorSocket.on("doneCreate", function(){
+          Router.navigate(codeSessionId, false);
+        });
+        cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
+      }
     });
-
-
   });
 
   // Helper for using session variable in templates
-  Handlebars.registerHelper('session',function(input){
+  Handlebars.registerHelper('session', function(input){
     return Session.get(input);
   });
 
