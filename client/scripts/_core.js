@@ -5,9 +5,7 @@ Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 
 if (Meteor.isClient) {
-  console.log(Meteor.call('getSocketIOHost'));
-  console.log(Meteor.call('getSocketIOPort'));
-  cocodojo.editorSocket = io.connect('localhost', {port: 3333});
+  cocodojo.editorSocket = io.connect(document.location.hostname, {port: 3333});
           
   Meteor.startup(function () {
 
@@ -103,7 +101,7 @@ if (Meteor.isClient) {
   });
 
   // Helper for using session variable in templates
-  Handlebars.registerHelper('session',function(input){
+  Handlebars.registerHelper('session', function(input){
     return Session.get(input);
   });
 

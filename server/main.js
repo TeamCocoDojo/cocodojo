@@ -67,14 +67,6 @@ if(Meteor.isServer) {
       }
     },
 
-    getSocketIOHost: function() {
-      return process.env.SOCKETIO_HOST || "localhost";
-    },
-
-    getSocketIOPort: function() {
-      return process.env.SOCKETIO_PORT || 3333;
-    },
-
     githubUser  : function() {
       try{
         return Meteor.user().services.github;
