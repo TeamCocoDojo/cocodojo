@@ -22,5 +22,3 @@ Template.repoTree.rendered = function() {
     });
   });
 }
-
-
