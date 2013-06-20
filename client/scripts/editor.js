@@ -53,3 +53,4 @@ Template.codeMirror.events = {
 $(document).on("repoFileSelected", function(event, data){
   cm.setValue(data.content);
 });
+
