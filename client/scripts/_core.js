@@ -3,6 +3,7 @@ CodeSession = new Meteor.Collection("codesession");
 SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
+WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 
 if(Meteor.isClient) {
 
@@ -16,6 +17,7 @@ if(Meteor.isClient) {
       Meteor.subscribe("sessionusers", Session.get("codeSessionId"), Session.get('userId'), Session.get('username'), Session.get('userSession'));
       Meteor.subscribe("chatbox", Session.get("codeSessionId"));
       Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
+      Meteor.subscribe("whiteboard_cursor", Session.get("codeSessionId"));
     });
 
     // Backbone Router Setup

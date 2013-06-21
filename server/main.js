@@ -2,6 +2,7 @@ CodeSession = new Meteor.Collection("codesession");
 SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
+WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 
 if(Meteor.isServer) {
   Meteor.publish("codesession", function(code_session_id) {
@@ -27,6 +28,11 @@ if(Meteor.isServer) {
   Meteor.publish("whiteboard", function(code_session_id) {
     check(code_session_id, String);
     return Whiteboard.find({codeSessionId: code_session_id});
+  });
+
+  Meteor.publish("whiteboard_cursor", function(code_session_id) {
+    check(code_session_id, String);
+    return WhiteboardCursor.find({codeSessionId: code_session_id});
   });
 
   var io = socketIO.listen(3333);
