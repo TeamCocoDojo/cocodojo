@@ -205,17 +205,18 @@ WhiteboardCanvas.prototype.initCursor = function(){
     } 
   });
   this.background.mousemove(function(event, x, y){
-    cursor = WhiteboardCursor.findOne({_id: Session.get("userSession")});
-    if(cursor === null){
+    var userSession = Session.get("userSession");
+    cursor = WhiteboardCursor.findOne({_id: userSession});
+    if(cursor === undefined){
       WhiteboardCursor.insert({
-        _id: Session.get("userSession"),
+        _id: userSession,
         codeSessionId: Session.get("codeSessionId"),
         x: 0,
         y: 0
       });
     }
     else{
-      WhiteboardCursor.update({_id: Session.get("userSession")},{$set: 
+      WhiteboardCursor.update({_id: userSession},{$set: 
                               {x: x, y: y}
       });
     }
