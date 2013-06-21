@@ -63,7 +63,7 @@ Drawing.prototype.randomLine = function(paper, pts){
 Drawing.prototype.cursor = function(paper, x, y, color){
   paper.setStart();
   color = color || (function(m,s,c){return (c ? arguments.callee(m,s,c-1) : '#') +
-    s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5);
+                    s[m.floor(m.random() * s.length)]})(Math,'0123456789ABCDEF',5);
   paper.circle(x, y, 5).attr({fill: color});
   //paper.path("M" + (x+5) + "," + (y+5) + "L" + (x+10) + "," + (y+10));
   return paper.setFinish();
@@ -88,22 +88,32 @@ WhiteboardCanvas.prototype.init = function(){
   var me = this;
   var dbQuery = Whiteboard.find({codeSessionId: Session.get("codeSessionId")});
   this.initCursor();
-  dbQuery.observeChanges({
-    added: function(id, fields){
-      if (me.drawings[fields.drawingId] !== undefined) return;
+  dbQuery.observe({
+    added: function(fields){
+      if(fields.modifier == Session.get("userSession")) return ;
       var graphData = JSON.parse(fields.data);
       graphData.options.splice(0, 0, me.paper);
       var drawing = new Drawing(graphData.type, graphData.options);
+      me.drawings[fields._id] = drawing;
       for (var key in graphData.attrs) {
         drawing.updateAttrs(key, graphData.attrs[key]);
       }
-      me.drawings[fields.drawingId] = drawing;
     },
-    changed: function(id, fields){
+    changed: function(fields, oldfields){
+      if(fields.modifier == Session.get("userSession")) return ;
+      var graphData = JSON.parse(fields.data);
+      var drawing = me.drawings[fields._id];
+      if(drawing === undefined) {
+        me.drawing[fields._id] = new Drawing(graphData.type, graphData.option);
+        drawing = me.drawing[fields._id]
+      }
+      for(var key in graphData.attrs){
+        drawing.updateAttrs(key, graphData.attrs[key]);
+      }
     },
-    removed: function(id){
-      if (me.drawings[id.toHexString()] === undefined) return; 
-      me.drawings[id.toHexString()].remove();
+    removed: function(fields){
+      if (me.drawings[fields._id] === undefined) return; 
+      me.drawings[fields._id].remove();
     }
   });
 };
@@ -136,6 +146,7 @@ WhiteboardCanvas.prototype.drawRandomLineListener = function(event){
     //During dragging
     if (!randomLine.hasOwnProperty("element")){
       randomLine.element = new Drawing("randomLine", [me.paper, randomLine.pts]);
+      randomLine.id = me.addToMongo(randomLine.element);
     }
     else{
       randomLine.pts.push(me.adjustMousePosition(x, y));
@@ -149,6 +160,7 @@ WhiteboardCanvas.prototype.drawRandomLineListener = function(event){
         }
       }
       randomLine.element.updateAttrs("path", path);
+      me.updateToMongo(randomLine.id, randomLine.element);
     }
   }, function(x,y, event){
     //drag Start
@@ -157,21 +169,26 @@ WhiteboardCanvas.prototype.drawRandomLineListener = function(event){
     ]};
   },function(x,y,event){
     //drag End
-    me.addToMongo(randomLine.element);
     me.background.undrag();
-
   });
 };
 
 WhiteboardCanvas.prototype.addToMongo = function(drawingObj){
-  var id = new Meteor.Collection.ObjectID();
-  this.drawings[id.toHexString()] = drawingObj;
+  var id = new Meteor.Collection.ObjectID().toHexString();
+  this.drawings[id] = drawingObj;
   Whiteboard.insert({
     _id: id,
-    drawingId: id.toHexString(),
+    modifier: Session.get("userSession"),
     codeSessionId: Session.get("codeSessionId"),
     data: drawingObj.stringify()
   });
+  return id;
+};
+WhiteboardCanvas.prototype.updateToMongo = function(id, drawingObj){
+  Whiteboard.update({_id: id}, {$set: {
+    modifier: Session.get("userSession"),
+    data: drawingObj.stringify()
+  }});
 };
 WhiteboardCanvas.prototype.initCursor = function(){
   this.cursors = {};
@@ -224,7 +241,7 @@ WhiteboardCanvas.prototype.initCursor = function(){
 };
 WhiteboardCanvas.prototype.clean = function(){
   for(var drawingId in this.drawings){
-    Whiteboard.remove(new Meteor.Collection.ObjectID(drawingId), function(){
+    Whiteboard.remove(drawingId, function(){
     });
   }
   this.drawings = {};
