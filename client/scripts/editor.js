@@ -2,7 +2,7 @@ var
 EditorClient = ot.EditorClient,
 SocketIOAdapter = ot.SocketIOAdapter,
 CodeMirrorAdapter = ot.CodeMirrorAdapter;
-editorSocket = io.connect('localhost', {port: 3333});
+editorSocket = io.connect(document.location.hostname, {port: 3333});
 var syntax = 'javascript';
 var selectedTheme = 'ambiance';
 var cm;
@@ -53,4 +53,3 @@ Template.codeMirror.events = {
 $(document).on("repoFileSelected", function(event, data){
   cm.setValue(data.content);
 });
-
