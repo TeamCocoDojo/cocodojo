@@ -179,10 +179,12 @@ WhiteboardCanvas.prototype.initCursor = function(){
   var cursorQuery = WhiteboardCursor.find({codeSessionId: Session.get("codeSessionId")});
   cursorQuery.observe({
     changed: function( cursorObj, oldCursorObj){
-      console.log("update mouse cursor ");
+      if(cursorObj._id === Session.get("userSession")) return;
       var location = me.adjustMousePosition(cursorObj.x, cursorObj.y); 
       if(me.cursors[cursorObj._id] === undefined){
+        user = SessionUsers.findOne({_id: cursorObj._id});
         me.cursors[cursorObj._id] = new Drawing("cursor", [me.paper, location.x, location.y]);
+        me.cursors[cursorObj._id].updateAttrs("fill", user.userColor );
       }
       else{
         me.cursors[cursorObj._id].updateAttrs("cx",location.x);
@@ -196,13 +198,6 @@ WhiteboardCanvas.prototype.initCursor = function(){
       }
     }
   });
-  console.log("WWWW - userSession: " + Session.get("userSession") );
-  WhiteboardCursor.insert({
-    _id: Session.get("userSession"),
-    codeSessionId: Session.get("codeSessionId"),
-    x: 0,
-    y: 0
-  });
   var userQuery = SessionUsers.find({codeSessionId: Session.get("codeSessionId")});
   userQuery.observe({
     removed: function(user){
@@ -210,10 +205,20 @@ WhiteboardCanvas.prototype.initCursor = function(){
     } 
   });
   this.background.mousemove(function(event, x, y){
-    console.log("mouse cursor move:" + x +"," + y);
-    WhiteboardCursor.update({_id: Session.get("userSession")},{$set: 
-      {x: x, y: y}
-    });
+    cursor = WhiteboardCursor.findOne({_id: Session.get("userSession")});
+    if(cursor === null){
+      WhiteboardCursor.insert({
+        _id: Session.get("userSession"),
+        codeSessionId: Session.get("codeSessionId"),
+        x: 0,
+        y: 0
+      });
+    }
+    else{
+      WhiteboardCursor.update({_id: Session.get("userSession")},{$set: 
+                              {x: x, y: y}
+      });
+    }
   });
 };
 WhiteboardCanvas.prototype.clean = function(){
@@ -237,4 +242,13 @@ Template.whiteboard.rendered = function () {
   $("#trashButton").click(function(){
     whiteboard.clean();
   });
+
+  $('#wb-pin-btn').click(function(){
+    $('#whiteboard-container').toggleClass('pinned');
+  });
+  $('.wb-btn').click(function(){
+    $('.wb-btn').removeClass('active');
+    $(this).addClass('active');
+  });
+
 };

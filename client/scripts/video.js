@@ -4,17 +4,18 @@ Template.video.users = function(){
   return SessionUsers.find({});
 };
 
+var session;
+var VIDEO_WIDTH = 320;
+var VIDEO_HEIGHT = 240;
+
 // for tokbox
 Template.video.rendered = function () {
   var apiKey = "31556702";
   var sessionId = "2_MX4zMTU1NjcwMn4xMjcuMC4wLjF-RnJpIEp1biAwNyAxNDoyOToxMiBQRFQgMjAxM34wLjkwNjI3NzN-";
   var token = "T1==cGFydG5lcl9pZD0zMTU1NjcwMiZzZGtfdmVyc2lvbj10YnJ1YnktdGJyYi12MC45MS4yMDExLTAyLTE3JnNpZz1hY2E0NDhlZTU0NTQwNTc1MzE4YjZhZjhhMTQ0ODc3NTY1ZWQwYjQ5OnJvbGU9cHVibGlzaGVyJnNlc3Npb25faWQ9Ml9NWDR6TVRVMU5qY3dNbjR4TWpjdU1DNHdMakYtUm5KcElFcDFiaUF3TnlBeE5Eb3lPVG94TWlCUVJGUWdNakF4TTM0d0xqa3dOakkzTnpOLSZjcmVhdGVfdGltZT0xMzcxMjMzMjg0Jm5vbmNlPTAuNDc5NDcxODI5MzMzMjg0NDcmZXhwaXJlX3RpbWU9MTM3MzgyNTI4MyZjb25uZWN0aW9uX2RhdGE9";
 
-  var session;
   var publisher;
   var subscribers = {};
-  var VIDEO_WIDTH = 320;
-  var VIDEO_HEIGHT = 240;
 
   TB.addEventListener("exception", exceptionHandler);
 

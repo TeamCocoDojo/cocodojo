@@ -47,12 +47,16 @@ if(Meteor.isServer) {
       syncServers[data.codeSessionId] = editorServer;
       socket.emit('doneCreate', {});
     });
-
     socket.on('join', function(data) {
       if (syncServers[data.codeSessionId]) {
         var editorServer = syncServers[data.codeSessionId];
         editorServer.addClient(socket);
+        editorServer.getClient(socket.id).userSessionId = data.userSessionId;
       }
+    });
+    socket.on("getClientUserSessionId", function(data){
+        var editorServer = syncServers[data.codeSessionId];
+        socket.emit("returnClientUserSessionId", {editorClientId: data.socketId, clientUserSessionId: editorServer.getClient(data.socketId).userSessionId});
     });
   });
 
@@ -63,8 +67,23 @@ if(Meteor.isServer) {
         { _id: user_session },
         { $set: { username: user_name } }
       );
-    }
+    },
 
+    githubToken: function() {
+      try {
+        return Meteor.user().services.github.accessToken;
+      } catch(e) {
+        return null;
+      }
+    },
+
+    githubUser  : function() {
+      try{
+        return Meteor.user().services.github;
+      }catch(e) {
+        return null;
+      }
+    }
   });
 
 

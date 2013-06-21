@@ -1,17 +1,43 @@
 <template name='codeMirror'>
   <div id='editorInstance'></div>
-  <div>
-  	<select id="syntaxHighlight">
+  <div class="selection-box">
+    <select id="syntaxHighlight">
+      <option value="javascript">JavaScript</option>
       <option value="text/x-python">Python</option>
       <option value="text/x-java">Java</option>
       <option value="text/x-c++src">C&#43&#43</option>
       <option value="text/x-ruby">Ruby</option>
       <option value="application/x-httpd-php">PHP or HTML</option>
       <option value="text/x-csrc">C</option>
-      <option value="javascript">JavaScript</option>
       <option value="text/x-csharp">C&#35</option>
       <option value="text/x-perl">Perl</option>
       <option value="text/css">CSS</option>
     </select>
+  </div>
+  <div class="selection-box">
+    <select id="themeHighlight">
+      <option value="ambiance">Ambiance</option>
+      <option value="blackboard">Blackboard</option>
+      <option value="default">Default</option>
+      <option value="cobalt">Cobalt</option>
+      <option value="eclipse">Eclipse</option>
+      <option value="elegant">Elegant</option>
+      <option value="erlang-dark">Erlang-Dark</option>
+      <option value="lesser-dark">Lesser-Dark</option>
+      <option value="midnight">Midnight</option>
+      <option value="monokai">Monokai</option>
+      <option value="neat">Neat</option>
+      <option value="night">Night</option>
+      <option value="rubymine">Rubyblue</option>
+      <option value="solarized dark">Solarized Dark</option>
+      <option value="solarized light">Solarized Light</option>
+      <option value="twilight">Twilight</option>
+      <option value="vibrant-ink">Vibrant-Ink</option>
+      <option value="xq-dark">XQ-Dark</option>
+      <option value="xq-light">XQ-Light</option>
+    </select>
+  </div>
+  <div class="session-actions">
+    <button class="btn btn-primary" style="display: none;">Finish</button>
   </div>
 </template>

@@ -1,24 +1,22 @@
-
-
 var
-  EditorClient = ot.EditorClient,
-  SocketIOAdapter = ot.SocketIOAdapter,
-  CodeMirrorAdapter = ot.CodeMirrorAdapter;
-  editorSocket = io.connect('ec2-184-169-238-194.us-west-1.compute.amazonaws.com', {port: 3333});
-  var syntax = 'text/x-python';
-  var cm;
-
-  Template.codeMirror.rendered = function() {
-  var cmClient;
+EditorClient = ot.EditorClient,
+SocketIOAdapter = ot.SocketIOAdapter,
+CodeMirrorAdapter = ot.CodeMirrorAdapter;
+editorSocket = io.connect(document.location.hostname, {port: 3333});
+var syntax = 'javascript';
+var selectedTheme = 'ambiance';
+var cm;
+var cmClient;
+var userSessions = {};
+Template.codeMirror.rendered = function() {
   var editorWrapper = document.getElementById('editorInstance');
   cm = window.cm = CodeMirror(editorWrapper, {
     lineNumbers: true,
     lineWrapping: true,
-    theme: 'blackboard',
+    theme: selectedTheme,
     mode: syntax
   });
-
-  editorSocket.emit("join", {codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
+  editorSocket.emit("join", {userSessionId: Session.get("userSession"), codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
     cm.setValue(obj.str);
     cmClient = window.cmClient = new EditorClient(
       obj.revision,
@@ -26,6 +24,18 @@ var
       new SocketIOAdapter(editorSocket),
       new CodeMirrorAdapter(cm)
     );
+    cmClient.serverAdapter.socket.on('cursor', function(editorClientId, cursor){
+      if(userSessions[editorClientId] !== undefined) return ;
+      editorSocket
+      .emit("getClientUserSessionId", {codeSessionId: Session.get("codeSessionId"), socketId: editorClientId})
+      .on("returnClientUserSessionId", function(data){
+        var user = SessionUsers.findOne({_id: data.clientUserSessionId});
+        if(user){
+          userSessions[data.editorClientId] = data.clientUserSessionId;
+          cmClient.clients[data.editorClientId].setColor(user.userHue);
+        }
+      });
+    });
   });
 }
 
@@ -33,5 +43,13 @@ Template.codeMirror.events = {
   'change #syntaxHighlight': function(e) {
     syntax = e.target.value;
     cm.setOption("mode", syntax);
+  },
+  'change #themeHighlight': function(e) {
+    selectedTheme = e.target.value;
+    cm.setOption("theme", selectedTheme);
   }
 }
+
+$(document).on("repoFileSelected", function(event, data){
+  cm.setValue(data.content);
+});

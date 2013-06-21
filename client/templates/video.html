@@ -13,7 +13,8 @@
 
     {{#each users}}
       <div class="video-instance">
-        <div class="video-username"> {{username}} </div>
+        <div style="border-left: 1.2em solid {{userColor}};" class="video-username" data-id="{{ _id }}">  {{username}}
+        </div>
       </div> <br>
     {{/each}}
   </div>
