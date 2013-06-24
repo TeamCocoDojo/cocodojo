@@ -29,7 +29,7 @@ var addFile = function(record) {
     mode: syntax
   });
   var editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
-  editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileTabId: record.fileTab}).on("doc", function(obj){
+  editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
     cm.setValue(obj.str);
     cmClient = window.cmClient = new EditorClient(
       obj.revision,

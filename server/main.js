@@ -48,10 +48,10 @@ if(Meteor.isServer) {
     io.of('/filesync' + fileTab._id).on('connection', function(socket) {
       socket.emit('doneConnection', { message: 'hello' });
       socket.on('join', function(data) {
-        var editorServer = syncServers[data.fileTabId];
+        var editorServer = syncServers[data.fileId];
         if (!editorServer) {
-          editorServer = new ot.EditorSocketIOServer("", [], data.fileTabId);
-          syncServers[data.fileTabId] = editorServer;
+          editorServer = new ot.EditorSocketIOServer("", [], data.fileId);
+          syncServers[data.fileId] = editorServer;
         }
         editorServer.addClient(socket);
         editorServer.getClient(socket.id).userSessionId = data.userSessionId;
