@@ -37,6 +37,14 @@ Template.codeMirror.rendered = function() {
       });
     });
   });
+
+  var editorWrapper2 = document.getElementById('editorInstance2');
+  var cm2 = window.cm2 = CodeMirror(editorWrapper2, {
+    lineNumbers: true,
+    lineWrapping: true,
+    theme: selectedTheme,
+    mode: syntax
+  });
 }
 
 Template.codeMirror.events = {
