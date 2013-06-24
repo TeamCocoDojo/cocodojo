@@ -93,10 +93,7 @@ if (Meteor.isClient) {
         Session.set('userSession', createUserSession());
 
         // Set a new editor sync session
-        cocodojo.editorSocket.on("doneCreate", function(){
-          Router.navigate(codeSessionId, false);
-        });
-        cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
+        Router.navigate(codeSessionId, false);
       }
     });
   });

@@ -13,9 +13,13 @@ body {
 
 #editorInstance {
   margin-right: 10px;
-  height: 96%;
+  height: 48%;
 }
 
+#editorInstance2 {
+    margin-right: 10px;
+    height: 48%;
+}
 
 /* GitHub Directory */
 .tree {

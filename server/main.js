@@ -38,21 +38,22 @@ if(Meteor.isServer) {
   var io = socketIO.listen(3333);
   var syncServers = {};
   io.set('origins', process.env.origin || '*:*');
-  io.sockets.on('connection', function(socket) {
+  io.of("/channel1").on('connection', function(socket) {
 
     socket.emit('doneConnection', { message: 'hello' });
 
     socket.on('create', function(data) {
-      var editorServer = new ot.EditorSocketIOServer("", [], data.codeSessionId);
-      syncServers[data.codeSessionId] = editorServer;
       socket.emit('doneCreate', {});
     });
     socket.on('join', function(data) {
-      if (syncServers[data.codeSessionId]) {
-        var editorServer = syncServers[data.codeSessionId];
-        editorServer.addClient(socket);
-        editorServer.getClient(socket.id).userSessionId = data.userSessionId;
+      var editorServer = syncServers[data.codeSessionId];
+      if (!editorServer) {
+          editorServer = new ot.EditorSocketIOServer("", [], data.codeSessionId);
+          syncServers[data.codeSessionId] = editorServer;
       }
+      var editorServer = syncServers[data.codeSessionId];
+      editorServer.addClient(socket);
+      editorServer.getClient(socket.id).userSessionId = data.userSessionId;
     });
     socket.on("getClientUserSessionId", function(data){
         var editorServer = syncServers[data.codeSessionId];

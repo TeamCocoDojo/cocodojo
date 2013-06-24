@@ -2,20 +2,20 @@ var
 EditorClient = ot.EditorClient,
 SocketIOAdapter = ot.SocketIOAdapter,
 CodeMirrorAdapter = ot.CodeMirrorAdapter;
-editorSocket = io.connect(document.location.hostname, {port: 3333});
+
 var syntax = 'javascript';
 var selectedTheme = 'ambiance';
-var cm;
 var cmClient;
 var userSessions = {};
 Template.codeMirror.rendered = function() {
   var editorWrapper = document.getElementById('editorInstance');
-  cm = window.cm = CodeMirror(editorWrapper, {
+  var cm = window.cm = CodeMirror(editorWrapper, {
     lineNumbers: true,
     lineWrapping: true,
     theme: selectedTheme,
     mode: syntax
   });
+  var editorSocket = io.connect(document.location.hostname + "/channel1", {port: 3333});
   editorSocket.emit("join", {userSessionId: Session.get("userSession"), codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
     cm.setValue(obj.str);
     cmClient = window.cmClient = new EditorClient(
