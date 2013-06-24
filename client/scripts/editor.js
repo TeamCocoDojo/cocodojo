@@ -45,6 +45,17 @@ Template.codeMirror.rendered = function() {
     theme: selectedTheme,
     mode: syntax
   });
+
+    var editorSocket2 = io.connect(document.location.hostname + "/channel2", {port: 3333});
+    editorSocket2.emit("join", {userSessionId: Session.get("userSession"), codeSessionId: Session.get("codeSessionId")}).on("doc", function(obj){
+        cm2.setValue(obj.str);
+        cmClient = window.cmClient = new EditorClient(
+            obj.revision,
+            obj.clients,
+            new SocketIOAdapter(editorSocket2),
+            new CodeMirrorAdapter(cm2)
+        );
+    });
 }
 
 Template.codeMirror.events = {

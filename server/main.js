@@ -36,7 +36,7 @@ if(Meteor.isServer) {
   });
 
   var io = socketIO.listen(3333);
-  var syncServers = {};
+  var syncServers1 = {};
   io.set('origins', process.env.origin || '*:*');
   io.of("/channel1").on('connection', function(socket) {
 
@@ -46,23 +46,50 @@ if(Meteor.isServer) {
       socket.emit('doneCreate', {});
     });
     socket.on('join', function(data) {
-      var editorServer = syncServers[data.codeSessionId];
+      var editorServer = syncServers1[data.codeSessionId];
       if (!editorServer) {
           editorServer = new ot.EditorSocketIOServer("", [], data.codeSessionId);
-          syncServers[data.codeSessionId] = editorServer;
+          syncServers1[data.codeSessionId] = editorServer;
       }
-      var editorServer = syncServers[data.codeSessionId];
+      var editorServer = syncServers1[data.codeSessionId];
       editorServer.addClient(socket);
       editorServer.getClient(socket.id).userSessionId = data.userSessionId;
     });
     socket.on("getClientUserSessionId", function(data){
-        var editorServer = syncServers[data.codeSessionId];
+        var editorServer = syncServers1[data.codeSessionId];
         socket.emit("returnClientUserSessionId", {editorClientId: data.socketId, clientUserSessionId: editorServer.getClient(data.socketId).userSessionId});
     });
   });
 
 
-  Meteor.methods({
+  var syncServers2 = {};
+
+  io.of("/channel2").on('connection', function(socket) {
+
+    socket.emit('doneConnection', { message: 'hello' });
+
+    socket.on('create', function(data) {
+      socket.emit('doneCreate', {});
+    });
+    socket.on('join', function(data) {
+        var editorServer = syncServers2[data.codeSessionId];
+        if (!editorServer) {
+            editorServer = new ot.EditorSocketIOServer("", [], data.codeSessionId);
+            syncServers2[data.codeSessionId] = editorServer;
+        }
+        var editorServer = syncServers2[data.codeSessionId];
+            editorServer.addClient(socket);
+            editorServer.getClient(socket.id).userSessionId = data.userSessionId;
+        });
+        socket.on("getClientUserSessionId", function(data){
+            var editorServer = syncServers2[data.codeSessionId];
+            socket.emit("returnClientUserSessionId", {editorClientId: data.socketId, clientUserSessionId: editorServer.getClient(data.socketId).userSessionId});
+        });
+    });
+
+
+
+    Meteor.methods({
     renameUser: function(user_session, user_name){
       SessionUsers.update(
         { _id: user_session },
