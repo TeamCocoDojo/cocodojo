@@ -4,6 +4,7 @@ SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
+FileTab = new Meteor.Collection("filetab");
 
 if (Meteor.isClient) {
   cocodojo.editorSocket = io.connect(document.location.hostname, {port: 3333});
@@ -17,6 +18,7 @@ if (Meteor.isClient) {
       Meteor.subscribe("chatbox", Session.get("codeSessionId"));
       Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
       Meteor.subscribe("whiteboard_cursor", Session.get("codeSessionId"));
+      Meteor.subscribe("filetab", Session.get("codeSessionId"));
     });
 
     // (c) 2012-2013 Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)

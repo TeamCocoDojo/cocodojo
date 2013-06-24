@@ -11,12 +11,7 @@ body {
   height: 91%;
 }
 
-#editorInstance {
-  margin-right: 10px;
-  height: 48%;
-}
-
-#editorInstance2 {
+.editorInstance {
     margin-right: 10px;
     height: 48%;
 }
