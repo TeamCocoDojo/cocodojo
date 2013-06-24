@@ -8,6 +8,8 @@ DataSource.prototype.getContent = function (sha, callback) {
   this.repo.getBlob(sha, callback);
 };
 DataSource.prototype.callback = function (options) {
+  var me = this;
+  options.element.empty();
   for (var i = 0; i< options.data.length; i++){
     var data = options.data[i];
     if(data.type == 'folder'){
@@ -16,17 +18,24 @@ DataSource.prototype.callback = function (options) {
       var element = $("<div></div>").addClass('tree-folder');
       header.appendTo(element);
       content.appendTo(element);
+      header.click(function(evt){
+        var element = $($(this).parents(".tree-folder")[0]);
+        var selectedItem = element.data();
+        me.data({sha: selectedItem.sha, element: $(element.find(".tree-folder-content")[0])});
+      });
     }
     else{
       var element = $("<div></div>").addClass('tree-item').append("<i class='tree-dot'></i>").append("<div class='tree-item-name'>" + data.name + "</div>");
-      var me = this;
       element.click(function(evt){
-        $(document).trigger("")
-      })
+      var selectedItem = $(this).data();
+        me.getContent(selectedItem.sha, function(err, data){
+          $(document).trigger("repoFileSelected", {name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
+        });
+      });
     }
     element.appendTo(options.element);
+    element.data(data);
   }
-
 };
 DataSource.prototype.data =  function (options, callback) {
   var self = this;
@@ -50,14 +59,6 @@ $(document).on("repoSelected", function(e, repoInfo) {
   //Put your logic here
   var dataSource = new DataSource(repoInfo.owner, repoInfo.name, $("#ex-tree"));
   $('#repoTree').modal('hide');
-  /*
-  $('#ex-tree').tree({ dataSource: dataSource }).on("selected", function(event, selectedObjs){
-    var selectedItem = selectedObjs.info[0];
-    dataSource.getContent(selectedItem.sha, function(err, data){
-      $(document).trigger("repoFileSelected", {name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
-    });
-  });
-  */
 });
 
 Template.repoview.rendered = function() {
