@@ -98,7 +98,6 @@ if (Meteor.isClient) {
           Router.navigate(codeSessionId, false);
         });
         cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
-        cocodojo.videoSocket.emit("codeSession", {codeSessionId: codeSessionId});
       }
     });
   });

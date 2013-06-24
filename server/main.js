@@ -60,12 +60,11 @@ if(Meteor.isServer) {
     });
   });
 
-  //////// begin of video session
+  // video session code (TODO: refactor to a single file)
   
   // OpenTok Variables
-  var OPENTOK_API_KEY = '413302',   // Replace with your API key
-   OPENTOK_API_SECRET = 'fc512f1f3c13e3ec3f590386c986842f92efa7e7',    // Replace with your API secret
-
+  var OPENTOK_API_KEY = process.env.OPENTOK_API_KEY,
+   OPENTOK_API_SECRET = process.env.OPENTOK_API_SECRET,
   // OpenTok SDK
   openTokSDK = new openTok.OpenTokSDK(OPENTOK_API_KEY, OPENTOK_API_SECRET),
   
@@ -111,17 +110,17 @@ if(Meteor.isServer) {
   function enterSession(otSessionId, client) {
     // Construct info object to pass back to client then send it
     console.log("otSessionId:"+otSessionId);
-    var opentok_info = {
+    var opentokInfo = {
       "sessionId": otSessionId,
       "apiKey": OPENTOK_API_KEY,
       "token": openTokSDK.generateToken()
     }
-    client.emit("message", opentok_info);
+    client.emit("openTokSession", opentokInfo);
   }
 
     // Finds which otSessionId the client was in and removes the client from that otSessionId.
   function leaveSession(client) {
-    console.log("====" + client + " left this session");
+    console.log(client + " left this session");
     // Find the otSessionId that the client was in
     // var otSessionId = session_map[client.otSessionId];
     
@@ -134,19 +133,20 @@ if(Meteor.isServer) {
 
   // video connection
   io.of('/video').on('connection', function(client) {
-    
+    console.log("=== xxx inside the connection");
     // When a client connects, figure out which session to join
     client.on('codeSession', function (data) {
       var codeSessionId = data.codeSessionId;
       console.log("CoCoDoJo Session id: " + data.codeSessionId);
-      // getSession(client, codeSessionId);
+      getSession(client, codeSessionId);
     });
     client.on('disconnect', function() {
       // When a client disconnects, drop that client from the session
-      // leaveSession(client);
+      leaveSession(client);
     });
   });
 
+  // end of video session code
 
   Meteor.methods({
     renameUser: function(user_session, user_name){
