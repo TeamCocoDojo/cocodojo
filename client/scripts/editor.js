@@ -2,11 +2,12 @@ var
 EditorClient = ot.EditorClient,
 SocketIOAdapter = ot.SocketIOAdapter,
 CodeMirrorAdapter = ot.CodeMirrorAdapter;
-editorSocket = io.connect(document.location.hostname, {port: 3333});
+editorSocket = io.connect(document.location.hostname+'/editor');
 var syntax = 'javascript';
 var selectedTheme = 'ambiance';
 var cm;
 var cmClient;
+var currentStatus = {}
 var userSessions = {};
 Template.codeMirror.rendered = function() {
   var editorWrapper = document.getElementById('editorInstance');
@@ -49,7 +50,12 @@ Template.codeMirror.events = {
     cm.setOption("theme", selectedTheme);
   }
 }
+$(document).on("getEditorContent", function (){
+  currentStatus.content = cm.getValue();
+  $(document).trigger("receiveEditorContent", currentStatus );
+});
 
 $(document).on("repoFileSelected", function(event, data){
+  currentStatus = data;
   cm.setValue(data.content);
 });

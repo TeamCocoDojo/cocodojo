@@ -1,12 +1,14 @@
 // for user list
+// TODO: fix the bug with Clyde of multiple video chat window issue
 Template.video.users = function(){
   console.log("session User: " + SessionUsers.find({}).fetch());
   return SessionUsers.find({});
 };
 
-var session;
-var VIDEO_WIDTH = 320;
-var VIDEO_HEIGHT = 240;
+var session,
+   VIDEO_WIDTH = 320,
+  VIDEO_HEIGHT = 240,
+  videoSocket = io.connect(document.location.hostname+'/video');
 
 // for tokbox
 Template.video.rendered = function () {
@@ -21,21 +23,14 @@ Template.video.rendered = function () {
 
     // Un-comment the following to set automatic logging:
     // TB.setLogLevel(TB.DEBUG);
-
-  if (TB.checkSystemRequirements() != TB.HAS_REQUIREMENTS) {
-    alert("You don't have the minimum requirements to run this application."
-      + "Please upgrade to the latest version of Flash.");
-  } else {
-    session = TB.initSession(sessionId);  // Initialize session
-
-    // Add event listeners to the session
-    session.addEventListener('sessionConnected', sessionConnectedHandler);
-    session.addEventListener('sessionDisconnected', sessionDisconnectedHandler);
-    session.addEventListener('connectionCreated', connectionCreatedHandler);
-    session.addEventListener('connectionDestroyed', connectionDestroyedHandler);
-    session.addEventListener('streamCreated', streamCreatedHandler);
-    session.addEventListener('streamDestroyed', streamDestroyedHandler);
-  }
+  videoSocket.on("openTokSession", function(data) {
+    sessionId = data.sessionId;
+        token = data.token;
+       apiKey = data.apiKey;
+    initOpenTokSession(sessionId);
+    session.connect(apiKey, token);
+  });
+  videoSocket.emit("codeSession", {codeSessionId: Session.get("codeSessionId")});
 
   //--------------------------------------
   //  LINK CLICK HANDLERS
@@ -95,6 +90,27 @@ var tokboxRouter = Backbone.Router.extend({
 });
 Router = new tokboxRouter;
 
+//--------------------------------------
+//  OPENTOK Session Initialization
+//--------------------------------------
+
+function initOpenTokSession(sessionId) { // sessionId is OpenTokSessionId, not CodeSessionId
+  if (TB.checkSystemRequirements() != TB.HAS_REQUIREMENTS) {
+    alert("You don't have the minimum requirements to run the video chat."
+      + "Please upgrade to the latest version of Flash.");
+  } else {
+    console.log("codeSession exists. Initializing with the existing openTokSession...");
+    session = TB.initSession(sessionId);  // Initialize session
+    // Add event listeners to the session
+    session.addEventListener('sessionConnected', sessionConnectedHandler);
+    session.addEventListener('sessionDisconnected', sessionDisconnectedHandler);
+    session.addEventListener('connectionCreated', connectionCreatedHandler);
+    session.addEventListener('connectionDestroyed', connectionDestroyedHandler);
+    session.addEventListener('streamCreated', streamCreatedHandler);
+    session.addEventListener('streamDestroyed', streamDestroyedHandler);
+  }
+}
+
 
 //--------------------------------------
 //  OPENTOK EVENT HANDLERS
@@ -106,7 +122,7 @@ function sessionConnectedHandler(event) {
   for (var i = 0; i < event.streams.length; i++) {
     addStream(event.streams[i]);
   }
-  show('disconnectLink');
+  // show('disconnectLink');
   show('publishLink');
   hide('connectLink');
 }
