@@ -22,3 +22,16 @@ body {
     width: 250px;
     height: 100%;
 }
+/* Github Commit box */
+#commitBox {
+  width: 250px;
+  height: 100px;
+  text-align: center;
+  margin: 5px;
+}
+#commitBox div {
+  text-align: left;
+}
+#commitBox textarea{
+  width: 95%;
+}
