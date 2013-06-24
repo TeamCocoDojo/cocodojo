@@ -6,7 +6,8 @@ Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 
 if (Meteor.isClient) {
-  cocodojo.editorSocket = io.connect(document.location.hostname, {port: 3333});
+  cocodojo.editorSocket = io.connect(document.location.hostname + '/editor', {port: 3333});
+  cocodojo.videoSocket = io.connect(document.location.hostname + '/video', {port: 3333});
 
   Meteor.startup(function () {
 
@@ -97,6 +98,7 @@ if (Meteor.isClient) {
           Router.navigate(codeSessionId, false);
         });
         cocodojo.editorSocket.emit("create", {codeSessionId: codeSessionId});
+        cocodojo.videoSocket.emit("codeSession", {codeSessionId: codeSessionId});
       }
     });
   });

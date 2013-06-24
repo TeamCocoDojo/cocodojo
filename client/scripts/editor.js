@@ -2,7 +2,7 @@ var
 EditorClient = ot.EditorClient,
 SocketIOAdapter = ot.SocketIOAdapter,
 CodeMirrorAdapter = ot.CodeMirrorAdapter;
-editorSocket = io.connect(document.location.hostname, {port: 3333});
+editorSocket = io.connect(document.location.hostname+'/editor');
 var syntax = 'javascript';
 var selectedTheme = 'ambiance';
 var cm;
