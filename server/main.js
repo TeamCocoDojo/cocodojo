@@ -42,28 +42,32 @@ if(Meteor.isServer) {
   var io = socketIO.listen(3333);
 
   var syncServers = {};
-  var fileTabs = FileTab.find({});
-  fileTabs.forEach(function(fileTab) {
-    console.log('/filesync' + fileTab._id);
-    io.of('/filesync' + fileTab._id).on('connection', function(socket) {
-      socket.emit('doneConnection', { message: 'hello' });
-      socket.on('join', function(data) {
-        var editorServer = syncServers[data.fileId];
-        if (!editorServer) {
-          editorServer = new ot.EditorSocketIOServer("", [], data.fileId);
-          syncServers[data.fileId] = editorServer;
-        }
-        editorServer.addClient(socket);
-        editorServer.getClient(socket.id).userSessionId = data.userSessionId;
-      });
+
+  var fileTabQuery = FileTab.find({});
+  fileTabQuery.observeChanges({
+    added: function (id, record) {
+      console.log("new added new added");
+      io.of('/filesync' + record.fileTab.toHexString()).on('connection', function(socket) {
+        socket.emit('doneConnection', { message: 'hello' });
+        socket.on('join', function(data) {
+          console.log("join");
+          var editorServer = syncServers[data.fileId];
+          if (!editorServer) {
+            editorServer = new ot.EditorSocketIOServer("", [], data.fileId);
+            syncServers[data.fileId] = editorServer;
+          }
+          editorServer.addClient(socket);
+          editorServer.getClient(socket.id).userSessionId = data.userSessionId;
+        });
 //      socket.on("getClientUserSessionId", function(data){
 //        var editorServer = syncServers[data.fileTabId];
 //        socket.emit("returnClientUserSessionId", {editorClientId: data.socketId, clientUserSessionId: editorServer.getClient(data.socketId).userSessionId});
 //      });
-    });
+      });
+    },
+    removed: function () {
+    }
   });
-
-
 
   Meteor.methods({
     renameUser: function(user_session, user_name){

@@ -20,8 +20,14 @@ cocodojo.insertDocument = function(file) {
   });
 };
 
+var addEditorInstance = function(record) {
+  var newEditorInstance = $("<div class='editorInstance'></div>");
+  $("#content").append(newEditorInstance);
+  return newEditorInstance[0];
+}
+
 var addFile = function(record) {
-  var editorWrapper = $(".editorInstance")[count++];
+  var editorWrapper = addEditorInstance(record);
   var cm = window.cm = CodeMirror(editorWrapper, {
     lineNumbers: true,
     lineWrapping: true,
@@ -55,21 +61,14 @@ var addFile = function(record) {
 
 Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
-  // var records = fileTabs.fetch();
   fileTabs.observeChanges({
     added: function (id, record) {
-      console.log("fsdddddddd");
+      console.log(record);
       addFile(record);
     },
     removed: function () {
     }
   });
-//
-//  cocodojo.insertDocument({
-//    sha: Session.get("codeSessionId") + "2",
-//    content: ""
-//  });
-
 }
 
 Template.codeMirror.events = {
@@ -84,5 +83,10 @@ Template.codeMirror.events = {
 }
 
 $(document).on("repoFileSelected", function(event, data){
-  cm.setValue(data.content);
+  cocodojo.insertDocument({
+    content: data.content,
+    sha: data.sha,
+    name: data.name
+  })
+//  cm.setValue(data.content);
 });
