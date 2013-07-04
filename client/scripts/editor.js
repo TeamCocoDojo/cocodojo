@@ -86,14 +86,8 @@ cocodojo.insertDocument = function(file) {
 var addFile = function(record) {
   var tab = new Tab(record);
   tabs[record.file.sha] = tab;
-  if (Object.keys(tabs).length == 1) {
-    tab.active();
-  }
-  else {
-    tab.inActive();
-  }
+  tab.active();
 };
-
 
 Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
