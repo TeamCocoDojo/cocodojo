@@ -3,6 +3,7 @@ SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
+FileTab = new Meteor.Collection("filetab");
 
 if(Meteor.isServer) {
   Meteor.publish("codesession", function(code_session_id) {
@@ -29,35 +30,40 @@ if(Meteor.isServer) {
     check(code_session_id, String);
     return Whiteboard.find({codeSessionId: code_session_id});
   });
-
   Meteor.publish("whiteboard_cursor", function(code_session_id) {
     check(code_session_id, String);
     return WhiteboardCursor.find({codeSessionId: code_session_id});
+  });
+  Meteor.publish("filetab", function(code_session_id) {
+    check(code_session_id, String);
+    return FileTab.find({codeSessionId: code_session_id});
   });
 
   var io = socketIO.listen(3333);
   var syncServers = {};
   io.set('origins', process.env.origin || '*:*');
-  io.of('/editor').on('connection', function(socket) {
 
-    socket.emit('doneConnection', { message: 'hello' });
-
-    socket.on('create', function(data) {
-      var editorServer = new ot.EditorSocketIOServer("", [], data.codeSessionId);
-      syncServers[data.codeSessionId] = editorServer;
-      socket.emit('doneCreate', {});
-    });
-    socket.on('join', function(data) {
-      if (syncServers[data.codeSessionId]) {
-        var editorServer = syncServers[data.codeSessionId];
-        editorServer.addClient(socket);
-        editorServer.getClient(socket.id).userSessionId = data.userSessionId;
+  var fileTabQuery = FileTab.find({});
+  fileTabQuery.observeChanges({
+    added: function (id, record) {
+      io.of('/filesync' + record.fileTab.toHexString()).on('connection', function(socket) {
+        socket.emit('doneConnection', { message: 'hello' });
+        socket.on('join', function(data) {
+          var editorServer = syncServers[data.fileId];
+          if (!editorServer) {
+            editorServer = new ot.EditorSocketIOServer(record.file.content || "", [], data.fileId);
+            syncServers[data.fileId] = editorServer;
+          }
+          editorServer.addClient(socket);
+          editorServer.getClient(socket.id).userSessionId = data.userSessionId;
+        }); 
+      });
+      if (!record.isReady) {
+        FileTab.update(record, {$set: {isSocketReady: true}});
       }
-    });
-    socket.on("getClientUserSessionId", function(data){
-        var editorServer = syncServers[data.codeSessionId];
-        socket.emit("returnClientUserSessionId", {editorClientId: data.socketId, clientUserSessionId: editorServer.getClient(data.socketId).userSessionId});
-    });
+    },
+    removed: function () {
+    }
   });
 
   // video session code (TODO: refactor to a single file)
@@ -172,6 +178,4 @@ if(Meteor.isServer) {
       }
     }
   });
-
-
 }
