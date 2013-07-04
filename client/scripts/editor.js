@@ -8,27 +8,26 @@ var selectedTheme = 'ambiance';
 var cmClient;
 var userSessions = {};
 
-var count = 0;
+var tabs = {};
 
-cocodojo.insertDocument = function(file) {
-  var id = new Meteor.Collection.ObjectID();
-  FileTab.insert({
-    _id: id,
-    fileTab: id,
-    codeSessionId: Session.get("codeSessionId"),
-    file: file
+var Tab = function(record) {
+  var id = record.file.sha;
+  var me = this;
+  me.newEditorWrapper = $("<div></div>");
+  me.newEditorWrapper.attr("id", id);
+
+  me.newEditorInstance = $("<div class='editorInstance'></div>");
+  me.tab = $("<li><a href='#" + id + "'>" + record.file.name + "</a></li>");
+  
+  $("#editorTab").append(me.tab);
+  $("#editorTabContent").append(me.newEditorWrapper);
+  me.newEditorWrapper.append(me.newEditorInstance);
+
+  me.tab.click(function() {
+    me.active();
   });
-};
 
-var addEditorInstance = function(record) {
-  var newEditorInstance = $("<div class='editorInstance'></div>");
-  $("#content").append(newEditorInstance);
-  return newEditorInstance[0];
-}
-
-var addFile = function(record) {
-  var editorWrapper = addEditorInstance(record);
-  var cm = window.cm = CodeMirror(editorWrapper, {
+  me.cm = CodeMirror(me.newEditorInstance[0], {
     lineNumbers: true,
     lineWrapping: true,
     theme: selectedTheme,
@@ -36,12 +35,12 @@ var addFile = function(record) {
   });
   var editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
   editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
-    cm.setValue(obj.str);
-    cmClient = window.cmClient = new EditorClient(
+    me.cm.setValue(obj.str);
+    cmClient = new EditorClient(
       obj.revision,
       obj.clients,
       new SocketIOAdapter(editorSocket),
-      new CodeMirrorAdapter(cm)
+      new CodeMirrorAdapter(me.cm)
     );
     cmClient.serverAdapter.socket.on('cursor', function(editorClientId, cursor){
       if(userSessions[editorClientId] !== undefined) return ;
@@ -56,15 +55,58 @@ var addFile = function(record) {
         });
     });
   });
+  return this;
 }
+
+Tab.prototype.active = function() {
+  for (var key in tabs) {
+    tabs[key].inActive();
+  }
+  this.newEditorWrapper.show();
+  this.tab.addClass("active");
+  this.cm.refresh();
+}
+
+Tab.prototype.inActive = function() {
+  this.tab.removeClass("active");
+  this.newEditorWrapper.hide();
+}
+
+
+cocodojo.insertDocument = function(file) {
+  var id = new Meteor.Collection.ObjectID();
+  FileTab.insert({
+    _id: id,
+    fileTab: id,
+    codeSessionId: Session.get("codeSessionId"),
+    file: file
+  });
+};
+
+var addFile = function(record) {
+  var tab = new Tab(record);
+  tabs[record.file.sha] = tab;
+  if (Object.keys(tabs).length == 1) {
+    tab.active();
+  }
+  else {
+    tab.inActive();
+  }
+};
 
 
 Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
     added: function (id, record) {
-      console.log(record);
-      addFile(record);
+      if (record.isReady) {
+        addFile(record);
+      }
+    },
+    changed: function(id, changed) {
+      if (changed && changed.isReady == true) {
+        addFile(FileTab.findOne({_id: id}));
+      }
     },
     removed: function () {
     }

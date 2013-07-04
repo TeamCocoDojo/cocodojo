@@ -46,24 +46,21 @@ if(Meteor.isServer) {
   var fileTabQuery = FileTab.find({});
   fileTabQuery.observeChanges({
     added: function (id, record) {
-      console.log("new added new added");
       io.of('/filesync' + record.fileTab.toHexString()).on('connection', function(socket) {
         socket.emit('doneConnection', { message: 'hello' });
         socket.on('join', function(data) {
-          console.log("join");
           var editorServer = syncServers[data.fileId];
           if (!editorServer) {
-            editorServer = new ot.EditorSocketIOServer("", [], data.fileId);
+            editorServer = new ot.EditorSocketIOServer(record.file.content || "", [], data.fileId);
             syncServers[data.fileId] = editorServer;
           }
           editorServer.addClient(socket);
           editorServer.getClient(socket.id).userSessionId = data.userSessionId;
-        });
-//      socket.on("getClientUserSessionId", function(data){
-//        var editorServer = syncServers[data.fileTabId];
-//        socket.emit("returnClientUserSessionId", {editorClientId: data.socketId, clientUserSessionId: editorServer.getClient(data.socketId).userSessionId});
-//      });
+        }); 
       });
+      if (!record.isReady) {
+        FileTab.update(record, {$set: {isReady: true}});
+      }
     },
     removed: function () {
     }
