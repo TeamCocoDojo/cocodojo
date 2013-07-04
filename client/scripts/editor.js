@@ -99,12 +99,12 @@ Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
     added: function (id, record) {
-      if (record.isReady) {
+      if (record.isSocketReady) {
         addFile(record);
       }
     },
     changed: function(id, changed) {
-      if (changed && changed.isReady == true) {
+      if (changed && changed.isSocketReady == true) {
         addFile(FileTab.findOne({_id: id}));
       }
     },

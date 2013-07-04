@@ -59,7 +59,7 @@ if(Meteor.isServer) {
         }); 
       });
       if (!record.isReady) {
-        FileTab.update(record, {$set: {isReady: true}});
+        FileTab.update(record, {$set: {isSocketReady: true}});
       }
     },
     removed: function () {
