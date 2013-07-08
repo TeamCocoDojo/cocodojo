@@ -155,6 +155,18 @@ if(Meteor.isServer) {
   // end of video session code
 
   Meteor.methods({
+    closeFileTab: function(record, content) {
+      SessionUsers.update(
+        record, {$set: {"file.content": content, "isOpen": false}}
+      );
+    },
+
+    renameFileTab: function(record, name) {
+      SessionUsers.update(
+        record, {$set: {"file.name": name}}
+      );
+    },
+
     renameUser: function(user_session, user_name){
       SessionUsers.update(
         { _id: user_session },

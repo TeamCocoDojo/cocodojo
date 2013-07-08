@@ -10,14 +10,6 @@ var userSessions = {};
 
 var tabs = {};
 
-var closeTab = function(record) {
-  var fileTab = tabs[record.file.sha];
-  fileTab.newEditorWrapper.remove();
-  fileTab.tab.remove();
-  FileTab.update(record, {$set: {content: fileTab.cm.getValue(), isOpen: false}});
-  tabs.delete[record.file.sha];
-}
-
 var existTab = function(sha) {
   return tabs[sha];
 }
@@ -91,7 +83,16 @@ Tab.prototype.inActive = function() {
 }
 
 Tab.prototype.close = function() {
-  closeTab(this.record);
+  var me = this;
+  Meteor.call('closeFileTab', this.record, this.cm.getValue(), function() {
+    me.newEditorWrapper.remove();
+    me.tab.remove();
+    tabs.delete[me.record.file.sha];  
+  });
+}
+
+Tab.prototype.rename = function(name) {
+
 }
 
 cocodojo.insertFileTab = function(file) {
