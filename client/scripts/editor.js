@@ -8,6 +8,7 @@ var selectedTheme = 'ambiance';
 var cm;
 var cmClient;
 var userSessions = {};
+var repoData = {};
 Template.codeMirror.rendered = function() {
   var editorWrapper = document.getElementById('editorInstance');
   cm = window.cm = CodeMirror(editorWrapper, {
@@ -49,7 +50,15 @@ Template.codeMirror.events = {
     cm.setOption("theme", selectedTheme);
   }
 }
+$(document).on("getEditorContent", function(data){
+  $(document).trigger({
+    type: "ReceiveEditorContent",
+    content: cm.getValue(),
+    filePath: repoData.filePath
+  });
 
+});
 $(document).on("repoFileSelected", function(event, data){
   cm.setValue(data.content);
+  repoData = data; 
 });

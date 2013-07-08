@@ -11,12 +11,15 @@ $(document).on("repoSelected", function(e, repoInfo){
 
 
   $("#commitConfirm").click(function(){
-    $(document).trigger("getEditorContent").onReceiveEditorContent(function(data){
+    $(document).trigger("getEditorContent").on("ReceiveEditorContent", function(data){
       var content = data.content;
       var filePath = data.filePath;
-      var message = $("#comitMessage").val();
+      var message = $("#commitMessage").val();
       var branch = $("#branch").val();
-      repo.write(branch, filePath, content, message, function(err) {});
+      repo.write(branch, filePath, content, message, function(err) {
+        if(err) return console.log("failed");
+        $('#commitBox').modal('hide');
+      });
     });
   });
 });

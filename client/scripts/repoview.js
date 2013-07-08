@@ -7,11 +7,14 @@ DataSource.prototype.getContent = function (sha, callback) {
 DataSource.prototype.data =  function (options, callback) {
   var self = this;
   var sha = options.sha || "master";
+  var path = options.path || "";
+  path = (path == "") ? "" : path + "/";
   this.repo.getTree(sha, function(err, tree){
     var data = tree.map(function(item){
       return { 
         name: item.path,
         sha: item.sha,
+        path: path + item.path, 
         type: (item.type == "blob")?"item":"folder" 
       };
     });
@@ -26,9 +29,27 @@ $(document).on("repoSelected", function(e, repoInfo) {
   $('#ex-tree').tree({ dataSource: dataSource }).on("selected", function(event, selectedObjs){
     var selectedItem = selectedObjs.info[0];
     dataSource.getContent(selectedItem.sha, function(err, data){
-      $(document).trigger("repoFileSelected", {name: selectedItem.name, sha:selectedItem.sha, content: data});
+      $(document).trigger("repoFileSelected", {name: selectedItem.name, sha:selectedItem.sha, content: data, filePath: selectedItem.path});
     });
   });
+});
+Template.repoview.events({
+  'click #login': function (evt) {
+    Meteor.loginWithGithub({
+    requestPermissions: ['user', 'public_repo']
+    },function (err) {
+      if (err)
+        Meteor._debug(err);
+    });
+    evt.preventDefault();
+  },
+  'click #logout': function (evt) {
+    Meteor.logout(function (err) {
+      if (err)
+        Meteor._debug(err);
+    });
+    evt.preventDefault();
+  }
 });
 
 Template.repoview.rendered = function() {
