@@ -91,6 +91,20 @@ if (Meteor.isClient) {
           "password" : "",
           "github_host" : ""
         });
+
+        var id = new Meteor.Collection.ObjectID();
+        
+        FileTab.insert({
+          _id: id,
+          fileTab: id,
+          codeSessionId: codeSessionId,
+          file: {
+            content: "Welcome to Coco Dojo, 5 Bucks",
+            sha: codeSessionId + "-untitled",
+            name: "untitled"
+          }
+        });
+
         Session.set("codeSessionId", codeSessionId);
         // Insert the user into the session userlist
         Session.set('userSession', createUserSession());

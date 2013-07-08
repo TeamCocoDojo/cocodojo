@@ -10,6 +10,16 @@ var userSessions = {};
 
 var tabs = {};
 
+var closeTab = function(record) {
+  var tab = tabs[sha];
+  tab.newEditorWrapper.remove();
+  tabs.delete[sha];
+}
+
+var existTab = function(sha) {
+  return tabs[sha];
+}
+
 var Tab = function(record) {
   var id = record.file.sha;
   var me = this;
@@ -17,7 +27,7 @@ var Tab = function(record) {
   me.newEditorWrapper.attr("id", id);
 
   me.newEditorInstance = $("<div class='editorInstance'></div>");
-  me.tab = $("<li><a href='#" + id + "'>" + record.file.name + "</a></li>");
+  me.tab = $("<li class='icon-remove'><a href='#" + id + "'>" + record.file.name + "</a></li>");
   
   $("#editorTab").append(me.tab);
   $("#editorTabContent").append(me.newEditorWrapper);
@@ -123,11 +133,11 @@ $(document).on("getEditorContent", function (){
 });
 
 $(document).on("repoFileSelected", function(event, data){
-
-  cocodojo.insertDocument({
-    content: data.content,
-    sha: data.sha,
-    name: data.name
-  })
-
+  if (!existTab(data.sha)) {
+    cocodojo.insertDocument({
+      content: data.content,
+      sha: data.sha,
+      name: data.name
+    });
+  }
 });
