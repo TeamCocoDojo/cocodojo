@@ -11,9 +11,9 @@ body {
   height: 91%;
 }
 
-#editorInstance {
-  margin-right: 10px;
-  height: 96%;
+.editorInstance {
+    margin-right: 10px;
+    height: 500px;
 }
 
 
