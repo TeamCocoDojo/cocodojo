@@ -98,6 +98,7 @@ if (Meteor.isClient) {
           _id: id,
           fileTab: id,
           codeSessionId: codeSessionId,
+          isOpen: true,
           file: {
             content: "Welcome to Coco Dojo, 5 Bucks",
             sha: codeSessionId + "-untitled",

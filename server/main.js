@@ -156,14 +156,23 @@ if(Meteor.isServer) {
 
   Meteor.methods({
     closeFileTab: function(record, content) {
-      SessionUsers.update(
-        record, {$set: {"file.content": content, "isOpen": false}}
+      FileTab.update(
+        {_id: record.fileTab},
+        {$set: {"file.content": content, "isOpen": false}}
       );
     },
 
     renameFileTab: function(record, name) {
-      SessionUsers.update(
-        record, {$set: {"file.name": name}}
+      FileTab.update(
+        {_id: record.fileTab},
+        {$set: {"file.name": name}}
+      );
+    },
+
+    reOpenFileTab: function(record) {
+      FileTab.update(
+        {_id: record.fileTab},
+        {$set: {isOpen: true}}
       );
     },
 

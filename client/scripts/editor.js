@@ -73,21 +73,26 @@ Tab.prototype.active = function() {
   this.newEditorWrapper.show();
   this.tab.addClass("active");
   this.cm.refresh();
-  this.active = true;
+  this.isActive = true;
 }
 
 Tab.prototype.inActive = function() {
   this.tab.removeClass("active");
   this.newEditorWrapper.hide();
-  this.active = false;
+  this.isActive = false;
 }
 
 Tab.prototype.close = function() {
   var me = this;
-  Meteor.call('closeFileTab', this.record, this.cm.getValue(), function() {
-    me.newEditorWrapper.remove();
-    me.tab.remove();
-    tabs.delete[me.record.file.sha];  
+  Meteor.call('closeFileTab', this.record, this.cm.getValue(), function(error) {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      me.newEditorWrapper.remove();
+      me.tab.remove();
+      delete tabs[me.record.file.sha];
+    }
   });
 }
 
@@ -97,8 +102,6 @@ Tab.prototype.rename = function(name) {
 
 cocodojo.insertFileTab = function(file) {
   var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.sha": file.sha});
-  console.log("record");
-  console.log(record);
   if (!record) {
     var id = new Meteor.Collection.ObjectID();
     FileTab.insert({
@@ -110,7 +113,7 @@ cocodojo.insertFileTab = function(file) {
     });
   }
   else {
-    FileTab.update(record, {$set: {isOpen: true}});
+    Meteor.call('reOpenFileTab', record);
   }
 };
 
