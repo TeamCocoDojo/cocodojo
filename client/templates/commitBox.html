@@ -1,11 +1,17 @@
 <template name="commitBox">
-<div id="commitBox">
-    <div>
-   Commit Message:
+<a href="#commitBox" role="button" class="btn" data-toggle="modal">Commit</a>
+
+<div id="commitBox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Commit to Github</h3>
+  </div>
+  <div class="modal-body">
+    Commit Message:
     <textarea id="commitMessage"></textarea>
     Commit Branch: 
     <select id="branch"></select>
     <input id="commitConfirm" disabled=true type='button' value='commit' />
-    </div>
   </div>
+</div>
 </template>
