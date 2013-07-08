@@ -27,6 +27,24 @@
 	top: 250px;
 }
 
+.file-tab {
+	position: relative;
+}
+
+#editorTab .tab-link {
+	float: left;
+	padding-left: 8px;
+	padding-right: 20px;
+}
+
+.tab-close {
+	position: absolute;
+	top: 11px;
+	right: 7px;
+	cursor: pointer;
+	float: left;
+}
+
 
 .etabs { margin: 0; padding: 0; }
 .tab { display: inline-block; zoom:1; *display:inline; background: #eee; border: solid 1px #999; border-bottom: none; -moz-border-radius: 4px 4px 0 0; -webkit-border-radius: 4px 4px 0 0; }

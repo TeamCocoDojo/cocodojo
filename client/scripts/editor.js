@@ -11,9 +11,11 @@ var userSessions = {};
 var tabs = {};
 
 var closeTab = function(record) {
-  var tab = tabs[sha];
-  tab.newEditorWrapper.remove();
-  tabs.delete[sha];
+  var fileTab = tabs[record.file.sha];
+  fileTab.newEditorWrapper.remove();
+  fileTab.tab.remove();
+  FileTab.update(record, {$set: {content: fileTab.cm.getValue(), isOpen: false}});
+  tabs.delete[record.file.sha];
 }
 
 var existTab = function(sha) {
@@ -23,12 +25,16 @@ var existTab = function(sha) {
 var Tab = function(record) {
   var id = record.file.sha;
   var me = this;
+  me.record = record;
   me.newEditorWrapper = $("<div></div>");
   me.newEditorWrapper.attr("id", id);
 
   me.newEditorInstance = $("<div class='editorInstance'></div>");
-  me.tab = $("<li class='icon-remove'><a href='#" + id + "'>" + record.file.name + "</a></li>");
-  
+  me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
+  me.tab.find(".tab-close").click(function () {
+    me.close();
+  });
+
   $("#editorTab").append(me.tab);
   $("#editorTabContent").append(me.newEditorWrapper);
   me.newEditorWrapper.append(me.newEditorInstance);
@@ -75,22 +81,36 @@ Tab.prototype.active = function() {
   this.newEditorWrapper.show();
   this.tab.addClass("active");
   this.cm.refresh();
+  this.active = true;
 }
 
 Tab.prototype.inActive = function() {
   this.tab.removeClass("active");
   this.newEditorWrapper.hide();
+  this.active = false;
 }
 
+Tab.prototype.close = function() {
+  closeTab(this.record);
+}
 
-cocodojo.insertDocument = function(file) {
-  var id = new Meteor.Collection.ObjectID();
-  FileTab.insert({
-    _id: id,
-    fileTab: id,
-    codeSessionId: Session.get("codeSessionId"),
-    file: file
-  });
+cocodojo.insertFileTab = function(file) {
+  var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.sha": file.sha});
+  console.log("record");
+  console.log(record);
+  if (!record) {
+    var id = new Meteor.Collection.ObjectID();
+    FileTab.insert({
+      _id: id,
+      fileTab: id,
+      codeSessionId: Session.get("codeSessionId"),
+      isOpen: true,
+      file: file
+    });
+  }
+  else {
+    FileTab.update(record, {$set: {isOpen: true}});
+  }
 };
 
 var addFile = function(record) {
@@ -103,12 +123,15 @@ Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
     added: function (id, record) {
-      if (record.isSocketReady) {
+      if (record.isSocketReady && record.isOpen) {
         addFile(record);
       }
     },
     changed: function(id, changed) {
       if (changed && changed.isSocketReady == true) {
+        addFile(FileTab.findOne({_id: id}));
+      }
+      if (changed && changed.isOpen == true) {
         addFile(FileTab.findOne({_id: id}));
       }
     },
@@ -134,10 +157,13 @@ $(document).on("getEditorContent", function (){
 
 $(document).on("repoFileSelected", function(event, data){
   if (!existTab(data.sha)) {
-    cocodojo.insertDocument({
+    cocodojo.insertFileTab({
       content: data.content,
       sha: data.sha,
       name: data.name
     });
+  }
+  else {
+    tabs[data.sha].active();
   }
 });
