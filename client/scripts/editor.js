@@ -14,6 +14,34 @@ var existTab = function(sha) {
   return tabs[sha];
 }
 
+var saveAllTabs = function() {
+  var records = {};
+  var contents = {};
+  for (var key in tabs) {
+    var tab = tabs[key];
+    records[key] = tab.record;
+    contents[key] = tab.cm.getValue();
+  }
+  Meteor.call('saveAllFileTabs', records, contents, function(error) {
+    var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
+    var documents = [];
+    fileTabs.forEach(function(tab){
+      var doc = {
+        content: tab.file.content, 
+        filePath: tab.file.filePath,
+        sha: tab.file.sha,
+        name: tab.file.name
+      };
+      documents.push(doc);
+    });
+    $(document).trigger({
+      type: "ReceiveEditorContent",
+      files: documents
+    });
+
+  });
+}
+
 var Tab = function(record) {
   var id = record.file.sha;
   var me = this;
@@ -53,14 +81,14 @@ var Tab = function(record) {
     cmClient.serverAdapter.socket.on('cursor', function(editorClientId, cursor){
       if(userSessions[editorClientId] !== undefined) return ;
       editorSocket
-        .emit("getClientUserSessionId", {codeSessionId: Session.get("codeSessionId"), socketId: editorClientId})
-        .on("returnClientUserSessionId", function(data){
-          var user = SessionUsers.findOne({_id: data.clientUserSessionId});
-          if(user){
-            userSessions[data.editorClientId] = data.clientUserSessionId;
-            cmClient.clients[data.editorClientId].setColor(user.userHue);
-          }
-        });
+      .emit("getClientUserSessionId", {codeSessionId: Session.get("codeSessionId"), socketId: editorClientId})
+      .on("returnClientUserSessionId", function(data){
+        var user = SessionUsers.findOne({_id: data.clientUserSessionId});
+        if(user){
+          userSessions[data.editorClientId] = data.clientUserSessionId;
+          cmClient.clients[data.editorClientId].setColor(user.userHue);
+        }
+      });
     });
   });
   return this;
@@ -95,6 +123,7 @@ Tab.prototype.close = function() {
     }
   });
 }
+
 
 Tab.prototype.rename = function(name) {
 
@@ -154,24 +183,11 @@ Template.codeMirror.events = {
     cm.setOption("theme", selectedTheme);
   }
 }
-$(document).on("getEditorContent", function(data){
-  var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
-  var documents = [];
-  fileTabs.forEach(function(tab){
-    var doc = {
-      content: tab.file.content, 
-      filePath: tab.file.filePath,
-      sha: tab.file.sha,
-      name: tab.file.name
-    };
-    documents.push(doc);
-  });
-  $(document).trigger({
-    type: "ReceiveEditorContent",
-    files: documents
-  });
-
+$(document).on("commitToGit", function(data){
+  saveAllTabs();
 });
+
+
 $(document).on("repoFileSelected", function(event, data){
   if (!existTab(data.sha)) {
     cocodojo.insertFileTab({

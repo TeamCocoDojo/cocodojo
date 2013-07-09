@@ -155,6 +155,18 @@ if(Meteor.isServer) {
   // end of video session code
 
   Meteor.methods({
+    saveAllFileTabs: function(records, contents) {
+      for (var key in records) {
+        var record = records[key];
+        var content = content[key];
+        
+        FileTab.update(
+          {_id: record.fileTab},
+          {$set: {"file.content": content}
+        );
+      }
+    },
+
     closeFileTab: function(record, content) {
       FileTab.update(
         {_id: record.fileTab},
