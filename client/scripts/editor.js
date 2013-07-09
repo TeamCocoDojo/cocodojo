@@ -28,11 +28,13 @@ var saveAllTabs = function() {
     fileTabs.forEach(function(tab){
       var doc = {
         content: tab.file.content, 
-        filePath: tab.file.filePath,
+        path: tab.file.path,
         sha: tab.file.sha,
         name: tab.file.name
       };
-      documents.push(doc);
+      if(doc.path){
+        documents.push(doc);
+      }
     });
     $(document).trigger({
       type: "ReceiveEditorContent",
@@ -193,7 +195,8 @@ $(document).on("repoFileSelected", function(event, data){
     cocodojo.insertFileTab({
       content: data.content,
       sha: data.sha,
-      name: data.name
+      name: data.name,
+      path: data.path
     });
   }
   else {

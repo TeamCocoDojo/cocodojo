@@ -158,7 +158,7 @@ if(Meteor.isServer) {
     saveAllFileTabs: function(records, contents) {
       for (var key in records) {
         var record = records[key];
-        var content = content[key];
+        var content = contents[key];
 
         FileTab.update(
           {_id: record.fileTab},

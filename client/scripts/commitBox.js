@@ -1,15 +1,15 @@
 var repo = null;
 var commitIndex = 0 ;
-function commitFile(filePath, fileContent, callback){
+function commitFile(path, fileContent, callback){
   repo.postBlob(fileContent, function(err, sha){
-    callback(err, {sha: sha, filePath: filePath});
+    callback(err, {sha: sha, path: path});
   });
 }
 $(document).on("repoSelected", function(e, repoInfo){
 
   repo = cocodojo.githubObj.getRepo(repoInfo.owner, repoInfo.name);
   repo.listBranches(function(err, branches) {
-    $("#branch").append("<option>New Branch</option>");
+    //$("#branch").append("<option>New Branch</option>");
     $.each(branches, function(item){
       $("#branch").append("<option>" + branches[item] + "</option>" ); 
     });
@@ -17,8 +17,9 @@ $(document).on("repoSelected", function(e, repoInfo){
   $("#commitConfirm").removeAttr("disabled");
 
   $("#commitConfirm").click(function(){
-    $(document).trigger("getEditorContent").on("ReceiveEditorContent", function(data){
+    $(document).trigger("commitToGit").on("ReceiveEditorContent", function(data){
       var docs = data.files;
+      console.log(docs);
       var branch = $("#branch").val();
       var message = $("#commitMessage").val();
       console.log(branch);
@@ -29,14 +30,14 @@ $(document).on("repoSelected", function(e, repoInfo){
         }
         var tree = [];
         docs.forEach(function(doc){
-          commitFile(doc.filePath, doc.content, function(err, item){
+          commitFile(doc.path, doc.content, function(err, item){
             commitIndex += 1;
             if(err) {
               console.log(err);
               return ;
             }
             tree.push({
-              "path": item.filePath,
+              "path": item.path,
               "mode": "100644",
               "type": "blob",
               "sha": item.sha
@@ -58,7 +59,7 @@ $(document).on("repoSelected", function(e, repoInfo){
                       console.log(err);
                       return; 
                     }
-                    console.log("success:"+ commit);
+                     $('#commitBox').modal('hide');
                   });
                 });
 
@@ -66,15 +67,6 @@ $(document).on("repoSelected", function(e, repoInfo){
             }
           });
         });
-      });
-      return; 
-
-      var content = data.content;
-
-      var filePath = data.filePath;
-      repo.write(branch, filePath, content, message, function(err) {
-        if(err) return console.log("failed");
-        $('#commitBox').modal('hide');
       });
     });
   });
