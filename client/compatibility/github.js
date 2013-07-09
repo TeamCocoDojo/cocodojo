@@ -276,255 +276,267 @@ var meteor_Github = Github;
       // -------
 
       this.updateTree = function(baseTree, path, blob, cb) {
-        var data = {
+        var data; 
+        if(Array.isArray(path)){
+          var tree = path;
+          cb = blob;
+          console.log("directly update a tree");
+          data = {
+            "base_tree": baseTree,
+            "tree": tree
+          }; 
+        }
+      else{
+        data = {
           "base_tree": baseTree,
           "tree": [
             {
-              "path": path,
-              "mode": "100644",
-              "type": "blob",
-              "sha": blob
-            }
+            "path": path,
+            "mode": "100644",
+            "type": "blob",
+            "sha": blob
+          }
           ]
         };
-        _request("POST", repoPath + "/git/trees", data, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Post a new tree object having a file path pointer replaced
-      // with a new blob SHA getting a tree SHA back
-      // -------
-
-      this.postTree = function(tree, cb) {
-        _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Create a new commit object with the current commit SHA as the parent
-      // and the new tree SHA, getting a commit SHA back
-      // -------
-
-      this.commit = function(parent, tree, message, cb) {
-        var data = {
-          "message": message,
-          "author": {
-            "name": options.username
-          },
-          "parents": [
-            parent
-          ],
-          "tree": tree
-        };
-
-        _request("POST", repoPath + "/git/commits", data, function(err, res) {
-          currentTree.sha = res.sha; // update latest commit
-          if (err) return cb(err);
-          cb(null, res.sha);
-        });
-      };
-
-      // Update the reference of your head to point to the new commit SHA
-      // -------
-
-      this.updateHead = function(head, commit, cb) {
-        _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
-          cb(err);
-        });
-      };
-
-      // Show repository information
-      // -------
-
-      this.show = function(cb) {
-        _request("GET", repoPath, null, cb);
-      };
-
-      // Get contents
-      // --------
-
-      this.contents = function(branch, path, cb) {
-        _request("GET", repoPath + "/contents?ref=" + branch, { path: path }, cb);
-      };
-
-      // Fork repository
-      // -------
-
-      this.fork = function(cb) {
-        _request("POST", repoPath + "/forks", null, cb);
-      };
-
-      // Create pull request
-      // --------
-
-      this.createPullRequest = function(options, cb) {
-        _request("POST", repoPath + "/pulls", options, cb);
-      };
-
-      // Read file at given path
-      // -------
-
-      this.read = function(branch, path, cb) {
-        that.getSha(branch, path, function(err, sha) {
-          if (!sha) return cb("not found", null);
-          that.getBlob(sha, function(err, content) {
-            cb(err, content, sha);
-          });
-        });
-      };
-
-      // Remove a file from the tree
-      // -------
-
-      this.remove = function(branch, path, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            var newTree = _.reject(tree, function(ref) { return ref.path === path; });
-            _.each(newTree, function(ref) {
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(newTree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Move a file to a new location
-      // -------
-
-      this.move = function(branch, path, newPath, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          that.getTree(latestCommit+"?recursive=true", function(err, tree) {
-            // Update Tree
-            _.each(tree, function(ref) {
-              if (ref.path === path) ref.path = newPath;
-              if (ref.type === "tree") delete ref.sha;
-            });
-
-            that.postTree(tree, function(err, rootTree) {
-              that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
-                that.updateHead(branch, commit, function(err) {
-                  cb(err);
-                });
-              });
-            });
-          });
-        });
-      };
-
-      // Write file contents to a given branch and path
-      // -------
-
-      this.write = function(branch, path, content, message, cb) {
-        updateTree(branch, function(err, latestCommit) {
-          if (err) return cb(err);
-          that.postBlob(content, function(err, blob) {
-            if (err) return cb(err);
-            that.updateTree(latestCommit, path, blob, function(err, tree) {
-              if (err) return cb(err);
-              that.commit(latestCommit, tree, message, function(err, commit) {
-                if (err) return cb(err);
-                that.updateHead(branch, commit, cb);
-              });
-            });
-          });
-        });
-      };
+      }
+      _request("POST", repoPath + "/git/trees", data, function(err, res) {
+        if (err) return cb(err);
+        cb(null, res.sha);
+      });
     };
 
-    // Gists API
-    // =======
-
-    Github.Gist = function(options) {
-      var id = options.id;
-      var gistPath = "/gists/"+id;
-
-      // Read the gist
-      // --------
-
-      this.read = function(cb) {
-        _request("GET", gistPath, null, function(err, gist) {
-          cb(err, gist);
-        });
-      };
-
-      // Create the gist
-      // --------
-      // {
-      //  "description": "the description for this gist",
-      //    "public": true,
-      //    "files": {
-      //      "file1.txt": {
-      //        "content": "String file contents"
-      //      }
-      //    }
-      // }
-      
-      this.create = function(options, cb){
-        _request("POST","/gists", options, cb);
-      };
-
-      // Delete the gist
-      // --------
-
-      this.delete = function(cb) {
-        _request("DELETE", gistPath, null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Fork a gist
-      // --------
-
-      this.fork = function(cb) {
-        _request("POST", gistPath+"/fork", null, function(err,res) {
-          cb(err,res);
-        });
-      };
-
-      // Update a gist with the new stuff
-      // --------
-
-      this.update = function(options, cb) {
-        _request("PATCH", gistPath, options, function(err,res) {
-          cb(err,res);
-        });
-      };
-    };
-
-    // Top Level API
+    // Post a new tree object having a file path pointer replaced
+    // with a new blob SHA getting a tree SHA back
     // -------
 
-    this.getRepo = function(user, repo) {
-      return new Github.Repository({user: user, name: repo});
+    this.postTree = function(tree, cb) {
+      _request("POST", repoPath + "/git/trees", { "tree": tree }, function(err, res) {
+        if (err) return cb(err);
+        cb(null, res.sha);
+      });
     };
 
-    this.getUser = function() {
-      return new Github.User();
+    // Create a new commit object with the current commit SHA as the parent
+    // and the new tree SHA, getting a commit SHA back
+    // -------
+
+    this.commit = function(parent, tree, message, cb) {
+      var data = {
+        "message": message,
+        "author": {
+          "name": options.username
+        },
+        "parents": [
+          parent
+        ],
+        "tree": tree
+      };
+
+      _request("POST", repoPath + "/git/commits", data, function(err, res) {
+        currentTree.sha = res.sha; // update latest commit
+        if (err) return cb(err);
+        cb(null, res.sha);
+      });
     };
 
-    this.getGist = function(id) {
-      return new Github.Gist({id: id});
+    // Update the reference of your head to point to the new commit SHA
+    // -------
+
+    this.updateHead = function(head, commit, cb) {
+      _request("PATCH", repoPath + "/git/refs/heads/" + head, { "sha": commit }, function(err, res) {
+        cb(err);
+      });
+    };
+
+    // Show repository information
+    // -------
+
+    this.show = function(cb) {
+      _request("GET", repoPath, null, cb);
+    };
+
+    // Get contents
+    // --------
+
+    this.contents = function(branch, path, cb) {
+      _request("GET", repoPath + "/contents?ref=" + branch, { path: path }, cb);
+    };
+
+    // Fork repository
+    // -------
+
+    this.fork = function(cb) {
+      _request("POST", repoPath + "/forks", null, cb);
+    };
+
+    // Create pull request
+    // --------
+
+    this.createPullRequest = function(options, cb) {
+      _request("POST", repoPath + "/pulls", options, cb);
+    };
+
+    // Read file at given path
+    // -------
+
+    this.read = function(branch, path, cb) {
+      that.getSha(branch, path, function(err, sha) {
+        if (!sha) return cb("not found", null);
+        that.getBlob(sha, function(err, content) {
+          cb(err, content, sha);
+        });
+      });
+    };
+
+    // Remove a file from the tree
+    // -------
+
+    this.remove = function(branch, path, cb) {
+      updateTree(branch, function(err, latestCommit) {
+        that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+          // Update Tree
+          var newTree = _.reject(tree, function(ref) { return ref.path === path; });
+          _.each(newTree, function(ref) {
+            if (ref.type === "tree") delete ref.sha;
+          });
+
+          that.postTree(newTree, function(err, rootTree) {
+            that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+              that.updateHead(branch, commit, function(err) {
+                cb(err);
+              });
+            });
+          });
+        });
+      });
+    };
+
+    // Move a file to a new location
+    // -------
+
+    this.move = function(branch, path, newPath, cb) {
+      updateTree(branch, function(err, latestCommit) {
+        that.getTree(latestCommit+"?recursive=true", function(err, tree) {
+          // Update Tree
+          _.each(tree, function(ref) {
+            if (ref.path === path) ref.path = newPath;
+            if (ref.type === "tree") delete ref.sha;
+          });
+
+          that.postTree(tree, function(err, rootTree) {
+            that.commit(latestCommit, rootTree, 'Deleted '+path , function(err, commit) {
+              that.updateHead(branch, commit, function(err) {
+                cb(err);
+              });
+            });
+          });
+        });
+      });
+    };
+
+    // Write file contents to a given branch and path
+    // -------
+
+    this.write = function(branch, path, content, message, cb) {
+      updateTree(branch, function(err, latestCommit) {
+        if (err) return cb(err);
+        that.postBlob(content, function(err, blob) {
+          if (err) return cb(err);
+          that.updateTree(latestCommit, path, blob, function(err, tree) {
+            if (err) return cb(err);
+            that.commit(latestCommit, tree, message, function(err, commit) {
+              if (err) return cb(err);
+              that.updateHead(branch, commit, cb);
+            });
+          });
+        });
+      });
     };
   };
 
+  // Gists API
+  // =======
 
-  if (typeof exports !== 'undefined') {
-    // Github = exports;
-    module.exports = Github;
-  } else {
-    window.Github = Github;
-  }
+  Github.Gist = function(options) {
+    var id = options.id;
+    var gistPath = "/gists/"+id;
+
+    // Read the gist
+    // --------
+
+    this.read = function(cb) {
+      _request("GET", gistPath, null, function(err, gist) {
+        cb(err, gist);
+      });
+    };
+
+    // Create the gist
+    // --------
+    // {
+    //  "description": "the description for this gist",
+    //    "public": true,
+    //    "files": {
+    //      "file1.txt": {
+    //        "content": "String file contents"
+    //      }
+    //    }
+    // }
+
+    this.create = function(options, cb){
+      _request("POST","/gists", options, cb);
+    };
+
+    // Delete the gist
+    // --------
+
+    this.delete = function(cb) {
+      _request("DELETE", gistPath, null, function(err,res) {
+        cb(err,res);
+      });
+    };
+
+    // Fork a gist
+    // --------
+
+    this.fork = function(cb) {
+      _request("POST", gistPath+"/fork", null, function(err,res) {
+        cb(err,res);
+      });
+    };
+
+    // Update a gist with the new stuff
+    // --------
+
+    this.update = function(options, cb) {
+      _request("PATCH", gistPath, options, function(err,res) {
+        cb(err,res);
+      });
+    };
+  };
+
+  // Top Level API
+  // -------
+
+  this.getRepo = function(user, repo) {
+    return new Github.Repository({user: user, name: repo});
+  };
+
+  this.getUser = function() {
+    return new Github.User();
+  };
+
+  this.getGist = function(id) {
+    return new Github.Gist({id: id});
+  };
+};
+
+
+if (typeof exports !== 'undefined') {
+  // Github = exports;
+  module.exports = Github;
+} else {
+  window.Github = Github;
+}
 }).call(this);
 var GithubLib = Github;
 var Github = meteor_Github;

@@ -7,13 +7,7 @@ var selectedTheme = 'ambiance';
 var cmClient;
 var currentStatus = {}
 var userSessions = {};
-<<<<<<< HEAD
 var repoData = {};
-Template.codeMirror.rendered = function() {
-  var editorWrapper = document.getElementById('editorInstance');
-  cm = window.cm = CodeMirror(editorWrapper, {
-=======
-
 var tabs = {};
 
 var Tab = function(record) {
@@ -34,7 +28,6 @@ var Tab = function(record) {
   });
 
   me.cm = CodeMirror(me.newEditorInstance[0], {
->>>>>>> master
     lineNumbers: true,
     lineWrapping: true,
     theme: selectedTheme,
@@ -125,21 +118,29 @@ Template.codeMirror.events = {
   }
 }
 $(document).on("getEditorContent", function(data){
+  var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
+  var documents = [];
+  fileTabs.forEach(function(tab){
+    var doc = {
+      content: tab.file.content, 
+      filePath: tab.file.filePath,
+      sha: tab.file.sha,
+      name: tab.file.name
+    };
+    documents.push(doc);
+  });
   $(document).trigger({
     type: "ReceiveEditorContent",
-    content: cm.getValue(),
-    filePath: repoData.filePath
+    files: documents
   });
 
 });
 $(document).on("repoFileSelected", function(event, data){
-  cm.setValue(data.content);
   repoData = data; 
   cocodojo.insertDocument({
     content: data.content,
     sha: data.sha,
     name: data.name,
-    filePath: data.filePath
-  })
-
+    filePath: data.path
+  });
 });

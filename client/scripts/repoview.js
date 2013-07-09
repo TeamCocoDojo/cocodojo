@@ -21,7 +21,7 @@ DataSource.prototype.callback = function (options) {
       header.click(function(evt){
         var element = $($(this).parents(".tree-folder")[0]);
         var selectedItem = element.data();
-        me.data({sha: selectedItem.sha, element: $(element.find(".tree-folder-content")[0])});
+        me.data({sha: selectedItem.sha, path: selectedItem.path, element: $(element.find(".tree-folder-content")[0])});
       });
     }
     else{
@@ -40,20 +40,14 @@ DataSource.prototype.callback = function (options) {
 DataSource.prototype.data =  function (options, callback) {
   var self = this;
   var sha = options.sha || "master";
-<<<<<<< HEAD
-  var path = options.path || "";
-  path = (path == "") ? "" : path + "/";
-=======
   var element = options.element || this.element;
   options.path = options.path || "";
->>>>>>> master
   this.repo.getTree(sha, function(err, tree){
     var data = tree.map(function(item){
       return {
         path: options.path + item.path + ((item.type == "blob")?"":"/"),
         name: item.path,
         sha: item.sha,
-        path: path + item.path, 
         type: (item.type == "blob")?"item":"folder" 
       };
     });
@@ -65,12 +59,6 @@ $(document).on("repoSelected", function(e, repoInfo) {
   //Put your logic here
   var dataSource = new DataSource(repoInfo.owner, repoInfo.name, $("#ex-tree"));
   $('#repoTree').modal('hide');
-  $('#ex-tree').tree({ dataSource: dataSource }).on("selected", function(event, selectedObjs){
-    var selectedItem = selectedObjs.info[0];
-    dataSource.getContent(selectedItem.sha, function(err, data){
-      $(document).trigger("repoFileSelected", {name: selectedItem.name, sha:selectedItem.sha, content: data, filePath: selectedItem.path});
-    });
-  });
 });
 Template.repoview.events({
   'click #login': function (evt) {
