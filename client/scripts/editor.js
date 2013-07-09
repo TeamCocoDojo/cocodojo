@@ -23,6 +23,7 @@ var saveAllTabs = function() {
     contents[key] = tab.cm.getValue();
   }
   Meteor.call('saveAllFileTabs', records, contents, function(error) {
+
   });
 }
 
@@ -35,7 +36,8 @@ var Tab = function(record) {
 
   me.newEditorInstance = $("<div class='editorInstance'></div>");
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
-  me.tab.find(".tab-close").click(function () {
+  me.tab.find(".tab-close").click(function (e) {
+    e.stopPropagation();
     me.close();
   });
 
@@ -104,6 +106,12 @@ Tab.prototype.close = function() {
       me.newEditorWrapper.remove();
       me.tab.remove();
       delete tabs[me.record.file.sha];
+    }
+    if (me.isActive && me.isActive == true) {
+      for (var key in tabs) {
+        tabs[key].active();
+        break;
+      }
     }
   });
 }
