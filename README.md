@@ -18,3 +18,6 @@ This is the new Coco Dojo repository.
 + ot.js
 + CodeMirror
 + Bootstrap
+
+###Black Magix
++ Sean's Gossip

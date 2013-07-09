@@ -10,15 +10,23 @@ var userSessions = {};
 var repoData = {};
 var tabs = {};
 
+var existTab = function(sha) {
+  return tabs[sha];
+}
+
 var Tab = function(record) {
   var id = record.file.sha;
   var me = this;
+  me.record = record;
   me.newEditorWrapper = $("<div></div>");
   me.newEditorWrapper.attr("id", id);
 
   me.newEditorInstance = $("<div class='editorInstance'></div>");
-  me.tab = $("<li><a href='#" + id + "'>" + record.file.name + "</a></li>");
-  
+  me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
+  me.tab.find(".tab-close").click(function () {
+    me.close();
+  });
+
   $("#editorTab").append(me.tab);
   $("#editorTabContent").append(me.newEditorWrapper);
   me.newEditorWrapper.append(me.newEditorInstance);
@@ -65,22 +73,48 @@ Tab.prototype.active = function() {
   this.newEditorWrapper.show();
   this.tab.addClass("active");
   this.cm.refresh();
+  this.isActive = true;
 }
 
 Tab.prototype.inActive = function() {
   this.tab.removeClass("active");
   this.newEditorWrapper.hide();
+  this.isActive = false;
 }
 
-
-cocodojo.insertDocument = function(file) {
-  var id = new Meteor.Collection.ObjectID();
-  FileTab.insert({
-    _id: id,
-    fileTab: id,
-    codeSessionId: Session.get("codeSessionId"),
-    file: file
+Tab.prototype.close = function() {
+  var me = this;
+  Meteor.call('closeFileTab', this.record, this.cm.getValue(), function(error) {
+    if (error) {
+      console.log(error);
+    }
+    else {
+      me.newEditorWrapper.remove();
+      me.tab.remove();
+      delete tabs[me.record.file.sha];
+    }
   });
+}
+
+Tab.prototype.rename = function(name) {
+
+}
+
+cocodojo.insertFileTab = function(file) {
+  var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.sha": file.sha});
+  if (!record) {
+    var id = new Meteor.Collection.ObjectID();
+    FileTab.insert({
+      _id: id,
+      fileTab: id,
+      codeSessionId: Session.get("codeSessionId"),
+      isOpen: true,
+      file: file
+    });
+  }
+  else {
+    Meteor.call('reOpenFileTab', record);
+  }
 };
 
 var addFile = function(record) {
@@ -93,12 +127,15 @@ Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
     added: function (id, record) {
-      if (record.isSocketReady) {
+      if (record.isSocketReady && record.isOpen) {
         addFile(record);
       }
     },
     changed: function(id, changed) {
       if (changed && changed.isSocketReady == true) {
+        addFile(FileTab.findOne({_id: id}));
+      }
+      if (changed && changed.isOpen == true) {
         addFile(FileTab.findOne({_id: id}));
       }
     },
@@ -136,11 +173,14 @@ $(document).on("getEditorContent", function(data){
 
 });
 $(document).on("repoFileSelected", function(event, data){
-  repoData = data; 
-  cocodojo.insertDocument({
-    content: data.content,
-    sha: data.sha,
-    name: data.name,
-    filePath: data.path
-  });
+  if (!existTab(data.sha)) {
+    cocodojo.insertFileTab({
+      content: data.content,
+      sha: data.sha,
+      name: data.name
+    });
+  }
+  else {
+    tabs[data.sha].active();
+  }
 });
