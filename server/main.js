@@ -159,10 +159,10 @@ if(Meteor.isServer) {
       for (var key in records) {
         var record = records[key];
         var content = content[key];
-        
+
         FileTab.update(
           {_id: record.fileTab},
-          {$set: {"file.content": content}
+          {$set: {"file.content": content}}
         );
       }
     },
