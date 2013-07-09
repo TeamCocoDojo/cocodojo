@@ -14,6 +14,18 @@ var existTab = function(sha) {
   return tabs[sha];
 }
 
+var saveAllTabs = function() {
+  var records = {};
+  var contents = {};
+  for (var key in tabs) {
+    var tab = tabs[key];
+    records[key] = tab.record;
+    contents[key] = tab.cm.getValue();
+  }
+  Meteor.call('saveAllFileTabs', records, contents, function(error) {
+  });
+}
+
 var Tab = function(record) {
   var id = record.file.sha;
   var me = this;
@@ -96,6 +108,7 @@ Tab.prototype.close = function() {
   });
 }
 
+
 Tab.prototype.rename = function(name) {
 
 }
@@ -158,6 +171,11 @@ $(document).on("getEditorContent", function (){
   currentStatus.content = cm.getValue();
   $(document).trigger("receiveEditorContent", currentStatus );
 });
+
+$(document).on("commitToGit", function (){
+  saveAllTabs();
+});
+
 
 $(document).on("repoFileSelected", function(event, data){
   if (!existTab(data.sha)) {
