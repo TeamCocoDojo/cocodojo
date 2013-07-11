@@ -6,7 +6,6 @@ function commitFile(path, fileContent, callback){
   });
 }
 $(document).on("repoSelected", function(e, repoInfo){
-
   repo = cocodojo.githubObj.getRepo(repoInfo.owner, repoInfo.name);
   repo.listBranches(function(err, branches) {
     //$("#branch").append("<option>New Branch</option>");
@@ -19,13 +18,13 @@ $(document).on("repoSelected", function(e, repoInfo){
   $("#commitConfirm").click(function(){
     $(document).trigger("commitToGit").on("ReceiveEditorContent", function(data){
       var docs = data.files;
-      console.log(docs);
       var branch = $("#branch").val();
       var message = $("#commitMessage").val();
-      console.log(branch);
       repo.getRef("heads/" + branch, function(err, latestCommit){
         if (err) {
-          console.log(err);
+          $("commitFailReason").text(err);
+          $('#commitBox').modal('hide');
+          $('#commitFail').modal('show');
           return ;
         }
         var tree = [];
@@ -33,7 +32,9 @@ $(document).on("repoSelected", function(e, repoInfo){
           commitFile(doc.path, doc.content, function(err, item){
             commitIndex += 1;
             if(err) {
-              console.log(err);
+              $("commitFailReason").text(err);
+              $('#commitBox').modal('hide');
+              $('#commitFail').modal('show');
               return ;
             }
             tree.push({
@@ -45,21 +46,27 @@ $(document).on("repoSelected", function(e, repoInfo){
             if(commitIndex == docs.length){
               repo.updateTree(latestCommit, tree, function(err, treeSha){
                 if(err){
-                  console.log(err);
+                    $("commitFailReason").text(err);
+                    $('#commitBox').modal('hide');
+                    $('#commitFail').modal('show');
                   return;
                 }
-                console.log("tree sha: " + treeSha);
                 repo.commit(latestCommit, treeSha, message, function(err, commit) {
                   if(err) {
-                    console.log(err);
+                    $("commitFailReason").text(err);
+                    $('#commitBox').modal('hide');
+                    $('#commitFail').modal('show');
                     return;
                   }
                   repo.updateHead(branch, commit, function(err){
                     if(err){
-                      console.log(err);
+                      $("commitFailReason").text(err);
+                      $('#commitBox').modal('hide');
+                      $('#commitFail').modal('show');
                       return; 
                     }
-                     $('#commitBox').modal('hide');
+                    $('#commitBox').modal('hide');
+                    $('#commitSuccess').modal('show');
                   });
                 });
 

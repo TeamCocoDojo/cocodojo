@@ -26,7 +26,8 @@ $(document).on("githubObjectCreated", function(){
     ul.find("a").click(function() {
       var repoName = $(this).attr("data-name");
       var repoOwner = $(this).attr("data-owner");
-      $(document).trigger("repoSelected", {name: repoName, owner:repoOwner});
+      console.log(Session.get("codeSessionId"));
+      CodeSession.update({_id: Session.get("codeSessionId")}, {githubHost: repoOwner, githubRepo: repoName});
     });
   });
 });

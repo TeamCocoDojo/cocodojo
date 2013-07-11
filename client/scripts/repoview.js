@@ -1,4 +1,7 @@
 var DataSource = function (owner, repoName, element) {
+  if(cocodojo.githubObj === undefined){
+    cocodojo.githubObj = new GithubLib({});
+  }
   this.repo = cocodojo.githubObj.getRepo(owner, repoName);
   this.element = element;
   element.empty();
@@ -54,19 +57,14 @@ DataSource.prototype.data =  function (options, callback) {
     self.callback({ data: data, element: element, start: 0, end: 0, count: 0, pages: 0, page: 0 });
   });
 }
-
-$(document).on("repoSelected", function(e, repoInfo) {
-  //Put your logic here
-  var dataSource = new DataSource(repoInfo.owner, repoInfo.name, $("#ex-tree"));
-  $('#repoTree').modal('hide');
-});
 Template.repoview.events({
   'click #login': function (evt) {
     Meteor.loginWithGithub({
     requestPermissions: ['user', 'public_repo']
     },function (err) {
-      if (err)
-        Meteor._debug(err);
+      if (err){
+        console.log(err);
+      }
     });
     evt.preventDefault();
   },
@@ -78,7 +76,31 @@ Template.repoview.events({
     evt.preventDefault();
   }
 });
-
+function setGithubFileTree(fields){
+  if(!Session.get("isSet")){
+    Session.set("isSet", true);
+    return;
+  }
+  if(fields.githubRepo === undefined) return;
+  var githubRepo = fields.githubRepo;
+  var githubHost = fields.githubHost || Session.get("githubHost") || "";
+  if(Session.get("githubRepo") === undefined || Session.get("githubRepo") != githubRepo ){
+    var dataSource = new DataSource( githubHost, githubRepo, $("#ex-tree"));
+    $('#repoTree').modal('hide');
+  }
+  Session.set("githubRepo", fields.githubRepo);
+  if(githubHost != "")  
+    Session.set("github_host", fields.githubHost)
+}
 Template.repoview.rendered = function() {
-
+  CodeSession.find({_id: Session.get("codeSessionId")}).observeChanges({
+    added: function(id, fields){ 
+      console.log("added");
+      setGithubFileTree(fields);
+    },
+    changed:function (id, fields){
+      console.log("changed");
+      setGithubFileTree(fields);
+    }
+  });
 };
