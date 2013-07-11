@@ -1,7 +1,6 @@
 // for user list
 // TODO: fix the bug with Clyde of multiple video chat window issue
 Template.video.users = function(){
-  console.log("session User: " + SessionUsers.find({}).fetch());
   return SessionUsers.find({});
 };
 
@@ -99,7 +98,6 @@ function initOpenTokSession(sessionId) { // sessionId is OpenTokSessionId, not C
     alert("You don't have the minimum requirements to run the video chat."
       + "Please upgrade to the latest version of Flash.");
   } else {
-    console.log("codeSession exists. Initializing with the existing openTokSession...");
     session = TB.initSession(sessionId);  // Initialize session
     // Add event listeners to the session
     session.addEventListener('sessionConnected', sessionConnectedHandler);
@@ -118,7 +116,7 @@ function initOpenTokSession(sessionId) { // sessionId is OpenTokSessionId, not C
 
 function sessionConnectedHandler(event) {
   // Subscribe to all streams currently in the Session
-  console.log("streams length is:" + event.streams.length);
+  
   for (var i = 0; i < event.streams.length; i++) {
     addStream(event.streams[i]);
   }

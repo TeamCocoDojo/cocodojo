@@ -133,7 +133,6 @@ Tab.prototype.close = function() {
   });
 }
 
-
 Tab.prototype.rename = function(name) {
 
 }
@@ -147,11 +146,12 @@ cocodojo.insertFileTab = function(file) {
       fileTab: id,
       codeSessionId: Session.get("codeSessionId"),
       isOpen: true,
-      file: file
+      file: file,
+      userId: Session.get('userId')
     });
   }
   else {
-    Meteor.call('reOpenFileTab', record);
+    addFile(record);
   }
 };
 
@@ -164,14 +164,13 @@ var addFile = function(record) {
 Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
-    added: function (id, record) {
-      if (record.isSocketReady && record.isOpen) {
-        addFile(record);
-      }
-    },
+    
     changed: function(id, changed) {
       if (changed && changed.isSocketReady == true) {
-        addFile(FileTab.findOne({_id: id}));
+        var record = FileTab.findOne({"_id": id});        
+        if (record.userId == Session.get("userId")) {
+          addFile(record);
+        }
       }
       if (changed && changed.isOpen == true) {
         addFile(FileTab.findOne({_id: id}));
@@ -192,10 +191,10 @@ Template.codeMirror.events = {
     cm.setOption("theme", selectedTheme);
   }
 }
+
 $(document).on("commitToGit", function(data){
   saveAllTabs();
 });
-
 
 $(document).on("repoFileSelected", function(event, data){
   if (!existTab(data.sha)) {
