@@ -89,7 +89,6 @@ if (Meteor.isClient) {
           "sessionName" : "New Dojo",
           //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
           "password" : "",
-          "github_host" : ""
         });
 
         var id = new Meteor.Collection.ObjectID();
