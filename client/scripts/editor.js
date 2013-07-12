@@ -9,6 +9,8 @@ var currentStatus = {}
 var userSessions = {};
 var repoData = {};
 var tabs = {};
+var sockets = {};
+var count = 0;
 
 var existTab = function(sha) {
   return tabs[sha];
@@ -47,21 +49,15 @@ var saveAllTabs = function() {
 var Tab = function(record) {
   var id = record.file.sha;
   var me = this;
+  me.id = count++;
   me.record = record;
   me.newEditorWrapper = $("<div></div>");
   me.newEditorWrapper.attr("id", id);
 
   me.newEditorInstance = $("<div class='editorInstance'></div>");
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
-  me.tab.find(".tab-close").click(function (e) {
-    e.stopPropagation();
-    me.close();
-  });
 
-  $("#editorTab").append(me.tab);
-  $("#editorTabContent").append(me.newEditorWrapper);
-  me.newEditorWrapper.append(me.newEditorInstance);
-
+  me.draw();
   me.tab.click(function() {
     me.active();
   });
@@ -75,6 +71,7 @@ var Tab = function(record) {
 
   me.editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
   me.editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
+    console.log(me.id);
     me.cm.setValue(obj.str);
     me.cmClient = new EditorClient(
       obj.revision,
@@ -114,6 +111,18 @@ Tab.prototype.inActive = function() {
   this.isActive = false;
 }
 
+Tab.prototype.draw = function() {
+  $("#editorTab").append(this.tab);
+  $("#editorTabContent").append(this.newEditorWrapper);
+  this.newEditorWrapper.append(this.newEditorInstance);
+  this.isClosed = false;
+  var me = this;
+  this.tab.find(".tab-close").click(function (e) {
+    e.stopPropagation();
+    me.close();
+  });
+}
+
 Tab.prototype.close = function() {
   var me = this;
   Meteor.call('closeFileTab', this.record, this.cm.getValue(), function(error) {
@@ -123,10 +132,7 @@ Tab.prototype.close = function() {
     else {
       me.newEditorWrapper.remove();
       me.tab.remove();
-      delete tabs[me.record.file.sha];
-      
-      me.editorSocket.disconnect(true);
-      
+      me.isClosed = true;
     }
     if (me.isActive && me.isActive == true) {
       for (var key in tabs) {
@@ -155,14 +161,20 @@ cocodojo.insertFileTab = function(file) {
     });
   }
   else {
-    addFile(record);
+    addFileTab(record);
   }
 };
 
-var addFile = function(record) {
-  var tab = new Tab(record);
-  tabs[record.file.sha] = tab;
-  tab.active();
+var addFileTab = function(record) {
+  if (tabs[record.file.sha]) {
+    var tab = tabs[record.file.sha];
+    tab.draw();
+  }
+  else {
+    var tab = new Tab(record);
+    tabs[record.file.sha] = tab;
+    tab.active();
+  }
 };
 
 Template.codeMirror.rendered = function() {
@@ -170,10 +182,11 @@ Template.codeMirror.rendered = function() {
   fileTabs.observeChanges({
     
     changed: function(id, changed) {
+      console.log("changed");
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
         if (record.userId == Session.get("userId")) {
-          addFile(record);
+          addFileTab(record);
         }
       }
     },
@@ -207,6 +220,10 @@ $(document).on("repoFileSelected", function(event, data){
     });
   }
   else {
+    var tab = tabs[data.sha];
+    if (tab.isClosed) {
+      tab.draw();
+    }
     tabs[data.sha].active();
   }
 });
