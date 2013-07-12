@@ -6,6 +6,7 @@ function commitFile(path, fileContent, callback){
   });
 }
 $(document).on("repoSelected", function(e, repoInfo){
+  $(document).trigger("updateGithubInfo", repoInfo);
   repo = cocodojo.githubObj.getRepo(repoInfo.owner, repoInfo.name);
   repo.listBranches(function(err, branches) {
     //$("#branch").append("<option>New Branch</option>");

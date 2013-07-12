@@ -63,6 +63,7 @@ Template.repoview.events({
     requestPermissions: ['user', 'public_repo']
     },function (err) {
       if (err){
+        alert(err);
         console.log(err);
       }
     });
@@ -77,30 +78,36 @@ Template.repoview.events({
   }
 });
 function setGithubFileTree(fields){
-  if(!Session.get("isSet")){
-    Session.set("isSet", true);
+  if(!cocodojo.isSet){
+    cocodojo.isSet = true;
     return;
   }
+
   if(fields.githubRepo === undefined) return;
   var githubRepo = fields.githubRepo;
-  var githubHost = fields.githubHost || Session.get("githubHost") || "";
-  if(Session.get("githubRepo") === undefined || Session.get("githubRepo") != githubRepo ){
+  var githubHost = fields.githubHost || cocodojo.githubHost || "";
+  if( cocodojo.githubRepo=== undefined || cocodojo.githubRepo != githubRepo ){
+    cocodojo.githubRepo = githubRepo;
     var dataSource = new DataSource( githubHost, githubRepo, $("#ex-tree"));
+    $(document).trigger("repoSelected", {owner: githubHost, name: githubRepo  });
     $('#repoTree').modal('hide');
   }
-  Session.set("githubRepo", fields.githubRepo);
   if(githubHost != "")  
-    Session.set("github_host", fields.githubHost)
-}
+    cocodojo.githubHost = githubHost;
+};
+
 Template.repoview.rendered = function() {
   CodeSession.find({_id: Session.get("codeSessionId")}).observeChanges({
     added: function(id, fields){ 
-      console.log("added");
       setGithubFileTree(fields);
     },
     changed:function (id, fields){
-      console.log("changed");
       setGithubFileTree(fields);
     }
   });
 };
+$(document).on("updateGithubInfo", function(evt){
+  if(cocodojo.githubUser == cocodojo.repoHost){
+    $("#btnCommitBox").removeClass("hide");
+  }
+});
