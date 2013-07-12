@@ -78,10 +78,10 @@ Template.repoview.events({
   }
 });
 function setGithubFileTree(fields){
-  if(!cocodojo.isSet){
+  /*if(!cocodojo.isSet){
     cocodojo.isSet = true;
     return;
-  }
+  }*/
 
   if(fields.githubRepo === undefined) return;
   var githubRepo = fields.githubRepo;
