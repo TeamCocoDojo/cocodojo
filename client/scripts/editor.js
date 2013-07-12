@@ -72,24 +72,25 @@ var Tab = function(record) {
     theme: selectedTheme,
     mode: syntax
   });
-  var editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
-  editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
+
+  me.editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
+  me.editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
     me.cm.setValue(obj.str);
-    cmClient = new EditorClient(
+    me.cmClient = new EditorClient(
       obj.revision,
       obj.clients,
-      new SocketIOAdapter(editorSocket),
+      new SocketIOAdapter(me.editorSocket),
       new CodeMirrorAdapter(me.cm)
     );
-    cmClient.serverAdapter.socket.on('cursor', function(editorClientId, cursor){
+    me.cmClient.serverAdapter.socket.on('cursor', function(editorClientId, cursor){
       if(userSessions[editorClientId] !== undefined) return ;
-      editorSocket
+      me.editorSocket
       .emit("getClientUserSessionId", {codeSessionId: Session.get("codeSessionId"), socketId: editorClientId})
       .on("returnClientUserSessionId", function(data){
         var user = SessionUsers.findOne({_id: data.clientUserSessionId});
         if(user){
           userSessions[data.editorClientId] = data.clientUserSessionId;
-          cmClient.clients[data.editorClientId].setColor(user.userHue);
+          me.cmClient.clients[data.editorClientId].setColor(user.userHue);
         }
       });
     });
@@ -123,6 +124,9 @@ Tab.prototype.close = function() {
       me.newEditorWrapper.remove();
       me.tab.remove();
       delete tabs[me.record.file.sha];
+      
+      me.editorSocket.disconnect(true);
+      
     }
     if (me.isActive && me.isActive == true) {
       for (var key in tabs) {
@@ -171,9 +175,6 @@ Template.codeMirror.rendered = function() {
         if (record.userId == Session.get("userId")) {
           addFile(record);
         }
-      }
-      if (changed && changed.isOpen == true) {
-        addFile(FileTab.findOne({_id: id}));
       }
     },
     removed: function () {
