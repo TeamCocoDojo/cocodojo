@@ -1,16 +1,5 @@
 <template name="video">
   <div id="video-container">
-    <div id="opentok_console">
-      <div id="links">
-        <input type="button" value="Connect" id ="connectLink" />
-        <input type="button" value="Leave" id ="disconnectLink" />
-        <input type="button" value="Start Publishing" id ="publishLink" />
-        <input type="button" value="Stop Publishing" id ="unpublishLink" />
-      </div>
-      <div id="myCamera" class="publisherContainer"></div>
-      <div id="subscribers"></div>
-    </div>
-
     {{#each users}}
       <div class="video-instance">
         <div style="border-left: 1.2em solid {{userColor}};" class="video-username" data-id="{{ _id }}">  {{username}}
