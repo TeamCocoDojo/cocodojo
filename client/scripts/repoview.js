@@ -1,7 +1,8 @@
-var DataSource = function (owner, repoName, element) {
+var DataSource = function (owner, repoName, branch, element) {
   if(cocodojo.githubObj === undefined){
     cocodojo.githubObj = new GithubLib({});
   }
+  this.branch = branch;
   this.repo = cocodojo.githubObj.getRepo(owner, repoName);
   this.element = element;
   element.empty();
@@ -42,7 +43,7 @@ DataSource.prototype.callback = function (options) {
 };
 DataSource.prototype.data =  function (options, callback) {
   var self = this;
-  var sha = options.sha || "master";
+  var sha = options.sha || this.branch;
   var element = options.element || this.element;
   options.path = options.path || "";
   this.repo.getTree(sha, function(err, tree){
@@ -78,18 +79,15 @@ Template.repoview.events({
   }
 });
 function setGithubFileTree(fields){
-  /*if(!cocodojo.isSet){
-    cocodojo.isSet = true;
-    return;
-  }*/
-
+  
   if(fields.githubRepo === undefined) return;
   var githubRepo = fields.githubRepo;
   var githubHost = fields.githubHost || cocodojo.githubHost || "";
+  var githubBranch = fields.githubBranch || cocodojo.githubBranch || "master";
   if( cocodojo.githubRepo=== undefined || cocodojo.githubRepo != githubRepo ){
     cocodojo.githubRepo = githubRepo;
-    var dataSource = new DataSource( githubHost, githubRepo, $("#ex-tree"));
-    $(document).trigger("repoSelected", {owner: githubHost, name: githubRepo  });
+    var dataSource = new DataSource( githubHost, githubRepo, githubBranch, $("#ex-tree"));
+    $(document).trigger("repoSelected", {owner: githubHost, name: githubRepo, branch: githubBranch  });
     $('#repoTree').modal('hide');
   }
   if(githubHost != "")  
