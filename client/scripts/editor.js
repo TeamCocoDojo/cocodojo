@@ -71,7 +71,6 @@ var Tab = function(record) {
 
   me.editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
   me.editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
-    console.log(me.id);
     me.cm.setValue(obj.str);
     me.cmClient = new EditorClient(
       obj.revision,
@@ -157,7 +156,7 @@ cocodojo.insertFileTab = function(file) {
       codeSessionId: Session.get("codeSessionId"),
       isOpen: true,
       file: file,
-      userId: Session.get('userId')
+      userId: Session.get('userSession')
     });
   }
   else {
@@ -185,7 +184,7 @@ Template.codeMirror.rendered = function() {
       console.log("changed");
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
-        if (record.userId == Session.get("userId")) {
+        if (record.userId == Session.get("userSession")) {
           addFileTab(record);
         }
       }
