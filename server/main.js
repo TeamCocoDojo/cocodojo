@@ -139,7 +139,6 @@ if(Meteor.isServer) {
 
   // video connection
   io.of('/video').on('connection', function(client) {
-    console.log("=== xxx inside the connection");
     // When a client connects, figure out which session to join
     client.on('codeSession', function (data) {
       var codeSessionId = data.codeSessionId;
