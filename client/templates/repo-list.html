@@ -1,0 +1,35 @@
+<template name="repoTree">
+<div id="repoTree" class="modal hide fade" tab index="-1">
+	<div class="select-repo modal-header">
+		<button type="button" class="close" data-dismiss="modal">x</button>
+		<h2>Select Github Repository</h2>
+	</div>
+	<div class="modal-body select-repo">
+		<div>
+			<ul id="repo-list">
+			</ul>
+		</div>
+	</div>
+	
+	<div class="select-branch hide modal-header">
+		<button type="button" class="close" data-dismiss="modal">x</button>
+		<h2>Select Github Branch</h2>
+	</div>
+	<div class="modal-body select-branch hide">
+		<div>
+			<ul id="branch-list">
+			</ul>
+			<div class="alert">
+				<strong>You can create new branch when commits. </strong>
+			</div>
+		</div>
+	</div>
+
+	
+	<div class="modal-footer" style="display: none;">
+		<button class="btn" data-dismiss="modal">Close</button>
+	</div>
+</div>
+</template>
+
+
