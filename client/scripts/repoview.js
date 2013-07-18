@@ -19,12 +19,20 @@ DataSource.prototype.callback = function (options) {
       var header = $("<div></div>").addClass('tree-folder-header').append("<i class='icon-folder-close'></i>").append("<div class='tree-folder-name'>" + data.name + "</div>");
       var content = $("<div></div>").addClass('tree-folder-content');
       var element = $("<div></div>").addClass('tree-folder');
+      header.attr("data-path", data.path);
       header.appendTo(element);
       content.appendTo(element);
       header.click(function(evt){
         var element = $($(this).parents(".tree-folder")[0]);
         var selectedItem = element.data();
         me.data({sha: selectedItem.sha, path: selectedItem.path, element: $(element.find(".tree-folder-content")[0])});
+      });
+      header.mousedown(function(e) {
+        if (e.button == 2) {
+          e.stopPropagation();
+          $("#folder-menu").css("top", $(this).css("top"));
+          $("#folder-menu").css("left", $(this).css("left"));
+        }
       });
     }
     else{
@@ -38,6 +46,60 @@ DataSource.prototype.callback = function (options) {
     }
     element.appendTo(options.element);
     element.data(data);
+    $.contextMenu({
+        selector: '.tree-folder-header',
+        items: {
+          "add": {
+            name: "Add File",
+            callback: function() {
+              var fileName = window.prompt("Please input the name of the file");
+              if (fileName) {
+                var fullPath = $(this).data("path") + fileName
+                $(document).trigger("addFile", {path: fullPath, name: fileName});
+              }
+            }
+          },
+          "rename": {
+            name: "Rename Directory",
+            callback: function() {
+              var fileName = window.prompt("Please input the name of the file");
+              if (fileName) {
+                var fullPath = $(this).data("path") + fileName
+                $(document).trigger("renameFile", fullPath);
+              }
+            }
+          },
+          "delete": {
+            name: "Delete Directory",
+            callback: function() {
+              $(document).trigger("deleteFile", fullPath);
+            }
+          }
+        }
+      }
+    );
+    $.contextMenu({
+        selector: '.tree-item',
+        items: {
+          "rename": {
+            name: "Rename File",
+            callback: function() {
+              var fileName = window.prompt("Please input the name of the file");
+              if (fileName) {
+                var fullPath = $(this).data("path") + fileName
+                $(document).trigger("renameFile", fullPath);
+              }
+            }
+          },
+          "delete": {
+            name: "Delete File",
+            callback: function() {
+              $(document).trigger("deleteFile", fullPath);
+            }
+          }
+        }
+      }
+    );
   }
 };
 DataSource.prototype.data =  function (options, callback) {
@@ -103,6 +165,20 @@ Template.repoview.rendered = function() {
     },
     changed:function (id, fields){
       setGithubFileTree(fields);
+    }
+  });
+  $.contextMenu({
+    selector: '.tree',
+    items: {
+      "add": {
+        name: "Add File",
+        callback: function() {
+          var fileName = window.prompt("Please input the name of the file");
+          if (fileName) {
+            $(document).trigger("addFile", {path: fileName, name: fileName});
+          }
+        }
+      }
     }
   });
 };
