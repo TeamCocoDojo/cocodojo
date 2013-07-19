@@ -16,17 +16,17 @@
     color:red;
 }
 
-.modal-body ul{
+.modal-body #repolist ul{
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.modal-body li{
+.modal-body #repolist li{
   margin-bottom: 30px;
 }
 
-.modal-body li::first-line{
+.modal-body #repolist li::first-line{
   font-size: 150%;
   font-weight: bold;
   margin-bottom: 28px;
