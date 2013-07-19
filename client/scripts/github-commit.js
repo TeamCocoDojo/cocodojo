@@ -1,6 +1,7 @@
 var repoOwner = null;
 var repoName = null;
 var commitIndex = 0 ;
+var docs = null;
 function commitFile(path, fileContent, callback){
 	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob(fileContent, function(err, sha){
 		callback(err, {sha: sha, path: path});
@@ -17,32 +18,40 @@ $(document).on("addFile", function(evt, data) {
 	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob("", function(err, sha) {
 		$(document).trigger("doneAddFile", {name: fileName, sha: sha, content: "", path: filePath});
 	});
-})
-$('#commitBox').on('show', function (e) {
-	$(document).trigger("commitToGit");
 });
+
+Template.commitBox.rendered = function() {
+	$('#commitBox').on('show', function () {
+		console.log("save");
+		$(document).trigger("commitToGit");
+		docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
+			if(file.file.path === undefined) return null;
+			return {path: file.file.path, content: file.file.content };
+		});
+		$("#files-commited").empty();
+		docs.forEach(function(doc){
+			$("<li/>").text(doc.path).appendTo("#files-commited");
+		});
+		$("#commitConfirm").removeAttr("disabled");
+	});
+}
 
 $(document).on("repoSelected", function(e, repoInfo){
 	$(document).trigger("updateGithubInfo", repoInfo);
 	repoOwner = repoInfo.owner;
 	repoName = repoInfo.name;
 	$("#branch-name").text(repoInfo.branch);
-	$("#commitConfirm").removeAttr("disabled");
 
 	$("#btnCommitBox").click(function() {
-	   $(document).trigger("commitToGit");
+		$(document).trigger("commitToGit");
 	});
 
 	$("#commitConfirm").click(function(){
 		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
 		var currentBranch = repoInfo.branch;
 		var repo = cocodojo.getGithubObj().getRepo(repoOwner, repoName);
-		
-		var docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
-			if(file.file.path === undefined) return null;
-			return {path: file.file.path, content: file.file.content };
-		});
-		
+
+
 		var message = $("#commitMessage").val();
 		repo.getRef("heads/" + currentBranch, function(err, latestCommit){
 			if (err) return commitFail(err);

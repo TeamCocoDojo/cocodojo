@@ -21,13 +21,14 @@ DataSource.prototype.callback = function (options) {
 		var data = options.data[i];
 		if(data.type == 'folder'){
 			var header = $("<div></div>").addClass('tree-folder-header').append("<i class='icon-folder-close'></i>").append("<div class='tree-folder-name'>" + data.name + "</div>");
-			var content = $("<div></div>").addClass('tree-folder-content');
+			var content = $("<div></div>").addClass('tree-folder-content').hide();
 			var element = $("<div></div>").addClass('tree-folder');
 			header.attr("data-path", data.path);
 			header.appendTo(element);
 			content.appendTo(element);
 			header.click(function(evt){
 				var element = $($(this).parents(".tree-folder")[0]);
+				$(element.find(".tree-folder-content")[0]).toggle();
 				var selectedItem = element.data();
 				me.data({sha: selectedItem.sha, path: selectedItem.path, element: $(element.find(".tree-folder-content")[0])});
 			});
