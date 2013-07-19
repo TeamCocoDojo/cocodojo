@@ -56,7 +56,6 @@ var Tab = function(record) {
   me.record = record;
   me.newEditorWrapper = $("<div></div>");
   me.newEditorWrapper.attr("id", id);
-
   me.newEditorInstance = $("<div class='editorInstance'></div>");
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
 
@@ -182,28 +181,27 @@ var addFileTab = function(record) {
 Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
-    
     changed: function(id, changed) {
-      console.log("changed");
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
         if (record.userId == Session.get("userSession")) {
           addFileTab(record);
         }
       }
-    },
-    removed: function () {
     }
   });
 
   var changeLogs = ChangeLog.find({codeSessionId: Session.get("codeSessionId")});
   changeLogs.observeChanges({
-    added: function(object) {
-      console.log("New changeLog");
-      saveAllTabs();
+
+    
+    changed: function(id, changed) {
+      if (changed.isOld == true) {
+        saveAllTabs();
+      }
     }
   });
-  Meteor.subscribe("changelog", Session.get("codeSessionId"));
+  
 }
 
 Template.codeMirror.events = {
@@ -224,10 +222,10 @@ $(document).on("commitToGit", function(data) {
 });
 
 $(document).on("repoFileSelected", function(event, data) {
-  console.log(data);
   if (cocodojo.util.isTextFile(data.name)) {
     insertNewTab(data);
   }
+
 });
 
 $(document).on("doneAddFile", function(event, data) {

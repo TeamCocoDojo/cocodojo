@@ -39,6 +39,10 @@ if(Meteor.isServer) {
     check(code_session_id, String);
     return FileTab.find({codeSessionId: code_session_id});
   });
+  Meteor.publish("changelog", function(code_session_id) {
+    check(code_session_id, String);
+    return ChangeLog.find({codeSessionId: code_session_id});
+  });
 
   var io = socketIO.listen(3333);
   var syncServers = {};
@@ -62,15 +66,20 @@ if(Meteor.isServer) {
       if (!record.isReady) {
         FileTab.update(record, {$set: {isSocketReady: true}});
       }
-    },
-    removed: function () {
+    }
+  });
+
+  var changelogs = ChangeLog.find({});
+  changelogs.observeChanges({
+    added: function(id, record) {
+      if (!record.isOld) {
+        ChangeLog.update({_id: id}, {$set: {isOld: true}});
+      } 
     }
   });
 
   Meteor.methods({
     saveAllFileTabs: function(records, contents) {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log("Save content");
       for (var key in records) {
         var record = records[key];
         var content = contents[key];

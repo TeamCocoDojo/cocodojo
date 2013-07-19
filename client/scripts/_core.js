@@ -33,6 +33,7 @@ if (Meteor.isClient) {
       Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
       Meteor.subscribe("whiteboard_cursor", Session.get("codeSessionId"));
       Meteor.subscribe("filetab", Session.get("codeSessionId"));
+      Meteor.subscribe("changelog", Session.get("codeSessionId"));
     });
 
     // (c) 2012-2013 Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)
