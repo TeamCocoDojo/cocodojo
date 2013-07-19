@@ -2,6 +2,7 @@ Template.repoTree.rendered = function() {
 	$('#repoTree').on('show', function () {
 	});
 }
+
 function createBranchList(repoOwner, repoName){
 	var repo = cocodojo.githubObj.getRepo(repoOwner, repoName);
 	repo.listBranches(function(err, branches) {
@@ -19,7 +20,6 @@ function createBranchList(repoOwner, repoName){
 			CodeSession.update({_id: Session.get("codeSessionId")}, {githubHost: repoOwner, githubRepo: repoName, githubBranch: branchName});
 		});
 	});
-
 };
 
 $(document).on("githubObjectCreated", function(){
