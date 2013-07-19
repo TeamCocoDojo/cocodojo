@@ -223,25 +223,16 @@ Template.codeMirror.events = {
   }
 }
 
-function s4() {
-  return Math.floor((1 + Math.random()) * 0x10000)
-             .toString(16)
-             .substring(1);
-};
-
-function guid() {
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-         s4() + '-' + s4() + s4() + s4();
-}
-
-$(document).on("commitToGit", function(data){
+$(document).on("commitToGit", function(data) {
   saveAllTabs();
 });
 
-$(document).on("repoFileSelected", function(event, data){
-  insertNewTab(data);
+$(document).on("repoFileSelected", function(event, data) {
+  if (cocodojo.util.isTextFile(data.name)) {
+    insertNewTab(data);
+  }
 });
 
-$(document).on("doneAddFile", function(event, data){
+$(document).on("doneAddFile", function(event, data) {
   insertNewTab(data);
 });
