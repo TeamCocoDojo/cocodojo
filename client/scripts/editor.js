@@ -242,8 +242,6 @@ $(document).on("repoFileSelected", function(event, data){
   insertNewTab(data);
 });
 
-$(document).on("addFile", function(event, data){
-  data.sha = guid();
-  data.content = "";
+$(document).on("doneAddFile", function(event, data){
   insertNewTab(data);
 });

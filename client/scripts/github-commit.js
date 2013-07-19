@@ -10,6 +10,14 @@ function commitFail(err){
 	$('#commitBox').modal('hide');
 	$('#commitFail').modal('show');
 }
+$(document).on("addFile", function(evt, data) {
+	console.log(data);
+	var fileName = data.name;
+	var filePath = data.path;
+	repo.postBlob("", function(err, sha) {
+		$(document).trigger("doneAddFile", {name: fileName, sha: sha, content: "", path: filePath});
+	});
+})
 
 $(document).on("repoSelected", function(e, repoInfo){
 	cocodojo.repoHost = repoInfo.owner;
