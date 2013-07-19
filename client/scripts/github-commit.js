@@ -1,9 +1,9 @@
 var repo = null;
 var commitIndex = 0 ;
 function commitFile(path, fileContent, callback){
-  repo.postBlob(fileContent, function(err, sha){
-    callback(err, {sha: sha, path: path});
-  });
+	repo.postBlob(fileContent, function(err, sha){
+		callback(err, {sha: sha, path: path});
+	});
 }
 function commitFail(err){
 	$("commitFailReason").text(err);
@@ -18,6 +18,9 @@ $(document).on("addFile", function(evt, data) {
 		$(document).trigger("doneAddFile", {name: fileName, sha: sha, content: "", path: filePath});
 	});
 })
+$('#commitBox').on('show', function (e) {
+	$(document).trigger("commitToGit");
+});
 
 $(document).on("repoSelected", function(e, repoInfo){
 	$(document).trigger("updateGithubInfo", repoInfo);
@@ -28,25 +31,27 @@ $(document).on("repoSelected", function(e, repoInfo){
 	$("#commitConfirm").click(function(){
 		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
 		var currentBranch = repoInfo.branch;
-		$(document).trigger("commitToGit").on("ReceiveEditorContent", function(data){
-			var docs = data.files;
-			var message = $("#commitMessage").val();
-			repo.getRef("heads/" + currentBranch, function(err, latestCommit){
-				if (err) return commitFail(err);
-				if(currentBranch != targetBranch){
-					repo.createRef({
-						ref: "refs/heads/" + targetBranch, 
-						sha: latestCommit
-					}, function(err, refInfo){
-						if(err) return commitFail(err);
-						var sha = refInfo.object.sha;
-						commitMultipleFiles(repo, docs, sha, targetBranch, message);
-					});	
-				}
-				else{
-					commitMultipleFiles(repo, docs, latestCommit, targetBranch, message);
-				}
-			});
+		
+		var docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
+			return {path: file.file.filePath, content: file.file.content };
+		});
+		
+		var message = $("#commitMessage").val();
+		repo.getRef("heads/" + currentBranch, function(err, latestCommit){
+			if (err) return commitFail(err);
+			if(currentBranch != targetBranch){
+				repo.createRef({
+					ref: "refs/heads/" + targetBranch, 
+					sha: latestCommit
+				}, function(err, refInfo){
+					if(err) return commitFail(err);
+					var sha = refInfo.object.sha;
+					commitMultipleFiles(repo, docs, sha, targetBranch, message);
+				});	
+			}
+			else{
+				commitMultipleFiles(repo, docs, latestCommit, targetBranch, message);
+			}
 		});
 	});
 });
@@ -71,6 +76,7 @@ function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
 		});
 	});
 };
+
 function commit(repo, refHash, tree, targetBranch, message){
 	repo.updateTree(refHash, tree, function(err, treeSha){
 		if(err) return commitFail(err);
