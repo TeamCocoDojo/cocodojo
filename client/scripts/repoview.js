@@ -45,7 +45,7 @@ DataSource.prototype.callback = function (options) {
 			element.click(function(evt){
 				var selectedItem = $(this).data();
 				me.getContent(selectedItem.sha, function(err, data){
-					$(document).trigger("repoFileSelected", {name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
+					$(document).trigger("repoFileSelected", {owner: this.owner, repo: this.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
 				});
 			});
 		}

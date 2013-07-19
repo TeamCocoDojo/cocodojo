@@ -2,21 +2,20 @@ var repoOwner = null;
 var repoName = null;
 var commitIndex = 0 ;
 var docs = null;
-function commitFile(path, fileContent, callback){
-	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob(fileContent, function(err, sha){
-		callback(err, {sha: sha, path: path});
-	});
-}
+var currentBranch = null;
+var targetBranch = null;
 function commitFail(err){
 	$("commitFailReason").text(err);
 	$('#commitBox').modal('hide');
 	$('#commitFail').modal('show');
 }
+
 $(document).on("addFile", function(evt, data) {
 	var fileName = data.name;
 	var filePath = data.path;
-	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob("", function(err, sha) {
-		$(document).trigger("doneAddFile", {name: fileName, sha: sha, content: "", path: filePath});
+	cocodojo.getGithubObj(currentBranch).getRepo(repoOwner, repoName).postBlob("", function(err, sha) {
+		if(err) return commitFail(err);
+		$(document.cument).trigger("doneAddFile", {owner: repoOwner, repo: repoName, name: fileName, sha: sha, content: "", path: filePath});
 	});
 });
 
@@ -40,6 +39,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 	$(document).trigger("updateGithubInfo", repoInfo);
 	repoOwner = repoInfo.owner;
 	repoName = repoInfo.name;
+	currentBranch = repoInfo.branch;
 	$("#branch-name").text(repoInfo.branch);
 
 	$("#btnCommitBox").click(function() {
@@ -48,10 +48,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 
 	$("#commitConfirm").click(function(){
 		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
-		var currentBranch = repoInfo.branch;
 		var repo = cocodojo.getGithubObj().getRepo(repoOwner, repoName);
-
-
 		var message = $("#commitMessage").val();
 		repo.getRef("heads/" + currentBranch, function(err, latestCommit){
 			if (err) return commitFail(err);
@@ -94,7 +91,13 @@ function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
 	});
 };
 
-function commit(repo, refHash, tree, targetBranch, message){
+function commitFile(path, fileContent, callback) {
+	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob(fileContent, function(err, sha){
+		callback(err, {sha: sha, path: path});
+	});
+};
+
+function commit(repo, refHash, tree, targetBranch, message) {
 	repo.updateTree(refHash, tree, function(err, treeSha){
 		if(err) return commitFail(err);
 		repo.commit(refHash, treeSha, message, function(err, commit) {
