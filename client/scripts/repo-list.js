@@ -4,7 +4,8 @@ Template.repoTree.rendered = function() {
 }
 
 function createBranchList(repoOwner, repoName){
-	var repo = cocodojo.githubObj.getRepo(repoOwner, repoName);
+	cocodojo.codeSessionHost = cocodojo.githubUser.username; 
+	var repo = cocodojo.getGithubObj().getRepo(repoOwner, repoName);
 	repo.listBranches(function(err, branches) {
 		var ul = $("#branch-list");
 		branches.forEach( function(branch) {
@@ -17,13 +18,13 @@ function createBranchList(repoOwner, repoName){
 		});
 		ul.find("a").click(function(){
 			var branchName = $(this).attr("data-branch");
-			CodeSession.update({_id: Session.get("codeSessionId")}, {githubHost: repoOwner, githubRepo: repoName, githubBranch: branchName});
+			CodeSession.update({_id: Session.get("codeSessionId")}, {codeSessionHost: cocodojo.githubUser.username, githubHost: repoOwner, githubRepo: repoName, githubBranch: branchName});
 		});
 	});
 };
 
 $(document).on("githubObjectCreated", function(){
-	var user = cocodojo.githubObj.getUser();
+	var user = cocodojo.getGithubObj().getUser();
 	user.repos(function(err, repos) {
 		var ul = $("#repo-list");
 		ul.empty();

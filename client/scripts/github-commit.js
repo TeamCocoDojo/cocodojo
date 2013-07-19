@@ -20,10 +20,9 @@ $(document).on("addFile", function(evt, data) {
 })
 
 $(document).on("repoSelected", function(e, repoInfo){
-	cocodojo.repoHost = repoInfo.owner;
 	$(document).trigger("updateGithubInfo", repoInfo);
 	$("#branch-name").text(repoInfo.branch);
-	repo = cocodojo.githubObj.getRepo(repoInfo.owner, repoInfo.name); 
+	repo = cocodojo.getGithubObj().getRepo(repoInfo.owner, repoInfo.name); 
 	$("#commitConfirm").removeAttr("disabled");
 
 	$("#commitConfirm").click(function(){
