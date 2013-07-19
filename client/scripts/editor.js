@@ -21,6 +21,7 @@ var insertNewTab = function(data) {
     insertFileTab({
       content: data.content,
       sha: data.sha,
+      change: data.change,
       name: data.name,
       path: data.path
     });
@@ -219,19 +220,15 @@ $(document).on("commitToGit", function(data) {
   });
 });
 
-$(document).on("preview", function(data) {
-  ChangeLog.insert({
-    codeSessionId: Session.get("codeSessionId"),
-  });
-});
-
 $(document).on("repoFileSelected", function(event, data) {
   if (cocodojo.util.isTextFile(data.name)) {
+    data.change = "modify";
     insertNewTab(data);
   }
 
 });
 
 $(document).on("doneAddFile", function(event, data) {
+  data.change = "add";
   insertNewTab(data);
 });
