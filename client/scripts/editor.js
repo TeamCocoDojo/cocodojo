@@ -16,6 +16,24 @@ var existTab = function(sha) {
   return tabs[sha];
 }
 
+var insertNewTab = function(data) {
+  if (!existTab(data.sha)) {
+    cocodojo.insertFileTab({
+      content: data.content,
+      sha: data.sha,
+      name: data.name,
+      path: data.path
+    });
+  }
+  else {
+    var tab = tabs[data.sha];
+    if (tab.isClosed) {
+      tab.draw();
+    }
+    tabs[data.sha].active();
+  }
+}
+
 var saveAllTabs = function() {
   var records = {};
   var contents = {};
@@ -24,6 +42,7 @@ var saveAllTabs = function() {
     records[key] = tab.record;
     contents[key] = tab.cm.getValue();
   }
+
   Meteor.call('saveAllFileTabs', records, contents, function(error) {
     var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
     var documents = [];
@@ -42,7 +61,6 @@ var saveAllTabs = function() {
       type: "ReceiveEditorContent",
       files: documents
     });
-
   });
 }
 
@@ -71,7 +89,6 @@ var Tab = function(record) {
 
   me.editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
   me.editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
-    console.log(me.id);
     me.cm.setValue(obj.str);
     me.cmClient = new EditorClient(
       obj.revision,
@@ -157,7 +174,7 @@ cocodojo.insertFileTab = function(file) {
       codeSessionId: Session.get("codeSessionId"),
       isOpen: true,
       file: file,
-      userId: Session.get('userId')
+      userId: Session.get('userSession')
     });
   }
   else {
@@ -185,7 +202,7 @@ Template.codeMirror.rendered = function() {
       console.log("changed");
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
-        if (record.userId == Session.get("userId")) {
+        if (record.userId == Session.get("userSession")) {
           addFileTab(record);
         }
       }
@@ -206,24 +223,16 @@ Template.codeMirror.events = {
   }
 }
 
-$(document).on("commitToGit", function(data){
+$(document).on("commitToGit", function(data) {
   saveAllTabs();
 });
 
-$(document).on("repoFileSelected", function(event, data){
-  if (!existTab(data.sha)) {
-    cocodojo.insertFileTab({
-      content: data.content,
-      sha: data.sha,
-      name: data.name,
-      path: data.path
-    });
+$(document).on("repoFileSelected", function(event, data) {
+  if (cocodojo.util.isTextFile(data.name)) {
+    insertNewTab(data);
   }
-  else {
-    var tab = tabs[data.sha];
-    if (tab.isClosed) {
-      tab.draw();
-    }
-    tabs[data.sha].active();
-  }
+});
+
+$(document).on("doneAddFile", function(event, data) {
+  insertNewTab(data);
 });

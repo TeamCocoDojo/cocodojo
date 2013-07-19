@@ -8,12 +8,8 @@ Template.githubLogin.repoNotSelected = function (){
 };
 Template.githubLogin.rendered = function(){
   Meteor.call("githubUser", function(error, user){
-    cocodojo.githubUser = user.username;
-    cocodojo.githubObj = new GithubLib({
-      token: user.accessToken,
-      auth: "oauth"
-    });
+    cocodojo.githubUser = user;
     $(document).trigger("updateGithubInfo");
-    $(document).trigger("githubObjectCreated", {github:cocodojo.githubObj});
+    $(document).trigger("githubObjectCreated" );
   });
 }

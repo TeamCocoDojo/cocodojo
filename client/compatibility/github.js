@@ -182,6 +182,15 @@ var meteor_Github = Github;
         });
       }
 
+      // Get collaborators
+      // ------
+      this.getCollaborators = function(cb){
+      	_request("GET", repoPath + "/collaborators", null, function(err, users){
+      		if(err) return cb(err);
+      		cb(null, users);
+				})
+			};
+
       // Get a particular reference
       // -------
 
