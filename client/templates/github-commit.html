@@ -8,6 +8,11 @@
   </div>
   <div class="modal-body">
 		<div>
+			<Strong>Files to be commited: </strong>
+			<div>
+				<ul id="files-commited">
+				</ul>
+			</div>
 			<strong>Commit to: </strong>
 			<label class="radio">
 				<input type="radio" name="optionBranches" id="optionCurrentBranch" value="optionCurrentBranch" checked>
@@ -24,14 +29,20 @@
 		</div>
 	</div>
 </div>
-<div id="commitSuccess" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="alert alert-success">
+<div id="commitSuccess" class="modal hide fade alert alert-success" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-header">
       Commit Success
-  </div>
+	</div>
+	<div class="modal-body">
+			Congraduation! Click anywhere to continue your work! 
+	</div>
 </div>
-<div id="commitFail" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="alert alert-success">
-    Commit Fail -  Reason<br/>
+<div id="commitFail" class="alert alert-error modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-header">
+		Commit Fail
+	</div>
+	<div class="modal-body">
+    Reason:<br/>
     <div id="commitFailReason"></div>
   </div>
 </div>
