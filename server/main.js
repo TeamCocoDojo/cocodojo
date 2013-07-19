@@ -4,6 +4,7 @@ Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 FileTab = new Meteor.Collection("filetab");
+ChangeLog = new Meteor.Collection("changelog");
 
 if(Meteor.isServer) {
   Meteor.publish("codesession", function(code_session_id) {
@@ -68,6 +69,8 @@ if(Meteor.isServer) {
 
   Meteor.methods({
     saveAllFileTabs: function(records, contents) {
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      console.log("Save content");
       for (var key in records) {
         var record = records[key];
         var content = contents[key];

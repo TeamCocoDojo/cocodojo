@@ -25,11 +25,27 @@ $(document).on("repoSelected", function(e, repoInfo){
 	repo = cocodojo.getGithubObj().getRepo(repoInfo.owner, repoInfo.name); 
 	$("#commitConfirm").removeAttr("disabled");
 
+	$("#btnCommitBox").click(function() {
+	   $(document).trigger("commitToGit");
+	});
+
 	$("#commitConfirm").click(function(){
 		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
 		var currentBranch = repoInfo.branch;
-		$(document).trigger("commitToGit").on("ReceiveEditorContent", function(data){
-			var docs = data.files;
+        $(document).trigger("commitToGit").on("ReceiveEditorContent", function(data){
+			var docs = []
+			var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
+    		fileTabs.forEach(function(tab){
+          		var doc = {
+                    content: tab.file.content,
+                    path: tab.file.path,
+                    sha: tab.file.sha,
+                    name: tab.file.name
+                };
+                if(doc.path){
+                    docs.push(doc);
+                }
+            });
 			var message = $("#commitMessage").val();
 			repo.getRef("heads/" + currentBranch, function(err, latestCommit){
 				if (err) return commitFail(err);
@@ -58,7 +74,6 @@ function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
 		commitFile(doc.path, doc.content, function(err, item){
 			commitIndex += 1;
 			if(err) return commitFail(err);
-
 			tree.push({
 				"path": item.path,
 				"mode": "100644",

@@ -18,7 +18,7 @@ var existTab = function(sha) {
 
 var insertNewTab = function(data) {
   if (!existTab(data.sha)) {
-    cocodojo.insertFileTab({
+    insertFileTab({
       content: data.content,
       sha: data.sha,
       name: data.name,
@@ -42,25 +42,10 @@ var saveAllTabs = function() {
     records[key] = tab.record;
     contents[key] = tab.cm.getValue();
   }
-
+  console.log(contents);
+  console.log(records);
   Meteor.call('saveAllFileTabs', records, contents, function(error) {
-    var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
-    var documents = [];
-    fileTabs.forEach(function(tab){
-      var doc = {
-        content: tab.file.content, 
-        path: tab.file.path,
-        sha: tab.file.sha,
-        name: tab.file.name
-      };
-      if(doc.path){
-        documents.push(doc);
-      }
-    });
-    $(document).trigger({
-      type: "ReceiveEditorContent",
-      files: documents
-    });
+    console.log(error);
   });
 }
 
@@ -164,7 +149,7 @@ Tab.prototype.rename = function(name) {
 
 }
 
-cocodojo.insertFileTab = function(file) {
+var insertFileTab = function(file) {
   var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.sha": file.sha});
   if (!record) {
     var id = new Meteor.Collection.ObjectID();
@@ -210,6 +195,15 @@ Template.codeMirror.rendered = function() {
     removed: function () {
     }
   });
+
+  var changeLogs = ChangeLog.find({codeSessionId: Session.get("codeSessionId")});
+  changeLogs.observeChanges({
+    added: function(object) {
+      console.log("New changeLog");
+      saveAllTabs();
+    }
+  });
+  Meteor.subscribe("changelog", Session.get("codeSessionId"));
 }
 
 Template.codeMirror.events = {
@@ -224,10 +218,13 @@ Template.codeMirror.events = {
 }
 
 $(document).on("commitToGit", function(data) {
-  saveAllTabs();
+  ChangeLog.insert({
+    codeSessionId: Session.get("codeSessionId"),
+  });
 });
 
 $(document).on("repoFileSelected", function(event, data) {
+  console.log(data);
   if (cocodojo.util.isTextFile(data.name)) {
     insertNewTab(data);
   }
