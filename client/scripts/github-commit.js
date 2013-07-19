@@ -70,10 +70,7 @@ function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
 		commitFile(doc.path, doc.content, function(err, item){
 			commitIndex += 1;
 			if(err) return commitFail(err);
-<<<<<<< HEAD
-			
-=======
->>>>>>> refactorying-commit
+
 			tree.push({
 				"path": item.path,
 				"mode": "100644",
