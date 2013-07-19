@@ -29,6 +29,10 @@ $(document).on("repoSelected", function(e, repoInfo){
 	$("#branch-name").text(repoInfo.branch);
 	$("#commitConfirm").removeAttr("disabled");
 
+	$("#btnCommitBox").click(function() {
+	   $(document).trigger("commitToGit");
+	});
+
 	$("#commitConfirm").click(function(){
 		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
 		var currentBranch = repoInfo.branch;
@@ -42,7 +46,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 		var message = $("#commitMessage").val();
 		repo.getRef("heads/" + currentBranch, function(err, latestCommit){
 			if (err) return commitFail(err);
-			if(currentBranch != targetBranch){
+			if (currentBranch != targetBranch) {
 				repo.createRef({
 					ref: "refs/heads/" + targetBranch, 
 					sha: latestCommit
@@ -52,7 +56,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 					commitMultipleFiles(repo, docs, sha, targetBranch, message);
 				});	
 			}
-			else{
+			else {
 				commitMultipleFiles(repo, docs, latestCommit, targetBranch, message);
 			}
 		});
@@ -66,7 +70,10 @@ function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
 		commitFile(doc.path, doc.content, function(err, item){
 			commitIndex += 1;
 			if(err) return commitFail(err);
+<<<<<<< HEAD
 			
+=======
+>>>>>>> refactorying-commit
 			tree.push({
 				"path": item.path,
 				"mode": "100644",

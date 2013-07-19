@@ -5,15 +5,16 @@ Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 FileTab = new Meteor.Collection("filetab");
+ChangeLog = new Meteor.Collection("changelog");
 
 if (Meteor.isClient) {
   cocodojo.editorSocket = io.connect(document.location.hostname + '/editor', {port: 3333});
   cocodojo.videoSocket = io.connect(document.location.hostname + '/video', {port: 3333});
   cocodojo.getGithubObj = function(){
-  	if(cocodojo.githubUser === undefined) {
-  		return new GithubLib({});
-		}
-  	if(cocodojo.githubObj === undefined ){
+  	if (cocodojo.githubUser === undefined) {
+      return new GithubLib({});
+    }
+  	if (cocodojo.githubObj === undefined) {
   		cocodojo.githubObj = new GithubLib({
   			token: cocodojo.githubUser.accessToken,
   			auth: "oauth"
@@ -32,6 +33,7 @@ if (Meteor.isClient) {
       Meteor.subscribe("whiteboard", Session.get("codeSessionId"));
       Meteor.subscribe("whiteboard_cursor", Session.get("codeSessionId"));
       Meteor.subscribe("filetab", Session.get("codeSessionId"));
+      Meteor.subscribe("changelog", Session.get("codeSessionId"));
     });
 
     // (c) 2012-2013 Tim Baumann <tim@timbaumann.info> (http://timbaumann.info)
@@ -101,20 +103,6 @@ if (Meteor.isClient) {
           "sessionName" : "New Dojo",
           //"users" : [ { userId: Session.get("userId"), username: Session.get("username") } ],
           "password" : "",
-        });
-
-        var id = new Meteor.Collection.ObjectID();
-        
-        FileTab.insert({
-          _id: id,
-          fileTab: id,
-          codeSessionId: codeSessionId,
-          isOpen: true,
-          file: {
-            content: "Welcome to Coco Dojo, 5 Bucks",
-            sha: codeSessionId + "-untitled",
-            name: "untitled"
-          }
         });
 
         Session.set("codeSessionId", codeSessionId);

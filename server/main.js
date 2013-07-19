@@ -4,6 +4,7 @@ Chatbox = new Meteor.Collection("chatbox");
 Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 FileTab = new Meteor.Collection("filetab");
+ChangeLog = new Meteor.Collection("changelog");
 
 if(Meteor.isServer) {
   Meteor.publish("codesession", function(code_session_id) {
@@ -38,6 +39,10 @@ if(Meteor.isServer) {
     check(code_session_id, String);
     return FileTab.find({codeSessionId: code_session_id});
   });
+  Meteor.publish("changelog", function(code_session_id) {
+    check(code_session_id, String);
+    return ChangeLog.find({codeSessionId: code_session_id});
+  });
 
   var io = socketIO.listen(3333);
   var syncServers = {};
@@ -61,8 +66,15 @@ if(Meteor.isServer) {
       if (!record.isReady) {
         FileTab.update(record, {$set: {isSocketReady: true}});
       }
-    },
-    removed: function () {
+    }
+  });
+
+  var changelogs = ChangeLog.find({});
+  changelogs.observeChanges({
+    added: function(id, record) {
+      if (!record.isOld) {
+        ChangeLog.update({_id: id}, {$set: {isOld: true}});
+      } 
     }
   });
 

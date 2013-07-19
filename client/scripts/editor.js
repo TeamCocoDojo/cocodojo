@@ -18,7 +18,7 @@ var existTab = function(sha) {
 
 var insertNewTab = function(data) {
   if (!existTab(data.sha)) {
-    cocodojo.insertFileTab({
+    insertFileTab({
       content: data.content,
       sha: data.sha,
       name: data.name,
@@ -42,25 +42,10 @@ var saveAllTabs = function() {
     records[key] = tab.record;
     contents[key] = tab.cm.getValue();
   }
-
+  console.log(contents);
+  console.log(records);
   Meteor.call('saveAllFileTabs', records, contents, function(error) {
-    var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
-    var documents = [];
-    fileTabs.forEach(function(tab){
-      var doc = {
-        content: tab.file.content, 
-        path: tab.file.path,
-        sha: tab.file.sha,
-        name: tab.file.name
-      };
-      if(doc.path){
-        documents.push(doc);
-      }
-    });
-    $(document).trigger({
-      type: "ReceiveEditorContent",
-      files: documents
-    });
+    console.log(error);
   });
 }
 
@@ -71,7 +56,6 @@ var Tab = function(record) {
   me.record = record;
   me.newEditorWrapper = $("<div></div>");
   me.newEditorWrapper.attr("id", id);
-
   me.newEditorInstance = $("<div class='editorInstance'></div>");
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
 
@@ -164,7 +148,7 @@ Tab.prototype.rename = function(name) {
 
 }
 
-cocodojo.insertFileTab = function(file) {
+var insertFileTab = function(file) {
   var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.sha": file.sha});
   if (!record) {
     var id = new Meteor.Collection.ObjectID();
@@ -197,19 +181,25 @@ var addFileTab = function(record) {
 Template.codeMirror.rendered = function() {
   var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
   fileTabs.observeChanges({
-    
     changed: function(id, changed) {
-      console.log("changed");
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
         if (record.userId == Session.get("userSession")) {
           addFileTab(record);
         }
       }
-    },
-    removed: function () {
     }
   });
+
+  var changeLogs = ChangeLog.find({codeSessionId: Session.get("codeSessionId")});
+  changeLogs.observeChanges({
+    changed: function(id, changed) {
+      if (changed.isOld == true) {
+        saveAllTabs();
+      }
+    }
+  });
+  
 }
 
 Template.codeMirror.events = {
@@ -224,13 +214,22 @@ Template.codeMirror.events = {
 }
 
 $(document).on("commitToGit", function(data) {
-  saveAllTabs();
+  ChangeLog.insert({
+    codeSessionId: Session.get("codeSessionId"),
+  });
+});
+
+$(document).on("preview", function(data) {
+  ChangeLog.insert({
+    codeSessionId: Session.get("codeSessionId"),
+  });
 });
 
 $(document).on("repoFileSelected", function(event, data) {
   if (cocodojo.util.isTextFile(data.name)) {
     insertNewTab(data);
   }
+
 });
 
 $(document).on("doneAddFile", function(event, data) {
