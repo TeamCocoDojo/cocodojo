@@ -1,7 +1,8 @@
-var repo = null;
+var repoOwner = null;
+var repoName = null;
 var commitIndex = 0 ;
 function commitFile(path, fileContent, callback){
-	repo.postBlob(fileContent, function(err, sha){
+	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob(fileContent, function(err, sha){
 		callback(err, {sha: sha, path: path});
 	});
 }
@@ -11,10 +12,9 @@ function commitFail(err){
 	$('#commitFail').modal('show');
 }
 $(document).on("addFile", function(evt, data) {
-	console.log(data);
 	var fileName = data.name;
 	var filePath = data.path;
-	repo.postBlob("", function(err, sha) {
+	cocodojo.getGithubObj().getRepo(repoOwner, repoName).postBlob("", function(err, sha) {
 		$(document).trigger("doneAddFile", {name: fileName, sha: sha, content: "", path: filePath});
 	});
 })
@@ -24,16 +24,19 @@ $('#commitBox').on('show', function (e) {
 
 $(document).on("repoSelected", function(e, repoInfo){
 	$(document).trigger("updateGithubInfo", repoInfo);
+	repoOwner = repoInfo.owner;
+	repoName = repoInfo.name;
 	$("#branch-name").text(repoInfo.branch);
-	repo = cocodojo.getGithubObj().getRepo(repoInfo.owner, repoInfo.name); 
 	$("#commitConfirm").removeAttr("disabled");
 
 	$("#commitConfirm").click(function(){
 		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
 		var currentBranch = repoInfo.branch;
+		var repo = cocodojo.getGithubObj().getRepo(repoOwner, repoName);
 		
 		var docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
-			return {path: file.file.filePath, content: file.file.content };
+			if(file.file.path === undefined) return null;
+			return {path: file.file.path, content: file.file.content };
 		});
 		
 		var message = $("#commitMessage").val();
@@ -63,13 +66,14 @@ function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
 		commitFile(doc.path, doc.content, function(err, item){
 			commitIndex += 1;
 			if(err) return commitFail(err);
-
+			
 			tree.push({
 				"path": item.path,
 				"mode": "100644",
 				"type": "blob",
 				"sha": item.sha
 			});
+
 			if(commitIndex == docs.length){
 				commit(repo, refHash, tree, targetBranch, message);
 			}
