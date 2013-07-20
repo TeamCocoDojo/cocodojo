@@ -12,26 +12,26 @@ var tabs = {};
 var sockets = {};
 var count = 0;
 
-var existTab = function(sha) {
-  return tabs[sha];
+var existTab = function(path) {
+  return tabs[path];
 }
 
 var insertNewTab = function(data) {
-  if (!existTab(data.sha)) {
+  if (!existTab(data.path)) {
     insertFileTab({
       content: data.content,
-      sha: data.sha,
+      path: data.path,
       change: data.change,
       name: data.name,
       path: data.path
     });
   }
   else {
-    var tab = tabs[data.sha];
+    var tab = tabs[data.path];
     if (tab.isClosed) {
       tab.draw();
     }
-    tabs[data.sha].active();
+    tabs[data.path].active();
   }
 }
 
@@ -51,7 +51,7 @@ var saveAllTabs = function() {
 }
 
 var Tab = function(record) {
-  var id = record.file.sha;
+  var id = record.file.path;
   var me = this;
   me.id = count++;
   me.record = record;
@@ -150,7 +150,7 @@ Tab.prototype.rename = function(name) {
 }
 
 var insertFileTab = function(file) {
-  var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.sha": file.sha});
+  var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.path": file.path});
   if (!record) {
     var id = new Meteor.Collection.ObjectID();
     FileTab.insert({
@@ -168,13 +168,13 @@ var insertFileTab = function(file) {
 };
 
 var addFileTab = function(record) {
-  if (tabs[record.file.sha]) {
-    var tab = tabs[record.file.sha];
+  if (tabs[record.file.path]) {
+    var tab = tabs[record.file.path];
     tab.draw();
   }
   else {
     var tab = new Tab(record);
-    tabs[record.file.sha] = tab;
+    tabs[record.file.path] = tab;
     tab.active();
   }
 };
