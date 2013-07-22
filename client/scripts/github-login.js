@@ -13,3 +13,8 @@ Template.githubLogin.rendered = function(){
     $(document).trigger("githubObjectCreated" );
   });
 }
+$(document).on("updateGithubInfo", function(evt, repoInfo){
+	if(cocodojo.githubUser !== undefined && cocodojo.githubUser.username == cocodojo.codeSessionHost){
+		$("#btnCommitBox").removeClass("hide");
+	}
+});
