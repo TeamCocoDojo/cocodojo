@@ -43,10 +43,13 @@ var saveAllTabs = function() {
     records[key] = tab.record;
     contents[key] = tab.cm.getValue();
   }
-  console.log(contents);
-  console.log(records);
   Meteor.call('saveAllFileTabs', records, contents, function(error) {
-    console.log(error);
+    if (error) {
+      console.log(error);
+    }
+    else {
+      $(document).trigger("finishSaveFile", Session.get("userSession"));
+    }
   });
 }
 
@@ -200,7 +203,6 @@ Template.codeMirror.rendered = function() {
       }
     }
   });
-  
 }
 
 Template.codeMirror.events = {
@@ -220,12 +222,15 @@ $(document).on("commitToGit", function(data) {
   });
 });
 
-$(document).on("repoFileSelected", function(event, data) {
-  if (cocodojo.util.isTextFile(data.name)) {
-    data.change = "modify";
-    insertNewTab(data);
-  }
+$(document).on("preview", function(data) {
+  ChangeLog.insert({
+    codeSessionId: Session.get("codeSessionId"),
+  });
+});
 
+$(document).on("repoFileSelected", function(event, data) {
+  data.change = "modify";
+  insertNewTab(data);
 });
 
 $(document).on("doneAddFile", function(event, data) {
