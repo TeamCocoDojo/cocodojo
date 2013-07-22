@@ -94,7 +94,7 @@ if(Meteor.isServer) {
     closeFileTab: function(record, content) {
       FileTab.update(
         {_id: record.fileTab},
-        {$set: {"file.content": content}}
+        {$set: {"file.content": content, "isOpen": false}}
       );
     },
 

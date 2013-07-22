@@ -47,9 +47,6 @@ var saveAllTabs = function() {
     if (error) {
       console.log(error);
     }
-    else {
-      $(document).trigger("finishSaveFile", Session.get("userSession"));
-    }
   });
 }
 
@@ -76,7 +73,7 @@ var Tab = function(record) {
   });
 
   me.editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
-  me.editorSocket.emit("join", {userSessionId: Session.get("userSession"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
+  me.editorSocket.emit("join", {userSessionId: Session.get("userId"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
     me.cm.setValue(obj.str);
     me.cmClient = new EditorClient(
       obj.revision,
@@ -153,7 +150,7 @@ Tab.prototype.rename = function(name) {
 }
 
 var insertFileTab = function(file) {
-  var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.path": file.path});
+  var record = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.path": file.path, userId: Session.get('userId')});
   if (!record) {
     var id = new Meteor.Collection.ObjectID();
     FileTab.insert({
@@ -162,7 +159,7 @@ var insertFileTab = function(file) {
       codeSessionId: Session.get("codeSessionId"),
       isOpen: true,
       file: file,
-      userId: Session.get('userSession')
+      userId: Session.get('userId')
     });
   }
   else {
@@ -188,7 +185,7 @@ Template.codeMirror.rendered = function() {
     changed: function(id, changed) {
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
-        if (record.userId == Session.get("userSession")) {
+        if (record.userId == Session.get("userId")) {
           addFileTab(record);
         }
       }
@@ -230,10 +227,12 @@ $(document).on("preview", function(data) {
 
 $(document).on("repoFileSelected", function(event, data) {
   data.change = "modify";
+  console.log(data);
   insertNewTab(data);
 });
 
 $(document).on("doneAddFile", function(event, data) {
   data.change = "add";
+  console.log(data);
   insertNewTab(data);
 });
