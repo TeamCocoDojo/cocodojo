@@ -15,7 +15,7 @@ $(document).on("addFile", function(evt, data) {
 	var filePath = data.path;
 	cocodojo.getGithubObj(currentBranch).getRepo(repoOwner, repoName).postBlob("", function(err, sha) {
 		if(err) return commitFail(err);
-		$(document.cument).trigger("doneAddFile", {owner: repoOwner, repo: repoName, name: fileName, sha: sha, content: "", path: filePath});
+		$(document).trigger("doneAddFile", {owner: repoOwner, repo: repoName, name: fileName, sha: sha, content: "", path: filePath});
 	});
 });
 
