@@ -13,15 +13,19 @@ Template.commitBox.rendered = function() {
 	$('#commitBox').on('show', function () {
 		console.log("save");
 		$(document).trigger("commitToGit");
-		docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
-			if(file.file.path === undefined) return null;
-			return {path: file.file.path, content: file.file.content };
-		});
-		$("#files-commited").empty();
-		docs.forEach(function(doc){
-			$("<li/>").text(doc.path).appendTo("#files-commited");
-		});
-		$("#commitConfirm").removeAttr("disabled");
+		$(".loading").removeClass("hide");
+		setTimeout(function () {
+			docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
+				if(file.file.path === undefined) return null;
+				return {path: file.file.path, content: file.file.content };
+			});
+			$(".loading").addClass("hide");
+			$("#files-commited").empty();
+			docs.forEach(function(doc){
+				$("<li/>").text(doc.path).appendTo("#files-commited");
+			});
+			$("#commitConfirm").removeAttr("disabled");
+		}, 3000);
 	});
 }
 
