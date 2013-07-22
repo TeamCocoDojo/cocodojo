@@ -5,7 +5,7 @@ var FolderList = function (owner, repoName, branch, element) {
 	this.element = element;
 	this.folders = {};
 	element.empty();
-	this.getFolderList({});
+	setTimeout("cocodojo.folderlist.getFolderList({})", 1000);
 }
 FolderList.prototype.getRepo = function(){
 	var githubObj = cocodojo.getGithubObj();
@@ -24,9 +24,11 @@ FolderList.prototype.addToFolderList = function ( fileName, path) {
 			return $($($(item).children(".tree-folder-header")[0]).children(".tree-folder-name")[0]).text() == pathes[i];
 		})[0]).children(".tree-folder-content");
 	}
+	
 	var includeItem = cocodojo.folderlist.createFileItem({path: path, name: fileName });
 	targetFolder.append(includeItem);
 }
+
 FolderList.prototype.createFolderItem = function ( data ) {
 	var me = this;
 	var header = $("<div/>").addClass('tree-folder-header').append("<i class='icon-folder-close'></i>").append("<div class='tree-folder-name'>" + data.name + "</div>");
@@ -41,6 +43,7 @@ FolderList.prototype.createFolderItem = function ( data ) {
 		var selectedItem = element.data();
 		me.getFolderList({sha: selectedItem.sha, path: selectedItem.path, element: $(element.find(".tree-folder-content")[0])});
 	});
+	
 	header.mousedown(function(e) {
 		if (e.button == 2) {
 			e.stopPropagation();
@@ -57,7 +60,7 @@ FolderList.prototype.createFileItem = function (data) {
 	element.click(function(evt){
 		var selectedItem = $(this).data();
 		me.getContent(selectedItem.sha, function(err, data){
-			$(document).trigger("repoFileSelected", {owner: this.owner, repo: this.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
+			$(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
 		});
 	});
 	return element;
@@ -191,8 +194,13 @@ Template.repoview.events({
 $(document).on("addFile", function(evt, data) {
 	var fileName = data.name;
 	var filePath = data.path;
+	FileFolder.insert({
+		codeSessionId: Session.get("codeSessionId"),
+		type: "file",
+		path: data.path, 
+		name: data.name
+	});
 	$(document).trigger("doneAddFile", {owner: cocodojo.repoOwner, repo: cocodojo.repoName, name: fileName, content: "", path: filePath});
-	cocodojo.folderlist.addToFolderList(fileName, filePath);
 });
 
 function setGithubFileTree(fields){
@@ -218,6 +226,13 @@ Template.repoview.rendered = function() {
 			setGithubFileTree(fields);
 		}
 	});
+	FileFolder.find({codeSessionId: Session.get("codeSessionId")}).observeChanges({
+		added: function(id, itemObj) {
+			console.log(itemObj);
+			cocodojo.folderlist.addToFolderList(itemObj.name, itemObj.path);
+		}
+	});
+	
 	$.contextMenu({
 		selector: '.tree',
 		items: {
