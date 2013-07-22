@@ -223,10 +223,8 @@ $(document).on("commitToGit", function(data) {
 });
 
 $(document).on("repoFileSelected", function(event, data) {
-  if (cocodojo.util.isTextFile(data.name)) {
-    data.change = "modify";
-    insertNewTab(data);
-  }
+  data.change = "modify";
+  insertNewTab(data);
 });
 
 $(document).on("doneAddFile", function(event, data) {

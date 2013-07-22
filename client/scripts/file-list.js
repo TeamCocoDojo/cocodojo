@@ -52,6 +52,7 @@ FolderList.prototype.createFolderItem = function ( data ) {
 };
 
 FolderList.prototype.createFileItem = function (data) {
+	var me = this;
 	var element = $("<div></div>").addClass('tree-item').append("<i class='tree-dot'></i>").append("<div class='tree-item-name'>" + data.name + "</div>");
 	element.click(function(evt){
 		var selectedItem = $(this).data();
