@@ -237,6 +237,12 @@ $(document).on("commitToGit", function(data) {
   });
 });
 
+$(document).on("preview", function(data) {
+  ChangeLog.insert({
+    codeSessionId: Session.get("codeSessionId"),
+  });
+});
+
 $(document).on("repoFileSelected", function(event, data) {
   data.change = "modify";
   insertNewTab(data);
