@@ -24,9 +24,13 @@ FolderList.prototype.addToFolderList = function ( fileName, path) {
 			return $($($(item).children(".tree-folder-header")[0]).children(".tree-folder-name")[0]).text() == pathes[i];
 		})[0]).children(".tree-folder-content");
 	}
+
+	
 	var includeItem = cocodojo.folderlist.createFileItem({path: path, name: fileName });
 	targetFolder.append(includeItem);
 }
+
+
 FolderList.prototype.createFolderItem = function ( data ) {
 	var me = this;
 	var header = $("<div/>").addClass('tree-folder-header').append("<i class='icon-folder-close'></i>").append("<div class='tree-folder-name'>" + data.name + "</div>");
@@ -52,11 +56,13 @@ FolderList.prototype.createFolderItem = function ( data ) {
 };
 
 FolderList.prototype.createFileItem = function (data) {
+	var me = this;
 	var element = $("<div></div>").addClass('tree-item').append("<i class='tree-dot'></i>").append("<div class='tree-item-name'>" + data.name + "</div>");
 	element.click(function(evt){
 		var selectedItem = $(this).data();
 		me.getContent(selectedItem.sha, function(err, data){
-			$(document).trigger("repoFileSelected", {owner: this.owner, repo: this.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
+			console.log(me.owner, me.repoName);
+			$(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
 		});
 	});
 	return element;
