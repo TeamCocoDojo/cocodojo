@@ -23,7 +23,9 @@ var insertNewTab = function(data) {
       path: data.path,
       change: data.change,
       name: data.name,
-      path: data.path
+      path: data.path,
+      owner: data.owner,
+      repo: data.repo
     });
   }
   else {
@@ -50,6 +52,10 @@ var saveAllTabs = function() {
   });
 }
 
+var getFileTabSocketId = function(record) {
+  return (record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
+}
+
 var Tab = function(record) {
   var id = record.file.path;
   var me = this;
@@ -72,8 +78,10 @@ var Tab = function(record) {
     mode: syntax
   });
 
-  me.editorSocket = io.connect(document.location.hostname + "/filesync" + record.fileTab, {port: 3333});
-  me.editorSocket.emit("join", {userSessionId: Session.get("userId"), fileId: record.fileTab.toHexString()}).on("doc", function(obj){
+  var socketId = getFileTabSocketId(record);
+
+  me.editorSocket = io.connect(document.location.hostname + "/filesync" + socketId, {port: 3333});
+  me.editorSocket.emit("join", {userSessionId: Session.get("userId"), fileId: socketId}).on("doc", function(obj){
     me.cm.setValue(obj.str);
     me.cmClient = new EditorClient(
       obj.revision,
