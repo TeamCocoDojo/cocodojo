@@ -22,6 +22,7 @@ var
       }
 
       // Upload and replace edited files
+      $(document).trigger("preview");
       var fileTabs = FileTab.find({});
       setTimeout(function(){
         fileTabs.forEach(function(d){
