@@ -44,7 +44,7 @@ Template.preview.rendered = function() {
 
       setTimeout(function(){
         window.open(serverAddress+":3333/"+Session.get('codeSessionId'),'Preview');
-      }, 6000);
+      }, 8000);
 
     });
   });
