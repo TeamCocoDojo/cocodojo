@@ -3,8 +3,8 @@ var
   serverAddress = "http://live.cocodojo.com";
   liveSocket = io.connect(serverAddress, {port: 3333} );
 
-  Template.preview.rendered = function() {
-    liveSocket.on('livePreview', function(data){
+Template.preview.rendered = function() {
+  liveSocket.on('livePreview', function(data){
     $('#preview-btn').click(function(){
 
       var codeSession = CodeSession.find({}).fetch();
@@ -38,12 +38,18 @@ var
       }, 3000);
 
       // Open preview window (temporary)
-      setTimeout(function(){
-        window.open(serverAddress+":3333/"+Session.get('codeSessionId'),'Preview');
-      }, 6000);
+      // setTimeout(function(){
+      //   window.open(serverAddress+":3333/"+Session.get('codeSessionId'),'Preview');
+      // }, 6000);
 
     });
   });
+
+  liveSocket.on('fileSaved', function(data){
+    console.log(fileSaved);
+    window.open(serverAddress+":3333/"+Session.get('codeSessionId'),'Preview');
+  });
+
 };
 
 

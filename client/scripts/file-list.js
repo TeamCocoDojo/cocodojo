@@ -160,7 +160,7 @@ FolderList.prototype.getFolderList =  function (options, callback) {
 				path: options.path + item.path + ((item.type == "blob")?"":"/"),
 				name: item.path,
 				sha: item.sha,
-				type: (item.type == "blob")?"item":"folder" 
+				type: (item.type == "blob")?"item":"folder"
 			};
 		});
 		self.createFolderList({ data: data, element: element, start: 0, end: 0, count: 0, pages: 0, page: 0 });
@@ -210,7 +210,7 @@ function setGithubFileTree(fields){
 
 Template.repoview.rendered = function() {
 	CodeSession.find({_id: Session.get("codeSessionId")}).observeChanges({
-		added: function(id, fields){ 
+		added: function(id, fields){
 			setGithubFileTree(fields);
 		},
 		changed:function (id, fields){
