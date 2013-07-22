@@ -5,6 +5,7 @@ Whiteboard = new Meteor.Collection("whiteboard");
 WhiteboardCursor = new Meteor.Collection("whiteboard_cursor");
 FileTab = new Meteor.Collection("filetab");
 ChangeLog = new Meteor.Collection("changelog");
+FileFolder = new Meteor.Collection("filefolder");
 
 if(Meteor.isServer) {
   var getFileTabSocketId = function(record) {
@@ -38,6 +39,10 @@ if(Meteor.isServer) {
   Meteor.publish("whiteboard_cursor", function(code_session_id) {
     check(code_session_id, String);
     return WhiteboardCursor.find({codeSessionId: code_session_id});
+  });
+  Meteor.publish("filefolder", function(code_session_id) {
+    check(code_session_id, String);
+    return  FileFolder.find({codeSessionId: code_session_id});
   });
   Meteor.publish("filetab", function(code_session_id) {
     check(code_session_id, String);
