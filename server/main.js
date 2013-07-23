@@ -77,9 +77,9 @@ if(Meteor.isServer) {
             editorServer.getClient(socket.id).userSessionId = data.userSessionId;
           }); 
         });
-        if (!record.isReady) {
-          FileTab.update(record, {$set: {isSocketReady: true}});
-        }
+      }
+      if (!record.isReady) {
+        FileTab.update(record, {$set: {isSocketReady: true}});
       }
     }
   });
