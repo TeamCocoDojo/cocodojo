@@ -103,6 +103,7 @@ Tab.prototype.active = function() {
   }
   this.newEditorWrapper.show();
   this.tab.addClass("active");
+  // console.log("triggered: " + this.cm.getOption("mode"));
   this.cm.refresh();
   this.isActive = true;
 }
@@ -147,6 +148,14 @@ Tab.prototype.close = function() {
 
 Tab.prototype.rename = function(name) {
 
+}
+
+Tab.prototype.changeSyntaxHighlight = function(newSyntax) {
+  this.cm.setOption("mode", newSyntax);
+}
+
+Tab.prototype.changeTheme = function(newTheme) {
+  this.cm.setOption("theme", newTheme);
 }
 
 var insertFileTab = function(file) {
@@ -205,11 +214,17 @@ Template.codeMirror.rendered = function() {
 Template.codeMirror.events = {
   'change #syntaxHighlight': function(e) {
     syntax = e.target.value;
-    cm.setOption("mode", syntax);
+    for (var key in tabs) {
+      if (tabs[key].isActive) {
+        tabs[key].changeSyntaxHighlight(syntax);
+      }
+    }
   },
   'change #themeHighlight': function(e) {
     selectedTheme = e.target.value;
-    cm.setOption("theme", selectedTheme);
+    for (var key in tabs) {
+      tabs[key].changeTheme(selectedTheme);
+    }
   }
 }
 

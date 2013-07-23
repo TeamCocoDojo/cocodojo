@@ -7,15 +7,18 @@ var
 
 Template.preview.rendered = function() {
   liveSocket.on('livePreview', function(data){
+
     $('#preview-btn').click(function(){
 
+      var userSession = Session.get('userSession');
       var codeSession = CodeSession.find({}).fetch();
+
       if(codeSession[0].githubHost){
         var repoAddr = 'https://github.com/'+codeSession[0].githubHost+'/'+codeSession[0].githubRepo+'.git';
-        //console.log(repoAddr);
         liveSocket.emit("clone", {
           sessionId: Session.get('codeSessionId'),
-          repoAddr: repoAddr
+          repoAddr: repoAddr,
+          repoBranch: codeSession[0].githubBranch
         });
       } else {
         liveSocket.emit("makedir", {
@@ -35,14 +38,13 @@ Template.preview.rendered = function() {
               fileString: d.file.content,
               path: d.file.path
             });
-            //console.log(d.file.content);
           }
         });
       }, 3000);
 
       setTimeout(function(){
         window.open(serverAddress+":3333/"+Session.get('codeSessionId'),'Preview');
-      }, 6000);
+      }, 8000);
 
     });
   });
