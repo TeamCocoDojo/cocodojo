@@ -8,6 +8,10 @@ ChangeLog = new Meteor.Collection("changelog");
 FileFolder = new Meteor.Collection("filefolder");
 
 if(Meteor.isServer) {
+  var getFileTabSocketId = function(record) {
+    return (record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
+  }
+
   Meteor.publish("codesession", function(code_session_id) {
     check(code_session_id, String);
     return CodeSession.find({_id: code_session_id});
@@ -52,22 +56,28 @@ if(Meteor.isServer) {
   var io = socketIO.listen(3333);
   var syncServers = {};
   io.set('origins', process.env.origin || '*:*');
+  var usedSocketIds = {};
 
   var fileTabQuery = FileTab.find({});
+
   fileTabQuery.observeChanges({
     added: function (id, record) {
-      io.of('/filesync' + record.fileTab.toHexString()).on('connection', function(socket) {
-        socket.emit('doneConnection', { message: 'hello' });
-        socket.on('join', function(data) {
-          var editorServer = syncServers[data.fileId];
-          if (!editorServer) {
-            editorServer = new ot.EditorSocketIOServer(record.file.content || "", [], data.fileId);
-            syncServers[data.fileId] = editorServer;
-          }
-          editorServer.addClient(socket);
-          editorServer.getClient(socket.id).userSessionId = data.userSessionId;
-        }); 
-      });
+      var socketId = getFileTabSocketId(record);
+      if (!(socketId in usedSocketIds)) {
+        usedSocketIds[socketId] = true;
+        io.of('/filesync' + socketId).on('connection', function(socket) {
+          socket.emit('doneConnection', { message: 'hello' });
+          socket.on('join', function(data) {
+            var editorServer = syncServers[data.fileId];
+            if (!editorServer) {
+              editorServer = new ot.EditorSocketIOServer(record.file.content || "", [], data.fileId);
+              syncServers[data.fileId] = editorServer;
+            }
+            editorServer.addClient(socket);
+            editorServer.getClient(socket.id).userSessionId = data.userSessionId;
+          }); 
+        });
+      }
       if (!record.isReady) {
         FileTab.update(record, {$set: {isSocketReady: true}});
       }
