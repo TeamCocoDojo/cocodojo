@@ -197,8 +197,13 @@ var addFileTab = function(record) {
 };
 
 Template.codeMirror.rendered = function() {
-  var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId")});
+  var fileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId"), userId: Session.get("userId")});
   fileTabs.observeChanges({
+    added: function(id, record) {
+      if (record.isSocketReady == true) {
+        addFileTab(record);
+      }
+    },
     changed: function(id, changed) {
       if (changed && changed.isSocketReady == true) {
         var record = FileTab.findOne({"_id": id});        
