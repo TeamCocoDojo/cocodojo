@@ -1,0 +1,11 @@
+<template name="userList">
+  <div id="user-container">
+    {{#each users}}
+      <div class="user-instance">
+        <div style="border-left: 1.2em solid {{userColor}};" class="username" data-id="{{ _id }}">  {{username}}
+        </div>
+      </div> <br>
+    {{/each}}
+  </div>
+
+</template>
