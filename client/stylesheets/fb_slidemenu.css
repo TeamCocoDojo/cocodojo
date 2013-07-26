@@ -76,6 +76,10 @@ body .viewport .frame .menu.collapse.in.height {
 body .viewport .frame .menu .collapse-inner {
   position: relative;
   height: 100%;
+  background-image: url('/images/left-panel-bg.jpg');
+  -moz-box-shadow:    inset 0 0 10px #000000;
+  -webkit-box-shadow: inset 0 0 10px #000000;
+  box-shadow:         inset 0 0 10px #000000;
 }
 
 body .viewport .frame .menu .navbar .navbar-inner {
