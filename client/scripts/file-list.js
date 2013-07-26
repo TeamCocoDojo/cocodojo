@@ -5,7 +5,7 @@ var FolderList = function (owner, repoName, branch, element) {
 	this.element = element;
 	this.folders = {};
 	element.empty();
-	setTimeout("cocodojo.folderlist.getFolderList({})", 1000);
+	//setTimeout("cocodojo.folderlist.initFolderList({})", 1000);
 }
 FolderList.prototype.getRepo = function(){
 	var githubObj = cocodojo.getGithubObj();
@@ -16,16 +16,18 @@ FolderList.prototype.getContent = function (sha, callback) {
 	this.getRepo().getBlob(sha, callback);
 };
 
-FolderList.prototype.addToFolderList = function ( fileName, path) {
-	var pathes = path.split("/");
+FolderList.prototype.addToFolderList = function ( data ) {
+	var pathes = data.path.split("/");
 	var targetFolder = this.element;
 	for(var i=0; i< pathes.length-1; i++){
 		targetFolder = $(_.filter(targetFolder.children(".tree-folder"), function(item) {
 			return $($($(item).children(".tree-folder-header")[0]).children(".tree-folder-name")[0]).text() == pathes[i];
 		})[0]).children(".tree-folder-content");
 	}
-	
-	var includeItem = cocodojo.folderlist.createFileItem({path: path, name: fileName });
+	if(data.type == "file") 
+		var includeItem = cocodojo.folderlist.createFileItem(data);
+	else
+		var includeItem = cocodojo.folderlist.createFolderItem(data)
 	targetFolder.append(includeItem);
 }
 
@@ -57,6 +59,7 @@ FolderList.prototype.createFolderItem = function ( data ) {
 FolderList.prototype.createFileItem = function (data) {
 	var me = this;
 	var element = $("<div></div>").addClass('tree-item').append("<i class='tree-dot'></i>").append("<div class='tree-item-name'>" + data.name + "</div>");
+	element.data(data);
 	element.click(function(evt){
 		var selectedItem = $(this).data();
 		me.getContent(selectedItem.sha, function(err, data){
@@ -136,7 +139,35 @@ FolderList.prototype.createFolderList = function (options) {
 															);
 	}
 };
-FolderList.prototype.getFolderList =  function (options, callback) {
+FolderList.prototype.initFolderList =  function (callback) {
+	var me = this;
+	var sha = this.branch;
+	this.folders = {};
+	this.getRepo().getTree(sha + "?recursive=true", function(err, tree){
+		tree.sort(function(a, b){
+			return a.path.localeCompare(b.path);
+		});
+		for(var i=0; i< tree.length; i++) {
+			var item = tree[i];
+			var pathes = item.path.split("/");
+			var folder = me.folders;
+			for(var j=0; j< pathes.length-1; j++){
+				folder = folder[pathes[j]].subcontents;
+			}
+			if(item.type == "tree") item.subcontents = {};
+			folder[pathes[pathes.length-1]] = item;
+			FileFolder.insert({
+				codeSessionId: Session.get("codeSessionId"),
+				type: (item.type=="blob")?"file":"folder",
+				path: item.path, 
+				name: pathes[pathes.length-1],
+				sha: item.sha
+			});
+		}
+	});	
+}
+
+FolderList.prototype.getFolderList = function (options, callback){
 	if(options.path !== undefined ) {
 		var folders = options.path.split("/");
 		var folder = this.folders;
@@ -152,24 +183,8 @@ FolderList.prototype.getFolderList =  function (options, callback) {
 		if(currentFolder[pathes[i]] === undefined) currentFolder[pathes[i]] = {};
 		currentFolder = currentFolder[pathes[i]];
 	}
-
-	var self = this;
-	var sha = options.sha || this.branch;
-	var element = options.element || this.element;
-	options.path = options.path || "";
-	this.getRepo().getTree(sha, function(err, tree){
-		var data = tree.map(function(item){
-			currentFolder[item.name] = {};
-			return {
-				path: options.path + item.path + ((item.type == "blob")?"":"/"),
-				name: item.path,
-				sha: item.sha,
-				type: (item.type == "blob")?"item":"folder"
-			};
-		});
-		self.createFolderList({ data: data, element: element, start: 0, end: 0, count: 0, pages: 0, page: 0 });
-	});
 }
+
 Template.repoview.events({
 	'click #login': function (evt) {
 		Meteor.loginWithGithub({
@@ -211,11 +226,18 @@ function setGithubFileTree(fields){
 	if( cocodojo.githubRepo=== undefined || cocodojo.githubRepo != githubRepo ){
 		cocodojo.githubRepo = githubRepo;
 		$(document).trigger("repoSelected", {owner: githubHost, name: githubRepo, branch: githubBranch  });
-		cocodojo.folderlist = new FolderList( githubHost, githubRepo, githubBranch, $("#ex-tree"));
+		if(cocodojo.folderlist === undefined) 
+			cocodojo.folderlist = new FolderList( githubHost, githubRepo, githubBranch, $("#ex-tree"));
 		$('#repoTree').modal('hide');
 	}
 	cocodojo.codeSessionHost = fields.codeSessionHost;
 };
+
+$(document).on("repoSelectedByHost", function(evt, data) {
+	if(cocodojo.folderlist === undefined) 
+		cocodojo.folderlist = new FolderList( data.owner, data.name, data.branch, $("#ex-tree"));
+	cocodojo.folderlist.initFolderList();
+});
 
 Template.repoview.rendered = function() {
 	CodeSession.find({_id: Session.get("codeSessionId")}).observeChanges({
@@ -228,11 +250,10 @@ Template.repoview.rendered = function() {
 	});
 	FileFolder.find({codeSessionId: Session.get("codeSessionId")}).observeChanges({
 		added: function(id, itemObj) {
-			console.log(itemObj);
-			cocodojo.folderlist.addToFolderList(itemObj.name, itemObj.path);
+			cocodojo.folderlist.addToFolderList(itemObj);
 		}
 	});
-	
+
 	$.contextMenu({
 		selector: '.tree',
 		items: {
