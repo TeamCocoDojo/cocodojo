@@ -11,7 +11,6 @@ function commitFail(err){
 
 Template.commitBox.rendered = function() {
 	$('#commitBox').on('show', function () {
-		console.log("save");
 		$(document).trigger("commitToGit");
 		$(".loading").removeClass("hide");
 		$(document).on("doneCommit", function() {
@@ -37,6 +36,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 	$("#branch-name").text(repoInfo.branch);
 
 	$("#btnCommitBox").click(function() {
+		console.log("Trigger commit to git");
 		$(document).trigger("commitToGit");
 	});
 
