@@ -58,6 +58,18 @@ if(Meteor.isServer) {
   io.set('origins', process.env.origin || '*:*');
   var usedSocketIds = {};
 
+  var allCodeSession = CodeSession.find({});
+
+  allCodeSession.observeChanges({
+    changed: function(id, change) {
+      FileTab.remove({codeSessionId: id, "file.noClose": true}, function(error) {
+        if (error) {
+          console.log(error);
+        }
+      });
+    }
+  });
+
   var fileTabQuery = FileTab.find({});
 
   fileTabQuery.observeChanges({
@@ -113,6 +125,14 @@ if(Meteor.isServer) {
       );
     },
 
+    removeTabs: function(codeSessionId, userId) {
+      FileTab.remove({codeSessionId: codeSessionId, userId: userId, "file.noClose": true}, function(error) {
+        if (error) {
+          console.log(error);
+        }
+      });
+    },
+
     renameFileTab: function(record, name) {
       FileTab.update(
         {_id: record.fileTab},
@@ -142,7 +162,7 @@ if(Meteor.isServer) {
       }
     },
 
-    githubUser  : function() {
+    githubUser: function() {
       try{
         return Meteor.user().services.github;
       }catch(e) {

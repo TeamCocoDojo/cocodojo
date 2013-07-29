@@ -10,7 +10,7 @@ Template.githubLogin.rendered = function(){
   Meteor.call("githubUser", function(error, user){
     cocodojo.githubUser = user;
     $(document).trigger("updateGithubInfo");
-    $(document).trigger("githubObjectCreated" );
+    $(document).trigger("githubObjectCreated");
   });
 }
 $(document).on("updateGithubInfo", function(evt, repoInfo){
