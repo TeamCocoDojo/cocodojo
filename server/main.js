@@ -57,10 +57,23 @@ if(Meteor.isServer) {
   var syncServers = {};
   io.set('origins', process.env.origin || '*:*');
   var usedSocketIds = {};
+  var sessionUsers = {};
 
   var allCodeSession = CodeSession.find({});
-
   allCodeSession.observeChanges({
+    added: function(id, record) {
+      io.of('/sesssion' + id).on('connection', function(socket) {
+        socket.on('commit', function() {
+          var users = SessionUsers.find({codeSessionId: id});
+          sessionUsers[id] = users.count();
+        }).on('finishCommit', function() {
+          sessionUsers[id] = sessionUsers[id] - 1;
+          if (sessionUsers[id] == 0) {
+            socket.emit('doneCommit');
+          }
+        })
+      });
+    },
     changed: function(id, change) {
       FileTab.remove({codeSessionId: id, "file.noClose": true}, function(error) {
         if (error) {
