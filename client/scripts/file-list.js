@@ -251,7 +251,7 @@ Template.repoview.rendered = function() {
 	});
 	FileFolder.find({codeSessionId: Session.get("codeSessionId")}).observeChanges({
 		added: function(id, itemObj) {
-			console.log("added");
+			console.log("added", id);
 			cocodojo.folderlist.addToFolderList(itemObj);
 		}
 	});
