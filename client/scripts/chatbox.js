@@ -1,5 +1,4 @@
 Template.chatbox.messages = function() {
-  console.log(Chatbox.find({}));
   return Chatbox.find({});
 };
 
