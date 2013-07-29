@@ -98,8 +98,9 @@ function commit(repo, refHash, tree, targetBranch, message) {
 			if(err) return commitFail(err);
 
 			repo.updateHead(targetBranch, commit, function(err){
-				if(err) return commitFail(err);
-
+				if(err) {
+					return commitFail(err);
+				}
 				$('#commitBox').modal('hide');
 				$('#commitSuccess').modal('show');
 			});
