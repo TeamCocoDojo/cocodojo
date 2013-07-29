@@ -4,6 +4,9 @@ Template.chatbox.messages = function(){
 
 Template.chatbox.rendered = function(){
   $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
+  if(Chatbox.find({}).count() != 0){
+    $('#chatbox-container .chatbox-header').css('background-color', '#003366');
+  }
 }
 
 Template.chatbox.events = {
@@ -22,5 +25,9 @@ Template.chatbox.events = {
   'click .chatbox-header': function(e) {
     $('#chatbox-container').toggleClass('hidden');
     $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
+    $('#chatbox-container .chatbox-header').css('background-color', '#333');
+  },
+  'focus #chatbox-container': function(e){
+    $('#chatbox-container .chatbox-header').css('background-color', '#333');
   }
 };
