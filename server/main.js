@@ -63,9 +63,8 @@ if(Meteor.isServer) {
   allCodeSession.observeChanges({
     added: function(id, record) {
       io.of('/sesssion' + id).on('connection', function(socket) {
-        console.log("!!!!!!!!!!!!!");
+
         socket.on('commit', function() {
-          console.log("commit");
           var users = SessionUsers.find({codeSessionId: id});
           sessionUsers[id] = users.count();
         }).on('finishCommit', function() {
