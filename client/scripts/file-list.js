@@ -16,6 +16,7 @@ FolderList.prototype.getContent = function (sha, callback) {
 };
 
 FolderList.prototype.addToFolderList = function ( data ) {
+	console.log(data);
 	var pathes = data.path.split("/");
 	var targetFolder = this.element;
 	for(var i=0; i< pathes.length-1; i++){
