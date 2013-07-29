@@ -1,3 +1,21 @@
+
 #preview-btn {
 	position: absolute; right: 1em; bottom: 32px;
+  z-index: 3;
+}
+
+#previewWindow {
+  width: 1024px; height: 640px;
+  margin-left: -540px;
+  margin-top: -40px;
+}
+
+#previewWindow .modal-body {
+  width: 1024px;
+  height: 600px;
+  max-height: 640px;
+}
+
+#previewWindow .modal-body iframe{
+  width: 99%; height: 95%;
 }
