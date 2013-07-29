@@ -27,29 +27,27 @@ FolderList.prototype.addToFolderList = function ( data ) {
 		var includeItem = cocodojo.folderlist.createFileItem(data);
 	else
 		var includeItem = cocodojo.folderlist.createFolderItem(data)
+	
 	targetFolder.append(includeItem);
-}
-
-FolderList.prototype.createFolderItem = function ( data ) {
-	var me = this;
-	var header = $("<div/>").addClass('tree-folder-header').append("<i class='icon-folder-close'></i>").append("<div class='tree-folder-name'>" + data.name + "</div>");
-	var content = $("<div/>").addClass('tree-folder-content').hide();
-	var element = $("<div/>").addClass('tree-folder');
-	header.attr("data-path", data.path);
-	header.appendTo(element);
-	content.appendTo(element);
-	header.click(function(evt){
-		var element = $($(this).parents(".tree-folder")[0]);
-		$(element.find(".tree-folder-content")[0]).toggle();
-		var selectedItem = element.data();
-		me.getFolderList({sha: selectedItem.sha, path: selectedItem.path, element: $(element.find(".tree-folder-content")[0])});
-	});
-
-	header.mousedown(function(e) {
-		if (e.button == 2) {
-			e.stopPropagation();
-			$("#folder-menu").css("top", $(this).css("top"));
-			$("#folder-menu").css("left", $(this).css("left"));
+	$.contextMenu({
+		selector: '.tree-item',
+		items: {
+			"rename": {
+				name: "Rename File",
+				callback: function() {
+					var fileName = window.prompt("Please input the name of the file");
+					if (fileName) {
+						var fullPath = $(this).data("path") + fileName
+						$(document).trigger("renameFile", fullPath);
+					}
+				}
+			},
+			"delete": {
+				name: "Delete File",
+				callback: function() {
+					$(document).trigger("deleteFile", fullPath);
+				}
+			}
 		}
 	});
 	$.contextMenu({
@@ -83,6 +81,30 @@ FolderList.prototype.createFolderItem = function ( data ) {
 			}
 		}
 	});
+}
+
+FolderList.prototype.createFolderItem = function ( data ) {
+	var me = this;
+	var header = $("<div/>").addClass('tree-folder-header').append("<i class='icon-folder-close'></i>").append("<div class='tree-folder-name'>" + data.name + "</div>");
+	var content = $("<div/>").addClass('tree-folder-content').hide();
+	var element = $("<div/>").addClass('tree-folder');
+	header.attr("data-path", data.path);
+	header.appendTo(element);
+	content.appendTo(element);
+	header.click(function(evt){
+		var element = $($(this).parents(".tree-folder")[0]);
+		$(element.find(".tree-folder-content")[0]).toggle();
+		var selectedItem = element.data();
+		me.getFolderList({sha: selectedItem.sha, path: selectedItem.path, element: $(element.find(".tree-folder-content")[0])});
+	});
+
+	header.mousedown(function(e) {
+		if (e.button == 2) {
+			e.stopPropagation();
+			$("#folder-menu").css("top", $(this).css("top"));
+			$("#folder-menu").css("left", $(this).css("left"));
+		}
+	});
 	return element;
 };
 
@@ -95,27 +117,6 @@ FolderList.prototype.createFileItem = function (data) {
 		me.getContent(selectedItem.sha, function(err, data){
 			$(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
 		});
-	});
-	$.contextMenu({
-		selector: '.tree-item',
-		items: {
-			"rename": {
-				name: "Rename File",
-				callback: function() {
-					var fileName = window.prompt("Please input the name of the file");
-					if (fileName) {
-						var fullPath = $(this).data("path") + fileName
-						$(document).trigger("renameFile", fullPath);
-					}
-				}
-			},
-			"delete": {
-				name: "Delete File",
-				callback: function() {
-					$(document).trigger("deleteFile", fullPath);
-				}
-			}
-		}
 	});
 	return element;
 };
@@ -139,7 +140,7 @@ FolderList.prototype.initFolderList =  function (callback) {
 				folder[pathes[pathes.length-1]] = item;
 				FileFolder.insert({
 					codeSessionId: Session.get("codeSessionId"),
-					type: (item.type=="blob")?"file":"folder",
+					type: (item.type=="blob") ? "file" : "folder",
 					path: item.path, 
 					name: pathes[pathes.length-1],
 					sha: item.sha
