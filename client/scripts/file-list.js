@@ -135,14 +135,16 @@ FolderList.prototype.initFolderList =  function (callback) {
 				folder = folder[pathes[j]].subcontents;
 			}
 			if(item.type == "tree") item.subcontents = {};
-			folder[pathes[pathes.length-1]] = item;
-			FileFolder.insert({
-				codeSessionId: Session.get("codeSessionId"),
-				type: (item.type=="blob")?"file":"folder",
-				path: item.path, 
-				name: pathes[pathes.length-1],
-				sha: item.sha
-			});
+			if(folder[pathes[pathes.length-1]] === undefined ){
+				folder[pathes[pathes.length-1]] = item;
+				FileFolder.insert({
+					codeSessionId: Session.get("codeSessionId"),
+					type: (item.type=="blob")?"file":"folder",
+					path: item.path, 
+					name: pathes[pathes.length-1],
+					sha: item.sha
+				});
+			}
 		}
 		$(".loading").addClass("hide");
 		$("#ex-tree").removeClass("hide");
@@ -260,6 +262,15 @@ Template.repoview.rendered = function() {
 					var fileName = window.prompt("Please input the name of the file");
 					if (fileName) {
 						$(document).trigger("addFile", {path: fileName, name: fileName});
+					}
+				}
+			},
+			"add-folder": {
+				name: "Add Folder", 
+				callback: function() {
+					var folderName = window.prompt("Please input the name of the folder");
+					if (folderName) {
+						$(document).trigger("addFolder", {path: folderName, name: folderName});
 					}
 				}
 			}
