@@ -129,25 +129,27 @@ FolderList.prototype.initFolderList =  function (callback) {
 		tree.sort(function(a, b){
 			return a.path.localeCompare(b.path);
 		});
-		for(var i=0; i< tree.length; i++) {
-			var item = tree[i];
+		console.log("start foreach", tree);
+		_.each(tree, function(item){
 			var pathes = item.path.split("/");
 			var folder = me.folders;
+			
 			for(var j=0; j< pathes.length-1; j++){
 				folder = folder[pathes[j]].subcontents;
 			}
+			
 			if(item.type == "tree") item.subcontents = {};
-			if(folder[pathes[pathes.length-1]] === undefined ){
-				folder[pathes[pathes.length-1]] = item;
-				FileFolder.insert({
-					codeSessionId: Session.get("codeSessionId"),
-					type: (item.type=="blob") ? "file" : "folder",
-					path: item.path, 
-					name: pathes[pathes.length-1],
-					sha: item.sha
-				});
-			}
-		}
+			folder[pathes[pathes.length-1]] = item;
+			console.log("insert item", item);
+			FileFolder.insert({
+				codeSessionId: Session.get("codeSessionId"),
+				type: (item.type=="blob") ? "file" : "folder",
+				path: item.path, 
+				name: pathes[pathes.length-1],
+				sha: item.sha
+			});
+
+		}, this);
 		$(".loading").addClass("hide");
 		$("#ex-tree").removeClass("hide");
 	});	
