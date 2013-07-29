@@ -11,10 +11,9 @@ function commitFail(err){
 
 Template.commitBox.rendered = function() {
 	$('#commitBox').on('show', function () {
-		console.log("save");
 		$(document).trigger("commitToGit");
 		$(".loading").removeClass("hide");
-		setTimeout(function () {
+		$(document).on("doneCommit", function() {
 			docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
 				if(file.file.path === undefined) return null;
 				return {path: file.file.path, content: file.file.content };
@@ -25,7 +24,7 @@ Template.commitBox.rendered = function() {
 				$("<li/>").text(doc.path).appendTo("#files-commited");
 			});
 			$("#commitConfirm").removeAttr("disabled");
-		}, 3000);
+		});
 	});
 }
 
@@ -37,6 +36,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 	$("#branch-name").text(repoInfo.branch);
 
 	$("#btnCommitBox").click(function() {
+		console.log("Trigger commit to git");
 		$(document).trigger("commitToGit");
 	});
 
@@ -98,8 +98,9 @@ function commit(repo, refHash, tree, targetBranch, message) {
 			if(err) return commitFail(err);
 
 			repo.updateHead(targetBranch, commit, function(err){
-				if(err) return commitFail(err);
-
+				if(err) {
+					return commitFail(err);
+				}
 				$('#commitBox').modal('hide');
 				$('#commitSuccess').modal('show');
 			});
