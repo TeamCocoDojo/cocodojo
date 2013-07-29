@@ -12,7 +12,6 @@ FolderList.prototype.getRepo = function(){
 	return githubObj.getRepo(this.owner, this.repoName);
 }
 FolderList.prototype.getContent = function (sha, callback) {
-
 	this.getRepo().getBlob(sha, callback);
 };
 

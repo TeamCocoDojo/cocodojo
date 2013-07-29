@@ -50,6 +50,10 @@ var saveAllTabs = function() {
     if (error) {
       console.log(error);
     }
+    else {
+      console.log("done commit " + Session.get("userId"));
+      $(document).trigger("doneSingleCommit");
+    }
   });
 }
 

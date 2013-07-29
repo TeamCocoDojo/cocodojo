@@ -41,9 +41,10 @@ $(document).on("repoSelected", function(e, repoInfo){
 	});
 
 	$("#commitConfirm").click(function(){
-		var targetBranch = $('#optionNewBranch').is(':checked')?$("#new-branch-name").val():repoInfo.branch;
+		var targetBranch = $('#optionNewBranch').is(':checked') ? $("#new-branch-name").val() : repoInfo.branch;
 		var repo = cocodojo.getGithubObj().getRepo(cocodojo.repoOwner, cocodojo.repoName);
 		var message = $("#commitMessage").val();
+		$(document).trigger("commitConfirm");
 		repo.getRef("heads/" + currentBranch, function(err, latestCommit){
 			if (err) return commitFail(err);
 			if (currentBranch != targetBranch) {
