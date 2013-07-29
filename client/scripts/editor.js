@@ -25,7 +25,8 @@ var insertNewTab = function(data) {
       name: data.name,
       path: data.path,
       owner: data.owner,
-      repo: data.repo
+      repo: data.repo,
+      noClose: data.noClose
     });
   }
   else {
@@ -102,6 +103,7 @@ var Tab = function(record) {
       });
     });
   });
+
   return this;
 }
 
@@ -111,7 +113,6 @@ Tab.prototype.active = function() {
   }
   this.newEditorWrapper.show();
   this.tab.addClass("active");
-  // console.log("triggered: " + this.cm.getOption("mode"));
   this.cm.refresh();
   this.isActive = true;
 }
@@ -132,6 +133,9 @@ Tab.prototype.draw = function() {
     e.stopPropagation();
     me.close();
   });
+  if (this.record.file.noClose) {
+    this.hideTab();
+  }
 }
 
 Tab.prototype.close = function() {
@@ -164,6 +168,10 @@ Tab.prototype.changeSyntaxHighlight = function(newSyntax) {
 
 Tab.prototype.changeTheme = function(newTheme) {
   this.cm.setOption("theme", newTheme);
+}
+
+Tab.prototype.hideTab = function() {
+  this.tab.hide();
 }
 
 var insertFileTab = function(file) {
@@ -214,10 +222,41 @@ Template.codeMirror.rendered = function() {
     }
   });
 
+  var demoTab = FileTab.find({codeSessionId: Session.get("codeSessionId"), userId: Session.get("userId"), "file.noClose": true});
+  demoTab.observe({
+    removed: function(record) {
+      var tab = tabs[record.file.path];
+      tab.close();
+    }
+  });
+
+  var codeSession = CodeSession.find({"_id": Session.get("codeSessionId")});
+  codeSession.observeChanges({
+    added: function(id, record) {
+      if (!record.githubRepo) {
+        var defaultFileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId"), userId: Session.get("userId")});
+        if (defaultFileTabs.count() == 0) {
+          insertNewTab({
+            content: "DEMO",
+            name: "DEMO",
+            owner: Session.get("codeSessionId"),
+            path: "DEMO",
+            repo: "",
+            noClose: true
+          });
+        }
+      }
+      else {
+        Meteor.call("removeTabs", Session.get("codeSessionId"), Session.get("userId"), function(error) {
+        });
+      }
+    }
+  });
+
   var changeLogs = ChangeLog.find({codeSessionId: Session.get("codeSessionId")});
   changeLogs.observeChanges({
-    changed: function(id, changed) {
-      if (changed.isOld == true) {
+    changed: function(newDoc, oldDoc) {
+      if (oldDoc.isOld == true) {
         saveAllTabs();
       }
     }
@@ -255,12 +294,11 @@ $(document).on("preview", function(data) {
 
 $(document).on("repoFileSelected", function(event, data) {
   data.change = "modify";
-  console.log(data);
   insertNewTab(data);
 });
 
 $(document).on("doneAddFile", function(event, data) {
   data.change = "add";
-  console.log(data);
   insertNewTab(data);
 });
+
