@@ -13,6 +13,7 @@ Template.commitBox.rendered = function() {
 	$('#commitBox').on('show', function () {
 		$(".loading").removeClass("hide");
 		$(document).on("doneCommit", function() {
+			folders = FileFolder.find({codeSessionId: Session.get("codeSessionId"), type: "folder", status: "new"}).get();
 			docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
 				if(file.file.path === undefined) return null;
 				return {path: file.file.path, content: file.file.content };
