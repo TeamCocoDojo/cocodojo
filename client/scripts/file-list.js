@@ -27,7 +27,10 @@ FolderList.prototype.addToFolderList = function ( data ) {
 		var includeItem = cocodojo.folderlist.createFileItem(data);
 	else
 		var includeItem = cocodojo.folderlist.createFolderItem(data)
-	
+
+	if(targetFolder.children(":contains('" + data.name + "')").length >0 && 
+		$(targetFolder.children(":contains('" + data.name + "')")[0]).text() == data.name ) return; 
+
 	targetFolder.append(includeItem);
 	$.contextMenu({
 		selector: '.tree-item',
