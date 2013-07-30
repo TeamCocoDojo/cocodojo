@@ -113,22 +113,6 @@ if (Meteor.isClient) {
         // Set a new editor sync session
         Router.navigate(codeSessionId, false);
       }
-      else {
-        var sessionSocket = io.connect(document.location.hostname + "/sesssion" + Session.get("codeSessionId"), {port: 3333});
-        $(document).on("commitToGit", function() {
-          sessionSocket.emit("commit");
-        });
-        
-        $(document).on("doneSingleCommit", function() {
-          console.log("Done Single Commit");
-          sessionSocket.emit("commit");
-        });
-        
-        sessionSocket.on("doneCommit", function() {
-          console.log("Done commit");
-          $(document).trigger("doneCommit");
-        });
-      }
     });
   });
 

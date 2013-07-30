@@ -8,6 +8,9 @@ ChangeLog = new Meteor.Collection("changelog");
 FileFolder = new Meteor.Collection("filefolder");
 
 if(Meteor.isServer) {
+  var sessionUsersMap = {};
+  var currentUserMap = {};
+
   var getFileTabSocketId = function(record) {
     return (record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
   }
@@ -23,6 +26,7 @@ if(Meteor.isServer) {
     // Remove user from userlist when disconnected
     if(this._session.socket._events.data.length === 1) {
       this._session.socket.on("close", Meteor.bindEnvironment(function() {
+        sessionUsersMap[code_session_id] = sessionUsersMap[code_session_id] - 1;
         SessionUsers.remove(user_session);
       }, function(e) { console.log("close error", e); }));
     }
@@ -57,27 +61,38 @@ if(Meteor.isServer) {
   var syncServers = {};
   io.set('origins', process.env.origin || '*:*');
   var usedSocketIds = {};
-  var sessionUsers = {};
+
+  var allSessionUsers = SessionUsers.find({});
+  allSessionUsers.observe({
+    added: function(record) {
+      if (!sessionUsersMap[record.codeSessionId]) {
+        sessionUsersMap[record.codeSessionId] = 0;
+      }
+      sessionUsersMap[record.codeSessionId] = sessionUsersMap[record.codeSessionId] + 1;
+    }
+  });
 
   var allCodeSession = CodeSession.find({});
-  allCodeSession.observeChanges({
-    added: function(id, record) {
-      io.of('/sesssion' + id).on('connection', function(socket) {
-
-        socket.on('commit', function() {
-          var users = SessionUsers.find({codeSessionId: id});
-          sessionUsers[id] = users.count();
-        }).on('finishCommit', function() {
-          console.log("finishCommit");
-          sessionUsers[id] = sessionUsers[id] - 1;
-          if (sessionUsers[id] == 0) {
-            socket.emit('doneCommit');
+  allCodeSession.observe({
+    added: function(record) {
+      io.of('/sesssion' + record._id).on('connection', function(socket) {
+        socket.on('commit', function(codeSessionId) {
+          return function() {
+            currentUserMap[codeSessionId] = 0;
           }
-        })
+        }(record._id))
+        .on('finishCommit', function(codeSessionId) {
+          return function() {
+            currentUserMap[codeSessionId] = currentUserMap[codeSessionId] + 1;
+            if (currentUserMap[codeSessionId] == sessionUsersMap[codeSessionId]) {
+              socket.emit('doneCommit');
+            }
+          }
+        }(record._id));
       });
     },
-    changed: function(id, change) {
-      FileTab.remove({codeSessionId: id, "file.noClose": true}, function(error) {
+    changed: function(oldDoc, newDoc) {
+      FileTab.remove({codeSessionId: oldDoc._id, "file.noClose": true}, function(error) {
         if (error) {
           console.log(error);
         }
