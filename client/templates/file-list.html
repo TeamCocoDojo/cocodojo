@@ -1,16 +1,22 @@
 <template name="repoview">
 
-    <div class="navbar navbar-inverse">
-      <div class="navbar-inner">
-        {{#if currentUser}}
-            {{>githubLogin}}
-        {{else}}
-          <a href="#" id="login">Sign In With Github</a>
-        {{/if}}
-      </div>
-    </div>
-    {{>commitBox}}
-    <div id="ex-tree" class="tree">
-    </div>
+<div class="navbar navbar-inverse">
+	<div class="navbar-inner"></div>
+</div>
+{{>commitBox}}
+<div class="loading hide">
+	<img src="images/ajax-loader.gif" />
+</div>
+<div id="ex-tree" class="tree">
+	<div id="github-login-container">
+		<img id="octocat-logo-big" src="/images/blacktocat-big.png" />
+		<p>
+		Start collaborative coding on your GitHub repositories! 
+		</p>
+
+		{{>githubLogin}}
+
+	</div>
+</div>
 
 </template>

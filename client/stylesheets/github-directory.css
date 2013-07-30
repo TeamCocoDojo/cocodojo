@@ -1,7 +1,30 @@
+#github-login-container {
+  margin: 20% auto;
+  color: black;
+  width: 220px;
+  font-size: 1em;
+  text-align: center;
+}
+
+#github-login-container a {
+  font-size: 17px;
+  text-decoration: none;
+  color: #222;
+  outline: 0;
+}
+
+#github-login-container a:hover,
+#github-login-container a:focus {
+  color: #fff;
+}
+
+#octocat-logo-big {
+  display: block;
+  width: 150px;
+  margin: 20px auto;
+}
+
 #ex-tree {
   border: none;
   border-bottom: 1px solid #292936;
 }
-
-/*fix the FuelUX tree in Meteor*/
-

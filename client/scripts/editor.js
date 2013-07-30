@@ -284,12 +284,6 @@ Template.codeMirror.events = {
   }
 }
 
-$(document).on("commitToGit", function(data) {
-  ChangeLog.insert({
-    codeSessionId: Session.get("codeSessionId"),
-  });
-});
-
 $(document).on("preview", function(data) {
   ChangeLog.insert({
     codeSessionId: Session.get("codeSessionId"),

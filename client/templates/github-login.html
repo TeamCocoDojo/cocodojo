@@ -1,5 +1,9 @@
 <template name="githubLogin">
-{{#if repoNotSelected}}
-  <a id="selectRepo" data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#repoTree">Select Repo</a>
-{{/if}}
+    {{#if currentUser}}
+      {{#if repoNotSelected}}
+        <a id="selectRepo" data-toggle="modal" data-keyboard="true" data-backdrop="true" class="btn-auth btn-github large" href="#repoTree">Select Repository</a>
+      {{/if}}
+    {{else}}
+      <a id="login" class="btn-auth btn-github large" href="#">Sign in with <b>Github</b></a>
+    {{/if}}
 </template>
