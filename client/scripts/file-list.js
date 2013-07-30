@@ -15,7 +15,6 @@ FolderList.prototype.getContent = function (sha, callback) {
 };
 
 FolderList.prototype.addToFolderList = function ( data ) {
-	console.log(data);
 	var pathes = data.path.split("/");
 	var targetFolder = this.element;
 	for(var i=0; i< pathes.length-1; i++){
@@ -124,7 +123,6 @@ FolderList.prototype.createFileItem = function (data) {
 	return element;
 };
 FolderList.prototype.initFolderList =  function (callback) {
-	console.log("init folderlist");
 	var me = this;
 	var sha = this.branch;
 	this.folders = {};
@@ -132,7 +130,6 @@ FolderList.prototype.initFolderList =  function (callback) {
 		tree.sort(function(a, b){
 			return a.path.localeCompare(b.path);
 		});
-		console.log("start foreach", tree);
 		_.each(tree, function(item){
 			var pathes = item.path.split("/");
 			var folder = me.folders;
@@ -143,7 +140,6 @@ FolderList.prototype.initFolderList =  function (callback) {
 			
 			if(item.type == "tree") item.subcontents = {};
 			folder[pathes[pathes.length-1]] = item;
-			console.log("insert item", item);
 			FileFolder.insert({
 				codeSessionId: Session.get("codeSessionId"),
 				type: (item.type=="blob") ? "file" : "folder",
@@ -256,7 +252,6 @@ Template.repoview.rendered = function() {
 	});
 	FileFolder.find({codeSessionId: Session.get("codeSessionId")}).observeChanges({
 		added: function(id, itemObj) {
-			console.log("added", id);
 			cocodojo.folderlist.addToFolderList(itemObj);
 		}
 	});
