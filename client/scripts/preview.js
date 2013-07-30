@@ -28,7 +28,9 @@ var
 
   },
   loadPreview = function(){
-    window.open(serverAddress+":3333/"+Session.get('codeSessionId'), 'Preview');
+    $('#previewWindow iframe').attr('src', serverAddress+":3333/"+Session.get('codeSessionId'));
+    $('#previewWindow').modal('show');
+    //window.open(serverAddress+":3333/"+Session.get('codeSessionId'), 'Preview');
   };
 
 

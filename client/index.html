@@ -8,7 +8,7 @@
 <body>
   <div class="viewport">
     <div class="frame">
-      <div id="menu" class="menu nav-collapse collapse width" >
+      <div id="menu" class="menu nav-collapse collapse width in" >
         <div class="collapse-inner fuelux">
           {{> repoview}}
           {{> userList}}
@@ -20,13 +20,11 @@
 
         {{> preview}}
 
+        {{> chatbox}}
         <div id="content">
           {{> codeMirror}}
 
-          {{> chatbox}}
-
           {{> repoTree}}
-
         </div>
       </div>
     </div>
