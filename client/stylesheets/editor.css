@@ -31,10 +31,28 @@
 	position: relative;
 }
 
+#editorTab {
+  margin: 0;
+  min-height: 38px;
+}
+
 #editorTab .tab-link {
 	float: left;
 	padding-left: 8px;
 	padding-right: 20px;
+}
+
+#editorTabContent {
+  height: 90%;
+}
+
+.editor-wrapper {
+  height: 90%;
+}
+
+.editorInstance {
+  margin-right: 10px;
+  height: 100%;
 }
 
 .tab-close {
@@ -85,7 +103,7 @@
 	font-weight: bold;
 }
 
-.tab-container .panel-container { 
+.tab-container .panel-container {
 	background: #fff;
 	border: solid #666 1px;
 	padding: 10px;

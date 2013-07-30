@@ -66,7 +66,7 @@ var Tab = function(record) {
   var me = this;
   me.id = count++;
   me.record = record;
-  me.newEditorWrapper = $("<div></div>");
+  me.newEditorWrapper = $("<div class='editor-wrapper'></div>");
   me.newEditorWrapper.attr("id", id);
   me.newEditorInstance = $("<div class='editorInstance'></div>");
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
@@ -218,7 +218,7 @@ Template.codeMirror.rendered = function() {
     },
     changed: function(id, changed) {
       if (changed && changed.isSocketReady == true) {
-        var record = FileTab.findOne({"_id": id});        
+        var record = FileTab.findOne({"_id": id});
         if (record.userId == Session.get("userId")) {
           addFileTab(record);
         }
