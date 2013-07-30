@@ -5,7 +5,6 @@ var FolderList = function (owner, repoName, branch, element) {
 	this.element = element;
 	this.folders = {};
 	element.empty();
-	//setTimeout("cocodojo.folderlist.initFolderList({})", 1000);
 }
 FolderList.prototype.getRepo = function(){
 	var githubObj = cocodojo.getGithubObj();
@@ -122,6 +121,7 @@ FolderList.prototype.createFileItem = function (data) {
 	return element;
 };
 FolderList.prototype.initFolderList =  function (callback) {
+	console.log("init folderlist");
 	var me = this;
 	var sha = this.branch;
 	this.folders = {};
