@@ -3,7 +3,11 @@ html {
 }
 
 body {
-  background-color: #666;
+  background-color: #444;
+}
+
+.navbar {
+	margin-bottom: 10px;
 }
 
 #content {
@@ -13,7 +17,7 @@ body {
 
 /* GitHub Directory */
 .tree {
-    width: 250px;
+	width: auto;
     height: 70%;
 }
 
@@ -28,3 +32,4 @@ body {
 #commitBox textarea{
   width: 95%;
 }
+

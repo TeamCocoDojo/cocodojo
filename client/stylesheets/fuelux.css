@@ -6630,14 +6630,14 @@ textarea.span1,
 .fuelux .tree {
   position: relative;
   padding: 10px 15px 0 15px;
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: auto;
   border: 1px solid #BBBBBB;
   border-radius: 4px 4px 4px 4px;
 }
 
 .fuelux .tree .tree-folder {
-  width: 100%;
+
   min-height: 20px;
   margin-top: 1px;
   cursor: pointer;
@@ -6675,8 +6675,8 @@ textarea.span1,
 }
 
 .fuelux .tree .tree-item {
-  position: relative;
   width: 100%;
+  position: relative;
   height: 20px;
   margin-top: 1px;
   cursor: pointer;
@@ -6690,6 +6690,7 @@ textarea.span1,
 }
 
 .fuelux .tree .tree-item .tree-item-name {
+  white-space: nowrap;
   position: absolute;
   left: 29px;
   color: #dfdddd;

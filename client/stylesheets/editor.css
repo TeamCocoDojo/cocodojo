@@ -5,6 +5,7 @@
 	z-index: -10; /*disabled until feature implemented*/
 	position: fixed;
 }
+
 #themeHighlight{
 	float: right;
 	right: 50px;
@@ -33,7 +34,6 @@
 
 #editorTab {
   margin: 0;
-  min-height: 38px;
 }
 
 #editorTab .tab-link {
@@ -47,11 +47,10 @@
 }
 
 .editor-wrapper {
-  height: 90%;
+  height: 100%;
 }
 
 .editorInstance {
-  margin-right: 10px;
   height: 100%;
 }
 
@@ -62,7 +61,6 @@
 	cursor: pointer;
 	float: left;
 }
-
 
 .etabs {
 	margin: 0; padding: 0;

@@ -74,6 +74,7 @@ body .viewport .frame .menu.collapse.in.height {
 }
 
 body .viewport .frame .menu .collapse-inner {
+  min-width: 250px;
   position: relative;
   height: 100%;
   background-image: url('/images/left-panel-bg.jpg');
