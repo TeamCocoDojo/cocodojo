@@ -11,8 +11,9 @@ body {
 }
 
 #content {
+  height: 645px !important;
   position: relative;
-  height: 91%;
+  margin-bottom: 10px;
 }
 
 /* GitHub Directory */

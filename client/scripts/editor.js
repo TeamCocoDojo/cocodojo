@@ -69,6 +69,9 @@ var Tab = function(record) {
   me.newEditorWrapper = $("<div class='editor-wrapper'></div>");
   me.newEditorWrapper.attr("id", id);
   me.newEditorInstance = $("<div class='editorInstance'></div>");
+  if (!record.file.noClose) {
+    me.newEditorInstance.css("height", "94%");
+  }
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
 
   me.draw();

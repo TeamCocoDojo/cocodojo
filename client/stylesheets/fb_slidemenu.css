@@ -105,7 +105,7 @@ body .viewport .frame .view .navbar .navbar-inner .btn-navbar {
 }
 
 body .viewport .frame .view #content {
-  margin: auto 15px;
+  margin: 0 15px 10px 15px;
   text-align: justify;
 }
 
