@@ -193,9 +193,9 @@ if(Meteor.isServer) {
     },
 
     githubUser: function() {
-      try{
+      try {
         return Meteor.user().services.github;
-      }catch(e) {
+      } catch(e) {
         return null;
       }
     }
