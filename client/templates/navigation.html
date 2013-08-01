@@ -1,16 +1,19 @@
 <template name="navigation">
   <div class="navbar navbar-inverse">
     <div class="navbar-inner">
-      <img src="images/githubIconTransparent.png" width="18px" height="18px" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
+      <img src="images/sliderWhite.png" width="18px" height="18px" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
+      <p class="navbar-text pull-right">
+        <img src="images/gearIcon.png" width="18px" height="18px" class="btn btn-navbar">
+      </p>
       <p class="navbar-text pull-right">
         <a href="#" id="username-navlink" class="navbar-link">{{session "username"}}</a>
 <!--         <a id="logout" class="navbar-link" href="#">Logout</a> -->
       </p>
       <ul class="nav">
         <li><img src="images/logo.png" width="120px"></li>
-        <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">Getting Started</a></li>
-        <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#about">About</a></li>
-        <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#contact">Contact or Report Bug</a></li>
+        <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">#help</a></li>
+        <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#about">#about</a></li>
+        <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#contact">#contact</a></li>
       </ul>
     </div>
   </div>
@@ -34,11 +37,8 @@
         You can also chat with your buddies using the chat box at the lower right corner. Your name will show as Anonymous. You will also find your display name at the higher right corner. To change your display name, simply click on it. </li>
         <li>GitHub Integration<br>
         Do you want to look at code that resides in your GitHub account?  Click the GitHub toggle on the upper left of the navigation bar and then log into your account.  Select a repository and then you can import the source code directly into our code editor's window.  After you have made the changes you can commit the files back to GitHub!</li>
-        ck on it. </li>
         <li>Preview Your Website or JavaScript Application<br>
         If you would like to see the changes you made, we have given you the ability to preview your website.  Just click the preview button to see what your site looks like before commiting to GitHub.</li>
-        <li>Whiteboard<br>
-        On the right side of the screen is a hidden whiteboard that you can use for discussing abstract thoughts or UML diagrams.  Again, this is fully syncronized between all parties.  Pin the whiteboard by clicking the icon in the upper left corner.</li>
       </ul>
     </div>
     <div class="modal-footer">
