@@ -1,17 +1,15 @@
 #user-container {
-  height: 30%;
-  font-weight: 700;
+  position: absolute; left: 0; bottom: 6px;
+  height: 39px; width: 100%;
+  /*font-weight: 700;*/
   z-index: 2;
-  /*background-color: yellow;*/
-  overflow: auto;
+  /*overflow: hidden;*/
   border-top: 1px solid #515455;
 }
 
 .user-instance {
-  float: left;
-  width: 144px;
-  margin: 6px;
-  border-radius: 2px;
+  display: inline-block; width: 29px; height: 27px; position: relative;
+  margin: 6px 0 6px 6px; border: 1px solid #333; border-radius: 1px;
   color: #333; background-color: #ccc;
   opacity: 0.85; overflow: hidden;
   box-shadow: 1px 1px 3px 1px #333;
@@ -20,11 +18,12 @@
 }
 
 .user-instance:hover {
-  /*width: 160px; height: 120px;*/
   opacity: 1;
 }
 
-.username {
-  height: 1.2em;
-  padding: 3px;
+.user-initial {
+  height: 100%;
+  padding: 5px 0 5px 5px;
+  font-size: 18px;
 }
+
