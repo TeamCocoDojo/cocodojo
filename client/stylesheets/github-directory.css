@@ -26,5 +26,9 @@
 
 #ex-tree {
   border: none;
+  position: absolute;
+  top: 120px;
+  min-width: 220px;
+  bottom: 98px;
   border-bottom: 1px solid #292936;
 }

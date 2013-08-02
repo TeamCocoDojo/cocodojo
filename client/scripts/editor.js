@@ -69,9 +69,6 @@ var Tab = function(record) {
   me.newEditorWrapper = $("<div class='editor-wrapper'></div>");
   me.newEditorWrapper.attr("id", id);
   me.newEditorInstance = $("<div class='editorInstance'></div>");
-  if (!record.file.noClose) {
-    me.newEditorInstance.css("height", "94%");
-  }
   me.tab = $("<li class='file-tab'><a class='tab-link' href='#" + id + "'>" + record.file.name + "</a><span class='tab-close icon-remove'></span></li>");
 
   me.draw();
@@ -209,6 +206,7 @@ var addFileTab = function(record) {
     tabs[record.file.path] = tab;
     tab.active();
   }
+  resize();
 };
 
 Template.codeMirror.rendered = function() {
@@ -303,3 +301,16 @@ $(document).on("doneAddFile", function(event, data) {
   insertNewTab(data);
 });
 
+
+function resize() {
+  $('#content').css('height', $('body').height() - 71 - $("#editorTab").height() +'px');
+}
+
+Meteor.startup(function () {
+  $(document).ready(function() {
+    resize();
+    $(window).resize(function() {
+      resize();
+    });
+  });
+});

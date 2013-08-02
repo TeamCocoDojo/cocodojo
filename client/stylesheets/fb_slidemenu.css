@@ -96,7 +96,7 @@ body .viewport .frame .menu .nav-stacked {
 
 body .viewport .frame .view {
   height: 100%;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 body .viewport .frame .view .navbar .navbar-inner .btn-navbar {
