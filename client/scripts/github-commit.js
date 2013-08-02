@@ -11,10 +11,6 @@ function commitFail(err){
 
 Template.commitBox.rendered = function() {
   $('#commitBox').on('show', function () {
-    Meteor.call("getGithubContent", Session.get("codeSessionId"), "", function(result) {
-      console.log(arguments);
-    });
-
     $(".loading").removeClass("hide");
     $(document).on("doneCommit", function() {
       docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){

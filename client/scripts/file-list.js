@@ -121,9 +121,19 @@ FolderList.prototype.createFileItem = function (data) {
   element.data(data);
   element.click(function(evt){
     var selectedItem = $(this).data();
-    me.getContent(selectedItem.path, function(err, data){
-      $(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data.content, path:selectedItem.path});
-    });
+    console.log(selectedItem);
+    if(selectedItem.status == "new"){
+      $(document).trigger("commitToGit");
+      $(document).on("doneCommit", function() {
+        var obj = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.path": selectedItem.path});
+        $(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, content: obj.file.content, path:obj.file.path});
+      });
+    }
+    else{
+      me.getContent(selectedItem.path, function(err, data){
+        $(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data.content, path:selectedItem.path});
+      });
+    }
   });
   return element;
 };
@@ -175,7 +185,8 @@ $(document).on("addFile", function(evt, data) {
     codeSessionId: Session.get("codeSessionId"),
     type: "file",
     path: data.path, 
-    name: data.name
+    name: data.name,
+    status: "new"
   });
   $(document).trigger("doneAddFile", {owner: cocodojo.repoOwner, repo: cocodojo.repoName, name: fileName, content: "", path: filePath});
 });
