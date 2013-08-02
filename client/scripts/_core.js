@@ -1,4 +1,5 @@
 
+
 CodeSession = new Meteor.Collection("codesession");
 SessionUsers = new Meteor.Collection("sessionusers");
 Chatbox = new Meteor.Collection("chatbox");

@@ -7,11 +7,13 @@ Template.githubLogin.repoNotSelected = function (){
   return false;
 };
 Template.githubLogin.rendered = function(){
-  Meteor.call("githubUser", function(error, user){
-    cocodojo.githubUser = user;
-    $(document).trigger("updateGithubInfo");
-    $(document).trigger("githubObjectCreated");
-  });
+  if (Meteor.currentUser) {
+    Meteor.call("githubUser", function(error, user){
+      cocodojo.githubUser = user;
+      $(document).trigger("updateGithubInfo");
+      $(document).trigger("githubObjectCreated");
+    });
+  }
 }
 $(document).on("updateGithubInfo", function(evt, repoInfo){
 	if(cocodojo.githubUser !== undefined && cocodojo.githubUser.username == cocodojo.codeSessionHost){
