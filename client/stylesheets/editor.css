@@ -14,7 +14,6 @@
 .selection-box select {
 	width: 150px;
 	color: black;
-	font-family:"Courier New",Courier,monospace;
 	font-weight: bold;
 	border: 2px solid #666;
 }
