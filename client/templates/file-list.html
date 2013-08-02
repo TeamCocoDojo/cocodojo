@@ -5,12 +5,11 @@
   <div class="loading hide">
     <img src="images/ajax-loader.gif" />
   </div>
-  {{#if codeSession.githubRepo}}
-    <div class="repo-info">
-      <h5>Repo Name: {{ codeSession.githubRepo }} @ {{ codeSession.githubBranch }}</h5>
-      <h5>Hosted by: {{ codeSession.githubHost }}</h5>
-    </div>
-  {{/if}}
+  <div class="repo-info">
+    <h5 class="repo-name-branch"></h5>
+    <h5 class="repo-host"></h5>
+  </div>
+
   <div id="ex-tree" class="tree">
     <div id="github-login-container">
       <img id="octocat-logo-big" src="/images/blacktocat-big.png" />
