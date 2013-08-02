@@ -1,6 +1,7 @@
 
 #preview-btn {
   z-index: 3;
+  font-weight: normal;
 }
 
 #previewWindow {
