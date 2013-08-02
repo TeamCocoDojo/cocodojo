@@ -223,9 +223,16 @@ Template.repoview.rendered = function() {
 	CodeSession.find({_id: Session.get("codeSessionId")}).observeChanges({
 		added: function(id, fields){
 			setGithubFileTree(fields);
+			console.log(fields);
+			if (fields.githubRepo) {
+				$(".repo-name-branch").text("Repo Name: " + fields.githubRepo + " @ "+ fields.githubBranch);
+				$(".repo-host").text("Hosted by: " + fields.githubHost);
+			}
 		},
 		changed:function (id, fields){
 			setGithubFileTree(fields);
+			$(".repo-name-branch").text("Repo Name: " + fields.githubRepo + " @ "+ fields.githubBranch);
+			$(".repo-host").text("Hosted by: " + fields.githubHost);
 		}
 	});
 	FileFolder.find({codeSessionId: Session.get("codeSessionId")}).observeChanges({

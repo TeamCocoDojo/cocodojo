@@ -6,19 +6,23 @@ body {
   background-color: #444;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 .navbar {
 	margin-bottom: 10px;
 }
 
 #content {
   position: relative;
-  height: 91%;
+  margin-bottom: 10px;
 }
 
 /* GitHub Directory */
 .tree {
 	width: auto;
-    height: 70%;
+  /*height: 70%;*/
 }
 
 
@@ -26,10 +30,28 @@ body {
 #commitBox {
   text-align: center;
 }
+
 #commitBox div {
   text-align: left;
 }
+
 #commitBox textarea{
   width: 95%;
 }
 
+#btnCommitBox {
+  width: 70%;
+  margin: 0 auto;
+}
+
+#commitBox-div {
+  position: absolute;
+  bottom: 46px;
+  display: block;
+  width: 250px;
+  height: 32px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #515455;
+  border-bottom: 1px solid #292936;
+}

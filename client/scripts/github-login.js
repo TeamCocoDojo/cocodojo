@@ -15,6 +15,7 @@ Template.githubLogin.rendered = function(){
 }
 $(document).on("updateGithubInfo", function(evt, repoInfo){
 	if(cocodojo.githubUser !== undefined && cocodojo.githubUser.username == cocodojo.codeSessionHost){
+    $("#btnCommitBox").css("display", "block");
 		$("#btnCommitBox").removeClass("hide");
 	}
 });

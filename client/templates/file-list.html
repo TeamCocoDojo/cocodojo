@@ -1,22 +1,23 @@
 <template name="repoview">
+  <div class="navbar navbar-inverse">
+    <div class="navbar-inner"></div>
+  </div>
+  <div class="loading hide">
+    <img src="images/ajax-loader.gif" />
+  </div>
+  <div class="repo-info">
+    <h5 class="repo-name-branch"></h5>
+    <h5 class="repo-host"></h5>
+  </div>
 
-<div class="navbar navbar-inverse">
-	<div class="navbar-inner"></div>
-</div>
-{{>commitBox}}
-<div class="loading hide">
-	<img src="images/ajax-loader.gif" />
-</div>
-<div id="ex-tree" class="tree">
-	<div id="github-login-container">
-		<img id="octocat-logo-big" src="/images/blacktocat-big.png" />
-		<p>
-		Start collaborative coding on your GitHub repositories! 
-		</p>
-
-		{{>githubLogin}}
-
-	</div>
-</div>
-
+  <div id="ex-tree" class="tree">
+    <div id="github-login-container">
+      <img id="octocat-logo-big" src="/images/blacktocat-big.png" />
+      <p>
+      Start collaborative coding on your GitHub repositories! 
+      </p>
+      {{>githubLogin}}
+    </div>
+  </div>
+  {{>commitBox}}
 </template>

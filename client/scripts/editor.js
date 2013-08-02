@@ -207,6 +207,7 @@ var addFileTab = function(record) {
     tabs[record.file.path] = tab;
     tab.active();
   }
+  resize();
 };
 
 Template.codeMirror.rendered = function() {
@@ -301,3 +302,16 @@ $(document).on("doneAddFile", function(event, data) {
   insertNewTab(data);
 });
 
+
+function resize() {
+  $('#content').css('height', $('body').height() - 71 - $("#editorTab").height() +'px');
+}
+
+Meteor.startup(function () {
+  $(document).ready(function() {
+    resize();
+    $(window).resize(function() {
+      resize();
+    });
+  });
+});

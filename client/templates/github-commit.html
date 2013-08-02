@@ -1,50 +1,51 @@
 <template name="commitBox">
-<a id="btnCommitBox" href="#commitBox" role="button" class="btn hide" data-toggle="modal">Commit</a>
-
+<div id="commitBox-div">
+  <a id="btnCommitBox" href="#commitBox" role="button" class="btn btn-primary hide" data-toggle="modal">Commit</a>
+</div>
 <div id="commitBox" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h2 id="myModalLabel">Commit to Github</h2>
   </div>
   <div class="modal-body">
-		<div>
-			<Strong>Files to be commited: </strong>
-			<div>
-				<div class="loading">
-					<img src="images/ajax-loader.gif" />
-				</div>
-				<ul id="files-commited">
-				</ul>
-			</div>
-			<strong>Commit to: </strong>
-			<label class="radio">
-				<input type="radio" name="optionBranches" id="optionCurrentBranch" value="optionCurrentBranch" checked>
-				Current branch: <strong><span id="branch-name"></span></strong>  
-			</label>
-			<label class="radio">
-				<input type="radio" name="optionBranches" id="optionNewBranch" value="optionNewBranch">
-				New branch: <input id="new-branch-name" class="input-xlarge" placeholder="New branch name..."/>
-		</label>
-		</ul>
-		<strong>Commit Message:</strong>
-    <textarea id="commitMessage"></textarea>	
-		<button id="commitConfirm" disabled=true>commit </button>
-		</div>
-	</div>
+    <div>
+      <Strong>Files to be commited: </strong>
+      <div>
+        <div class="loading">
+          <img src="images/ajax-loader.gif" />
+        </div>
+        <ul id="files-commited">
+        </ul>
+      </div>
+      <strong>Commit to: </strong>
+      <label class="radio">
+        <input type="radio" name="optionBranches" id="optionCurrentBranch" value="optionCurrentBranch" checked>
+        Current branch: <strong><span id="branch-name"></span></strong>  
+      </label>
+      <label class="radio">
+        <input type="radio" name="optionBranches" id="optionNewBranch" value="optionNewBranch">
+        New branch: <input id="new-branch-name" class="input-xlarge" placeholder="New branch name..."/>
+    </label>
+    </ul>
+    <strong>Commit Message:</strong>
+    <textarea id="commitMessage"></textarea>  
+    <button id="commitConfirm" disabled=true>commit </button>
+    </div>
+  </div>
 </div>
 <div id="commitSuccess" class="modal hide fade alert alert-success" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-header">
+  <div class="modal-header">
       Commit Success
-	</div>
-	<div class="modal-body">
-			Congraduation! Click anywhere to continue your work! 
-	</div>
+  </div>
+  <div class="modal-body">
+      Congraduation! Click anywhere to continue your work! 
+  </div>
 </div>
 <div id="commitFail" class="alert alert-error modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-header">
-		Commit Fail
-	</div>
-	<div class="modal-body">
+  <div class="modal-header">
+    Commit Fail
+  </div>
+  <div class="modal-body">
     Reason:<br/>
     <div id="commitFailReason"></div>
   </div>

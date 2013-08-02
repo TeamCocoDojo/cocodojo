@@ -26,5 +26,23 @@
 
 #ex-tree {
   border: none;
+  position: absolute;
+  top: 120px;
+  min-width: 220px;
+  bottom: 98px;
   border-bottom: 1px solid #292936;
+}
+
+#branch-list li,
+#repo-list li {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.repo-info h5 {
+  color: #999;
+  margin-left: 10px;
 }
