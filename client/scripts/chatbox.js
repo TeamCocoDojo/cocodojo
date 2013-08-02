@@ -5,7 +5,7 @@ Template.chatbox.messages = function() {
 Template.chatbox.rendered = function(){
   $('#chatbox-container .chatbox-content')[0].scrollTop = 99999;
   if(Chatbox.find({}).count() != 0){
-    $('#chatbox-container .chatbox-header').css('background-color', '#003366');
+    $('#chatbox-container .chatbox-header').css('background-color', '#3980f1');
   }
 }
 
