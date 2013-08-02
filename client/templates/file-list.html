@@ -1,25 +1,24 @@
 <template name="repoview">
-
-<div class="navbar navbar-inverse">
-	<div class="navbar-inner"></div>
-</div>
-<div class="loading hide">
-	<img src="images/ajax-loader.gif" />
-</div>
-<div>
-	<h5>sticy</h5>
-	<h5>dliu</h5>
-</div>
-<div id="ex-tree" class="tree">
-	<div id="github-login-container">
-		<img id="octocat-logo-big" src="/images/blacktocat-big.png" />
-		<p>
-		Start collaborative coding on your GitHub repositories! 
-		</p>
-
-		{{>githubLogin}}
-
-	</div>
-</div>
-{{>commitBox}}
+  <div class="navbar navbar-inverse">
+    <div class="navbar-inner"></div>
+  </div>
+  <div class="loading hide">
+    <img src="images/ajax-loader.gif" />
+  </div>
+  {{#if codeSession.githubRepo}}
+    <div class="repo-info">
+      <h5>Repo Name: {{ codeSession.githubRepo }} @ {{ codeSession.githubBranch }}</h5>
+      <h5>Hosted by: {{ codeSession.githubHost }}</h5>
+    </div>
+  {{/if}}
+  <div id="ex-tree" class="tree">
+    <div id="github-login-container">
+      <img id="octocat-logo-big" src="/images/blacktocat-big.png" />
+      <p>
+      Start collaborative coding on your GitHub repositories! 
+      </p>
+      {{>githubLogin}}
+    </div>
+  </div>
+  {{>commitBox}}
 </template>

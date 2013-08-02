@@ -241,6 +241,10 @@ $(document).on("repoSelectedByHost", function(evt, data) {
 	cocodojo.folderlist.initFolderList();
 });
 
+Template.repoview.codeSession = function() {
+	return CodeSession.findOne({_id: Session.get("codeSessionId")});
+}
+
 Template.repoview.rendered = function() {
 	CodeSession.find({_id: Session.get("codeSessionId")}).observeChanges({
 		added: function(id, fields){

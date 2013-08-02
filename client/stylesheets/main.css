@@ -6,6 +6,10 @@ body {
   background-color: #444;
 }
 
+a:hover {
+  text-decoration: none;
+}
+
 .navbar {
 	margin-bottom: 10px;
 }
