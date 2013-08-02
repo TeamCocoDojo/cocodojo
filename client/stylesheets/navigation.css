@@ -3,7 +3,6 @@
 }
 
 .navbar-inner{
-  height:50px;
   overflow: hidden;
 }
 
@@ -83,7 +82,9 @@
   display: none;
 }
 
-
+#preview-btn-container {
+  line-height: normal;
+}
 
 /*#navbarRight {
     float:right;
