@@ -17,6 +17,7 @@ var existTab = function(path) {
 }
 
 var insertNewTab = function(data) {
+  console.log(data.content);
   if (!existTab(data.path)) {
     insertFileTab({
       content: data.content,

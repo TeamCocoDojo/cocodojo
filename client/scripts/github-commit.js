@@ -11,15 +11,21 @@ function commitFail(err){
 
 Template.commitBox.rendered = function() {
 	$('#commitBox').on('show', function () {
+		Meteor.call("getGithubContent", Session.get("codeSessionId"), "", function(result) {
+			console.log(arguments);
+		});
+
 		$(".loading").removeClass("hide");
 		$(document).on("doneCommit", function() {
-			folders = FileFolder.find({codeSessionId: Session.get("codeSessionId"), type: "folder", status: "new"}).get();
 			docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
 				if(file.file.path === undefined) return null;
 				return {path: file.file.path, content: file.file.content };
 			});
 			$(".loading").addClass("hide");
 			$("#files-commited").empty();
+			docs.forEach(function(doc){
+				$("<li/>").text(doc.path).appendTo("#files-commited");
+			});
 			docs.forEach(function(doc){
 				$("<li/>").text(doc.path).appendTo("#files-commited");
 			});
@@ -62,6 +68,7 @@ $(document).on("repoSelected", function(e, repoInfo){
 		var repo = cocodojo.getGithubObj().getRepo(cocodojo.repoOwner, cocodojo.repoName);
 		var message = $("#commitMessage").val();
 		$(document).trigger("commitConfirm");
+		folders = FileFolder.find({codeSessionId: Session.get("codeSessionId"), type: "folder", status: "new"}).get();
 		repo.getRef("heads/" + currentBranch, function(err, latestCommit){
 			if (err) return commitFail(err);
 			if (currentBranch != targetBranch) {
@@ -71,17 +78,17 @@ $(document).on("repoSelected", function(e, repoInfo){
 				}, function(err, refInfo){
 					if(err) return commitFail(err);
 					var sha = refInfo.object.sha;
-					commitMultipleFiles(repo, docs, sha, targetBranch, message);
+					commitMultipleFiles(repo, folders, docs, sha, targetBranch, message);
 				});	
 			}
 			else {
-				commitMultipleFiles(repo, docs, latestCommit, targetBranch, message);
+				commitMultipleFiles(repo, folders, docs, latestCommit, targetBranch, message);
 			}
 		});
 	});
 });
 
-function commitMultipleFiles(repo, docs, refHash, targetBranch, message){
+function commitMultipleFiles(repo, folders, docs, refHash, targetBranch, message){
 	var tree = [];
 	var commitIndex = 0;
 	docs.forEach(function(doc){

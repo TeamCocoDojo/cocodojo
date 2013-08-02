@@ -18,8 +18,14 @@ function createBranchList(repoOwner, repoName){
 		});
 		ul.find("a").click(function(){
 			var branchName = $(this).attr("data-branch");
+			CodeSession.update({_id: Session.get("codeSessionId")}, 
+												 {codeSessionHost: cocodojo.githubUser.username, 
+												 	 githubHost: repoOwner, 
+												 	 githubRepo: repoName, 
+												 	 githubBranch: branchName,
+													 githubToken: cocodojo.githubUser.accessToken
+												 });
 			$(document).trigger("repoSelectedByHost", {owner: repoOwner, name: repoName, branch: branchName});
-			CodeSession.update({_id: Session.get("codeSessionId")}, {codeSessionHost: cocodojo.githubUser.username, githubHost: repoOwner, githubRepo: repoName, githubBranch: branchName});
 		});
 	});
 };

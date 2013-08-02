@@ -10,8 +10,11 @@ FolderList.prototype.getRepo = function(){
 	var githubObj = cocodojo.getGithubObj();
 	return githubObj.getRepo(this.owner, this.repoName);
 }
-FolderList.prototype.getContent = function (sha, callback) {
-	this.getRepo().getBlob(sha, callback);
+FolderList.prototype.getContent = function (path, callback) {
+	Meteor.call("getGithubContent", Session.get("codeSessionId"), path, function(err, result) {
+		console.log(result);
+		callback(err, result);
+	});
 };
 
 FolderList.prototype.addToFolderList = function ( data ) {
@@ -28,61 +31,62 @@ FolderList.prototype.addToFolderList = function ( data ) {
 		var includeItem = cocodojo.folderlist.createFolderItem(data)
 
 	if(targetFolder.children(":contains('" + data.name + "')").length >0 && 
-		$(targetFolder.children(":contains('" + data.name + "')")[0]).text() == data.name ) return; 
+		 $(targetFolder.children(":contains('" + data.name + "')")[0]).text() == data.name ) return; 
 
-	targetFolder.append(includeItem);
-	$.contextMenu({
-		selector: '.tree-item',
-		items: {
-			"rename": {
-				name: "Rename File",
-				callback: function() {
-					var fileName = window.prompt("Please input the name of the file");
-					if (fileName) {
-						var fullPath = $(this).data("path") + fileName
-						$(document).trigger("renameFile", fullPath);
+		targetFolder.append(includeItem);
+		$.contextMenu({
+			selector: '.tree-item',
+			items: {
+				"rename": {
+					name: "Rename File",
+					callback: function() {
+						var fileName = window.prompt("Please input the name of the file");
+						if (fileName) {
+							var fullPath = $(this).data("path") + "/" +fileName;
+							$(document).trigger("renameFile", fullPath);
+						}
 					}
-				}
-			},
-			"delete": {
-				name: "Delete File",
-				callback: function() {
-					$(document).trigger("deleteFile", fullPath);
+				},
+				"delete": {
+					name: "Delete File",
+					callback: function() {
+						$(document).trigger("deleteFile", fullPath);
+					}
 				}
 			}
-		}
-	});
-	$.contextMenu({
-		selector: '.tree-folder',
-		items: {
-			"add": {
-				name: "Add File",
-				callback: function() {
-					var fileName = window.prompt("Please input the name of the file");
-					if (fileName) {
-						var fullPath = $(this).data("path") + fileName
-						$(document).trigger("addFile", {path: fullPath, name: fileName});
+		});
+		$.contextMenu({
+			selector: '.tree-folder-header',
+			items: {
+				"add": {
+					name: "Add File",
+					callback: function(key, obj) {
+						var item = $(obj.$trigger[0]);
+						var fileName = window.prompt("Please input the name of the file");
+						if (fileName) {
+							var fullPath = $(this).data("path") + "/" +fileName;
+							$(document).trigger("addFile", {path: fullPath, name: fileName});
+						}
 					}
-				}
-			},
-			"rename": {
-				name: "Rename Directory",
-				callback: function() {
-					var fileName = window.prompt("Please input the name of the file");
-					if (fileName) {
-						var fullPath = $(this).data("path") + fileName
-						$(document).trigger("renameFile", fullPath);
+				},
+				"rename": {
+					name: "Rename Directory",
+					callback: function() {
+						var fileName = window.prompt("Please input the name of the file");
+						if (fileName) {
+							var fullPath = $(this).data("path") + fileName
+							$(document).trigger("renameFile", fullPath);
+						}
 					}
-				}
-			},
-			"delete": {
-				name: "Delete Directory",
-				callback: function() {
-					$(document).trigger("deleteFile", fullPath);
+				},
+				"delete": {
+					name: "Delete Directory",
+					callback: function() {
+						$(document).trigger("deleteFile", fullPath);
+					}
 				}
 			}
-		}
-	});
+		});
 }
 
 FolderList.prototype.createFolderItem = function ( data ) {
@@ -91,6 +95,7 @@ FolderList.prototype.createFolderItem = function ( data ) {
 	var content = $("<div/>").addClass('tree-folder-content').hide();
 	var element = $("<div/>").addClass('tree-folder');
 	header.attr("data-path", data.path);
+	header.data(data);
 	header.appendTo(element);
 	content.appendTo(element);
 	header.click(function(evt){
@@ -116,43 +121,12 @@ FolderList.prototype.createFileItem = function (data) {
 	element.data(data);
 	element.click(function(evt){
 		var selectedItem = $(this).data();
-		me.getContent(selectedItem.sha, function(err, data){
-			$(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data, path:selectedItem.path});
+		me.getContent(selectedItem.path, function(err, data){
+			$(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, sha:selectedItem.sha, content: data.content, path:selectedItem.path});
 		});
 	});
 	return element;
 };
-FolderList.prototype.initFolderList =  function (callback) {
-	var me = this;
-	var sha = this.branch;
-	this.folders = {};
-	this.getRepo().getTree(sha + "?recursive=true", function(err, tree){
-		tree.sort(function(a, b){
-			return a.path.localeCompare(b.path);
-		});
-		_.each(tree, function(item){
-			var pathes = item.path.split("/");
-			var folder = me.folders;
-			
-			for(var j=0; j< pathes.length-1; j++){
-				folder = folder[pathes[j]].subcontents;
-			}
-			
-			if(item.type == "tree") item.subcontents = {};
-			folder[pathes[pathes.length-1]] = item;
-			FileFolder.insert({
-				codeSessionId: Session.get("codeSessionId"),
-				type: (item.type=="blob") ? "file" : "folder",
-				path: item.path, 
-				name: pathes[pathes.length-1],
-				sha: item.sha
-			});
-
-		}, this);
-		$(".loading").addClass("hide");
-		$("#ex-tree").removeClass("hide");
-	});	
-}
 
 FolderList.prototype.getFolderList = function (options, callback){
 	if(options.path !== undefined ) {
@@ -194,6 +168,7 @@ Template.repoview.events({
 });
 
 $(document).on("addFile", function(evt, data) {
+	console.log("on add file:", data);
 	var fileName = data.name;
 	var filePath = data.path;
 	FileFolder.insert({
@@ -238,7 +213,10 @@ $(document).on("repoSelectedByHost", function(evt, data) {
 	$(".loading").removeClass("hide");
 	if(cocodojo.folderlist === undefined) 
 		cocodojo.folderlist = new FolderList( data.owner, data.name, data.branch, $("#ex-tree"));
-	cocodojo.folderlist.initFolderList();
+	Meteor.call("initGithubFolderList", Session.get("codeSessionId"), function(){
+		$("#ex-tree").removeClass("hide");
+		$(".loading").addClass("hide");
+	});
 });
 
 Template.repoview.rendered = function() {
