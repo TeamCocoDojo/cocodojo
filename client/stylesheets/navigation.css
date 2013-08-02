@@ -102,8 +102,20 @@
   font-weight: normal;
 }
 
+#about h2 {
+  color: #005580;
+}
+
 #team-photo {
   width: 800px;
+}
+
+#parnters li {
+  margin: 30px 0;
+}
+
+#parnters li a {
+  color: #000;
 }
 
 /*#navbarRight {
