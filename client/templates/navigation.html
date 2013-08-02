@@ -2,19 +2,23 @@
   <div class="navbar navbar-inverse">
     <div class="navbar-inner">
       <img src="images/sliderWhite.png" width="18px" height="18px" class="btn btn-navbar" data-toggle="collapse" data-target="#menu">
-      <p class="navbar-text pull-right">
+      <!-- <p class="navbar-text pull-right">
         <img src="images/gearIcon.png" width="18px" height="18px" class="btn btn-navbar">
       </p>
       <p class="navbar-text pull-right">
         <a href="#" id="username-navlink" class="navbar-link">{{session "username"}}</a>
-<!--         <a id="logout" class="navbar-link" href="#">Logout</a> -->
-      </p>
+        <a id="logout" class="navbar-link" href="#">Logout</a>
+      </p> -->
+      
       <ul class="nav">
         <li><img src="images/logo.png" width="120px"></li>
         <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#gettingStarted">#help</a></li>
         <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#about">#about</a></li>
         <li><a data-toggle="modal" data-keyboard="true" data-backdrop="true" href="#contact">#contact</a></li>
       </ul>
+      <div class="navbar-text pull-right">
+        {{> preview}}
+      </div>
     </div>
   </div>
 
