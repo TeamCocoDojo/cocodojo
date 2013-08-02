@@ -6,8 +6,12 @@
   overflow: hidden;
 }
 
+.view .modal {
+  width: 1060px;
+  margin-left: -530px;
+}
+
 .modal-body{
-  font-family:"Courier New",Courier,monospace;
   font-size: 100%;
 }
 
@@ -41,8 +45,11 @@
   font-size: 100%;
 }
 
+.modal-body h4{
+  margin-left: 25px;
+}
+
 .modal-header{
-  font-family:"Courier New",Courier,monospace;
   color: #005580;
 }
 
@@ -84,6 +91,19 @@
 
 #preview-btn-container {
   line-height: normal;
+}
+
+#feature-intro li {
+  margin: 20px 0;
+}
+
+#report-bugs {
+  font-size: 13px;
+  font-weight: normal;
+}
+
+#team-photo {
+  width: 800px;
 }
 
 /*#navbarRight {
