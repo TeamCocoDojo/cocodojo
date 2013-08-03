@@ -126,7 +126,6 @@ FolderList.prototype.createFileItem = function (data) {
   element.data(data);
   element.click(function(evt){
     var selectedItem = $(this).data();
-    console.log(selectedItem);
     if(selectedItem.status == "new"){
       $(document).trigger("commitToGit");
       $(document).on("doneCommit", function() {
