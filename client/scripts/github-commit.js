@@ -11,7 +11,7 @@ function commitFail(err){
 
 Template.commitBox.rendered = function() {
   $('#commitBox').on('show', function () {
-    $(".loading").removeClass("hide");
+    $("#commitBox .loading").removeClass("hide");
     $(document).on("doneCommit", function() {
       docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
         if(file.file.path === undefined) return null;
@@ -20,10 +20,15 @@ Template.commitBox.rendered = function() {
       $(".loading").addClass("hide");
       $("#files-commited").empty();
       docs.forEach(function(doc){
-        $("<li/>").text(doc.path).appendTo("#files-commited");
+        $("<li/>").text("Modified: " + doc.path).appendTo("#files-commited");
       });
-      docs.forEach(function(doc){
-        $("<li/>").text(doc.path).appendTo("#files-commited");
+      folders = FileFolder.find({codeSessionId: Session.get("codeSessionId"), type: "folder", status: "new"}).fetch();
+      folders.forEach(function(doc){
+        $("<li/>").text("Added: " + doc.path).appendTo("#files-commited");
+      });
+      deletedFiles = FileFolder.find({codeSessionId: Session.get("codeSessionId"), status: "removed"}).fetch();
+      deletedFiles.forEach(function(doc){
+        $("<li/>").text("Deleted: " +doc.path).appendTo("#files-commited");
       });
       $("#commitConfirm").removeAttr("disabled");
     });
@@ -63,8 +68,7 @@ $(document).on("repoSelected", function(e, repoInfo){
     var targetBranch = $('#optionNewBranch').is(':checked') ? $("#new-branch-name").val() : repoInfo.branch;
     var repo = cocodojo.getGithubObj().getRepo(cocodojo.repoOwner, cocodojo.repoName);
     var message = $("#commitMessage").val();
-    $(document).trigger("commitConfirm");
-    folders = FileFolder.find({codeSessionId: Session.get("codeSessionId"), type: "folder", status: "new"}).get();
+    $(document).trigger("commitConfirm"); 
     repo.getRef("heads/" + currentBranch, function(err, latestCommit){
       if (err) return commitFail(err);
       if (currentBranch != targetBranch) {
@@ -74,17 +78,16 @@ $(document).on("repoSelected", function(e, repoInfo){
         }, function(err, refInfo){
           if(err) return commitFail(err);
           var sha = refInfo.object.sha;
-          commitMultipleFiles(repo, folders, docs, sha, targetBranch, message);
+          commitMultipleFiles(repo, folders, deletedFiles, docs, sha, targetBranch, message);
         }); 
       }
       else {
-        commitMultipleFiles(repo, folders, docs, latestCommit, targetBranch, message);
+        commitMultipleFiles(repo, folders, deletedFiles, docs, latestCommit, targetBranch, message);
       }
     });
   });
 });
-
-function commitMultipleFiles(repo, folders, docs, refHash, targetBranch, message){
+function commitMultipleFiles(repo, folders, deletedFiles, docs, refHash, targetBranch, message){
   var tree = [];
   var commitIndex = 0;
   docs.forEach(function(doc){
@@ -99,10 +102,33 @@ function commitMultipleFiles(repo, folders, docs, refHash, targetBranch, message
       });
 
       if(commitIndex == docs.length){
-        commit(repo, refHash, tree, targetBranch, message);
+        if(deletedFiles.length > 0 ){
+          removeDeletedFilesFromTree(deletedFiles, repo, refHash, tree, targetBranch, message);
+        }
+        else{
+          commit(repo, refHash, tree, targetBranch, message);
+        }
       }
     });
   });
+};
+
+function removeDeletedFilesFromTree(deletedFiles, repo, refHash, treeToModify, targetBranch, message) {
+  var modifyList = _.map(treeToModify, function(item) {return item.path}); 
+  repo.getTree(refHash+"?recursive=true", function(err, tree) {
+    var newTree = _.reject(tree, function(ref) { return (deletedFiles.indexOf(ref.path) !== -1); });
+    for(var i=0; i< newTree.length; i++) {
+      var item = newTree[i];
+      var index = modifyList.indexOf(item.path);
+      if( index !== -1 ) {
+        newTree[i] = treeToModify[index];
+      }
+      if (item.type === "tree") delete item.sha;
+    }
+    commit(repo, refHash, newTree, targetBranch, message);
+
+  });
+
 };
 
 function commitFile(path, fileContent, callback) {

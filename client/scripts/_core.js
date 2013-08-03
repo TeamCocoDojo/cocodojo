@@ -12,7 +12,7 @@ if (Meteor.isClient) {
   cocodojo.editorSocket = io.connect(document.location.hostname + '/editor', {port: 3333});
   cocodojo.videoSocket = io.connect(document.location.hostname + '/video', {port: 3333});
   cocodojo.getGithubObj = function(){
-  	if (cocodojo.githubUser === undefined) {
+  	if (cocodojo.githubUser === undefined || cocodojo.githubUser == null) {
       return new GithubLib({});
     }
   	if (cocodojo.githubObj === undefined) {
