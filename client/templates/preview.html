@@ -1,11 +1,20 @@
 <template name="preview">
-  <!-- <button id="" type="submit" class="btn">Search</button> -->
-  <a id="preview-btn" class="btn btn-primary">HTML Preview</a>
+
+  <div class="btn-group">
+    <button id="preview-btn" type="button" class="btn btn-default">HTML Preview</button>
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a id="select-popup">Pop Up <i class="icon-ok"></i></a></li>
+      <li><a id="select-modalbox">Modal Box <i class="icon-ok"></i></a></li>
+    </ul>
+  </div>
+
+  <!-- <a id="preview-btn" class="btn btn-primary">HTML Preview</a> -->
 
   <div id="previewWindow" class="modal hide fade alert alert-success" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-header">
-      Preview
-    </div>
+    <div class="modal-header"> Preview </div>
     <div class="modal-body">
       <iframe src="">
     </div>

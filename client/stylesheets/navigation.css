@@ -3,7 +3,7 @@
 }
 
 .navbar-inner{
-  overflow: hidden;
+  /*overflow: hidden;*/
 }
 
 .view .modal {
@@ -36,7 +36,7 @@
 }
 
 .modal-body li{
-  list-style-type: none; 
+  list-style-type: none;
 }
 
 .modal-body h5{
