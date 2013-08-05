@@ -6,7 +6,7 @@
   /*overflow: hidden;*/
 }
 
-.view .modal {
+.navmodal {
   width: 1060px;
   margin-left: -530px;
 }
@@ -118,37 +118,4 @@
   color: #000;
 }
 
-/*#navbarRight {
-    float:right;
-}
 
-
-#navbarRight ul {
-  margin: 0;
-  padding: 5px;
-  list-style-type: none;
-  text-align: right;
-}
-
-#navbarRight ul li {
-  display: inline;
-}
-
-#navbarLeft{
-    float: left;
-}
-
-#navbarLeft ul {
-  margin: 0;
-  padding: 5px;
-  list-style-type: none;
-  text-align: left;
-}
-
-#navbarLeft ul li {
-  display: inline;
-  padding-left: 20px;
-  font-family:"Courier New",Courier,monospace;
-  font-weight: bold;
-}
-*/

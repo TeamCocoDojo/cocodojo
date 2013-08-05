@@ -243,10 +243,10 @@ Template.codeMirror.rendered = function() {
         var defaultFileTabs = FileTab.find({codeSessionId: Session.get("codeSessionId"), userId: Session.get("userId")});
         if (defaultFileTabs.count() == 0) {
           insertNewTab({
-            content: "DEMO",
-            name: "DEMO",
+            content: "<html>\n\t<body>\n\t\t<p>Welcome to Coco Dojo.</p>\n\t\t<p>Hope you enjoy it.</p>\n\t</body>\n</html>",
+            name: "index.html",
             owner: Session.get("codeSessionId"),
-            path: "DEMO",
+            path: "index.html",
             repo: "",
             noClose: true
           });
