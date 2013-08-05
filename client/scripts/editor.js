@@ -116,9 +116,7 @@ Tab.prototype.active = function() {
   }
   this.newEditorWrapper.show();
   this.tab.addClass("active");
-  console.log("syntaxHighlight changed");
   this.cm.refresh();
-  var syntax = "application/x-httpd-php";
   this.isActive = true;
   for (var key in tabs) {
     if (tabs[key].isActive) {
@@ -193,36 +191,50 @@ Tab.prototype.hideTab = function() {
 
 var getSyntaxByFileName = function(fileName) {
   var split = fileName.split('.');
-  var fileExt = split[split.length - 1];
+  var fileExt = split[split.length - 1].toLowerCase();
   var syntax;
   switch(fileExt) {
-    case "js":
-    case "JS":    syntax = "javascript"; break;
-    case "py":
-    case "PY":    syntax = "text/x-python"; break;
+    case "jade":
+    case "js":      syntax = "javascript"; break;
+    case "coffee":  syntax = "text/x-coffeescript"; break;
+    case "py":      syntax = "text/x-python"; break;
     case "java":
-    case "JAVA":  syntax = "text/x-java"; break;
+    case "jspx":
+    case "wss":
+    case "do":
+    case "action":
+    case "jsp":     syntax = "text/x-java"; break;
     case "rb":
-    case "RB":    syntax = "text/x-ruby"; break;
+    case "rhtml":   syntax = "text/x-ruby"; break;
+    case "erb":     syntax = "application/x-erb"; break;
     case "php":
-    case "PHP":
+    case "php4":
+    case "php3":    syntax = "application/x-httpd-php"; break;
+    case "phtml":
     case "html":
-    case "HTML":  syntax = "application/x-httpd-php"; break;
-    case "c":
-    case "C":     syntax = "text/x-csrc"; break;
-    case "cs":
-    case "CS":    syntax = "text/x-csrc"; break;
-    case "pl":
-    case "PL":    syntax = "text/x-perl"; break;
+    case "htm":
+    case "jhtml":   
+    case "xhtml":   
+    case "xml":     syntax = "text/html"; break;
+    case "svg":
+    case "rss":     syntax = "application/xml"; break;
+    case "c":       syntax = "text/x-csrc"; break;
+    case "cs":      syntax = "text/x-csrc"; break;
+    case "pl":      syntax = "text/x-perl"; break;
     case "css":
-    case "CSS":
     case "scss":
-    case "SCSS":
-    case "sass":
-    case "SASS":
     case "less":
-    case "LESS":  syntax = "text/css"; break;
-    default: syntax = "javascript"; break;
+    case "sass":    syntax = "text/css"; break;
+    case "groovy":  syntax = "text/x-groovy"; break;
+    case "erl":     syntax = "text/x-erlang"; break;
+    case "go":      syntax = "text/x-go"; break;
+    case "lua":     syntax = "text/x-lua"; break;
+    case "r":       syntax = "text/x-rsrc"; break;
+    case "scala":   syntax = "text/x-scala"; break;
+    case "sls":     syntax = "text/x-scheme"; break;
+    case "hs":      syntax = "text/x-haskell"; break;
+    case "clj":     syntax = "text/x-clojure"; break;
+    default:        syntax = "javascript"; break;
   }
   return syntax;
 }
