@@ -17,6 +17,15 @@ Template.commitBox.rendered = function() {
         if(file.file.path === undefined) return null;
         return {path: file.file.path, content: file.file.content };
       });
+      var uniq_docs = {};
+      $.each(docs, function(index, item){
+      	console.log(index, item);
+        uniq_docs[item.path] = item;  
+			});
+			docs = $.map(uniq_docs, function(v, k) {
+			  return [v];
+			}); 
+			console.log(docs);
       $(".loading").addClass("hide");
       $("#files-commited").empty();
       docs.forEach(function(doc){
@@ -70,6 +79,7 @@ $(document).on("repoSelected", function(e, repoInfo){
     var message = $("#commitMessage").val();
     $(document).trigger("commitConfirm"); 
     repo.getRef("heads/" + currentBranch, function(err, latestCommit){
+    	console.log(latestCommit);
       if (err) return commitFail(err);
       if (currentBranch != targetBranch) {
         repo.createRef({
@@ -88,68 +98,76 @@ $(document).on("repoSelected", function(e, repoInfo){
   });
 });
 function commitMultipleFiles(repo, folders, deletedFiles, docs, refHash, targetBranch, message){
-  var tree = [];
-  var commitIndex = 0;
-  docs.forEach(function(doc){
-    commitFile(doc.path, doc.content, function(err, item){
-      commitIndex += 1;
-      if(err) return commitFail(err);
-      tree.push({
-        "path": item.path,
-        "mode": "100644",
-        "type": "blob",
-        "sha": item.sha
-      });
+	var tree = [];
+	var commitIndex = 0;
+	if(docs.length == 0) {
+		return removeDeletedFilesFromTree(deletedFiles, repo, refHash, tree, targetBranch, message);
+	}
+	docs.forEach(function(doc){
+		commitFile(doc.path, doc.content, function(err, item){
+			commitIndex += 1;
+			if(err) return commitFail(err);
+			tree.push({
+				"path": item.path,
+				"mode": "100644",
+				"type": "blob",
+				"sha": item.sha
+			});
 
-      if(commitIndex == docs.length){
-        if(deletedFiles.length > 0 ){
-          removeDeletedFilesFromTree(deletedFiles, repo, refHash, tree, targetBranch, message);
-        }
-        else{
-          commit(repo, refHash, tree, targetBranch, message);
-        }
-      }
-    });
-  });
+			if(commitIndex == docs.length){
+				if(deletedFiles.length > 0 ){
+					removeDeletedFilesFromTree(deletedFiles, repo, refHash, tree, targetBranch, message);
+				}
+				else{
+					commit(repo, refHash, tree, targetBranch, message);
+				}
+			}
+		});
+	});
 };
 
 function removeDeletedFilesFromTree(deletedFiles, repo, refHash, treeToModify, targetBranch, message) {
-  var modifyList = _.map(treeToModify, function(item) {return item.path}); 
-  repo.getTree(refHash+"?recursive=true", function(err, tree) {
-    var newTree = _.reject(tree, function(ref) { return (deletedFiles.indexOf(ref.path) !== -1); });
-    for(var i=0; i< newTree.length; i++) {
-      var item = newTree[i];
-      var index = modifyList.indexOf(item.path);
-      if( index !== -1 ) {
-        newTree[i] = treeToModify[index];
-      }
-      if (item.type === "tree") delete item.sha;
-    }
-    commit(repo, refHash, newTree, targetBranch, message);
-
-  });
+	var totalDeletedFiles = deletedFiles.length;
+	var currentDeletedFiles = 0;
+	_.each(deletedFiles, function(file) {
+		repo.remove(targetBranch, file.path, function(err, result) {
+			currentDeletedFiles += 1;
+			if(currentDeletedFiles == totalDeletedFiles) {
+    		if(treeToModify.length == 0 ) {
+        	$('#commitBox').modal('hide');
+        	$('#commitSuccess').modal('show');
+        	return;
+				}
+				else{
+					repo.getRef("heads/" + targetBranch, function(err, latestCommit){
+						commit(repo, latestCommit, treeToModify, targetBranch, message);
+					});
+				}
+			}
+		})
+	});
 
 };
 
 function commitFile(path, fileContent, callback) {
-  cocodojo.getGithubObj().getRepo(cocodojo.repoOwner, cocodojo.repoName).postBlob(fileContent, function(err, sha){
-    callback(err, {sha: sha, path: path});
-  });
+	cocodojo.getGithubObj().getRepo(cocodojo.repoOwner, cocodojo.repoName).postBlob(fileContent, function(err, sha){
+		callback(err, {sha: sha, path: path});
+	});
 };
 
 function commit(repo, refHash, tree, targetBranch, message) {
-  repo.updateTree(refHash, tree, function(err, treeSha){
-    if(err) return commitFail(err);
-    repo.commit(refHash, treeSha, message, function(err, commit) {
-      if(err) return commitFail(err);
+	repo.updateTree(refHash, tree, function(err, treeSha){
+		if(err) return commitFail(err);
+		repo.commit(refHash, treeSha, message, function(err, commit) {
+			if(err) return commitFail(err);
 
-      repo.updateHead(targetBranch, commit, function(err){
-        if(err) {
-          return commitFail(err);
-        }
-        $('#commitBox').modal('hide');
-        $('#commitSuccess').modal('show');
-      });
-    });
-  });
+			repo.updateHead(targetBranch, commit, function(err){
+				if(err) {
+					return commitFail(err);
+				}
+				$('#commitBox').modal('hide');
+				$('#commitSuccess').modal('show');
+			});
+		});
+	});
 }
