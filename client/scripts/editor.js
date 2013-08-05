@@ -229,9 +229,11 @@ Template.codeMirror.rendered = function() {
   var demoTab = FileTab.find({codeSessionId: Session.get("codeSessionId"), userId: Session.get("userId"), "file.noClose": true});
   demoTab.observe({
     removed: function(record) {
-      var tab = tabs[record.file.path];
-      tab.close();
-      delete tabs[record.file.path];
+      if (tabs[record.file.path]) {
+        var tab = tabs[record.file.path];
+        tab.close();
+        delete tabs[record.file.path];
+      }
     }
   });
 
