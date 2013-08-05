@@ -84,6 +84,7 @@ if(Meteor.isServer) {
         .on('finishCommit', function(codeSessionId) {
           return function() {
             currentUserMap[codeSessionId] = currentUserMap[codeSessionId] + 1;
+            console.log(currentUserMap);
             if (currentUserMap[codeSessionId] == sessionUsersMap[codeSessionId]) {
               socket.emit('doneCommit');
             }
