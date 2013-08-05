@@ -128,10 +128,10 @@ FolderList.prototype.createFileItem = function (data) {
     var selectedItem = $(this).data();
     if(selectedItem.status == "new"){
       $(document).trigger("commitToGit");
-      $(document).on("doneCommit", function() {
+      setTimeout(function() {
         var obj = FileTab.findOne({codeSessionId: Session.get("codeSessionId"), "file.path": selectedItem.path});
         $(document).trigger("repoFileSelected", {owner: me.owner, repo: me.repoName ,name: selectedItem.name, content: obj.file.content, path:obj.file.path});
-      });
+      }, 2000);
     }
     else{
       me.getContent(selectedItem.path, function(err, data){
