@@ -17,7 +17,6 @@ var existTab = function(path) {
 }
 
 var insertNewTab = function(data) {
-  console.log(data.content);
   if (!existTab(data.path)) {
     insertFileTab({
       content: data.content,
@@ -232,6 +231,7 @@ Template.codeMirror.rendered = function() {
     removed: function(record) {
       var tab = tabs[record.file.path];
       tab.close();
+      delete tabs[record.file.path];
     }
   });
 
