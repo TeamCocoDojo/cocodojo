@@ -52,7 +52,6 @@ var saveAllTabs = function() {
       console.log(error);
     }
     else {
-      console.log("done commit " + Session.get("userId"));
       $(document).trigger("doneSingleCommit");
     }
   });
@@ -287,9 +286,7 @@ Template.codeMirror.events = {
 }
 
 $(document).on("preview", function(data) {
-  ChangeLog.insert({
-    codeSessionId: Session.get("codeSessionId"),
-  });
+  $(document).trigger("commitToGit");
 });
 
 $(document).on("repoFileSelected", function(event, data) {
