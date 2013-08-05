@@ -46,3 +46,7 @@
   color: #999;
   margin-left: 10px;
 }
+
+.loading-icon-big img{
+  width: 250px;
+}
