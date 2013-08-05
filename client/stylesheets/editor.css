@@ -12,6 +12,7 @@
 	position: fixed;
 }
 .selection-box select {
+	z-index: 10;
 	width: 150px;
 	color: black;
 	font-weight: bold;
