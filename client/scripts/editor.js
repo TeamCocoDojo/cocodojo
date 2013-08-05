@@ -118,8 +118,21 @@ Tab.prototype.active = function() {
   }
   this.newEditorWrapper.show();
   this.tab.addClass("active");
+  console.log("syntaxHighlight changed");
   this.cm.refresh();
+  var syntax = "application/x-httpd-php";
   this.isActive = true;
+  for (var key in tabs) {
+    if (tabs[key].isActive) {
+      console.log(tabs[key].record.file.name);
+      var syntax = getSyntaxByFileName(tabs[key].record.file.name);
+      // set the code mirror syntax highlight
+      tabs[key].changeSyntaxHighlight(syntax);
+      // update the select
+      var element = document.getElementById('syntaxHighlight');
+      element.value = syntax;
+    }
+  }
 }
 
 Tab.prototype.inActive = function() {
@@ -168,6 +181,7 @@ Tab.prototype.rename = function(name) {
 }
 
 Tab.prototype.changeSyntaxHighlight = function(newSyntax) {
+  console.log("change this syntax to:" + newSyntax);
   this.cm.setOption("mode", newSyntax);
 }
 
@@ -177,6 +191,42 @@ Tab.prototype.changeTheme = function(newTheme) {
 
 Tab.prototype.hideTab = function() {
   this.tab.hide();
+}
+
+var getSyntaxByFileName = function(fileName) {
+  var split = fileName.split('.');
+  var fileExt = split[split.length - 1];
+  var syntax;
+  switch(fileExt) {
+    case "js":
+    case "JS":    syntax = "javascript"; break;
+    case "py":
+    case "PY":    syntax = "text/x-python"; break;
+    case "java":
+    case "JAVA":  syntax = "text/x-java"; break;
+    case "rb":
+    case "RB":    syntax = "text/x-ruby"; break;
+    case "php":
+    case "PHP":
+    case "html":
+    case "HTML":  syntax = "application/x-httpd-php"; break;
+    case "c":
+    case "C":     syntax = "text/x-csrc"; break;
+    case "cs":
+    case "CS":    syntax = "text/x-csrc"; break;
+    case "pl":
+    case "PL":    syntax = "text/x-perl"; break;
+    case "css":
+    case "CSS":
+    case "scss":
+    case "SCSS":
+    case "sass":
+    case "SASS":
+    case "less":
+    case "LESS":  syntax = "text/css"; break;
+    default: syntax = "javascript"; break;
+  }
+  return syntax;
 }
 
 var insertFileTab = function(file) {
