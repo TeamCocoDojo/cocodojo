@@ -71,7 +71,7 @@ FolderList.prototype.addToFolderList = function ( data ) {
               $(document).trigger("addFile", {path: fullPath, name: fileName});
             }
           }
-        },/*
+        }/*,
         "rename": {
           name: "Rename Directory",
           callback: function() {
@@ -81,7 +81,7 @@ FolderList.prototype.addToFolderList = function ( data ) {
               $(document).trigger("renameFile", fullPath);
             }
           }
-        },*/
+        },
         "delete": {
           name: "Delete Directory",
           callback: function(key, obj) {
@@ -89,7 +89,7 @@ FolderList.prototype.addToFolderList = function ( data ) {
             var fullPath = item.data("path") ;
             $(document).trigger("deleteFile", fullPath);
           }
-        }
+        }*/
       }
     });
 }
@@ -181,6 +181,7 @@ Template.repoview.events({
 });
 $(document).on("deleteFile", function(evt, data) {
 	var file = FileFolder.findOne({codeSessionId: Session.get("codeSessionId"), path: data.path});
+	console.log(file);
 	if(data.status == "new"){
 		FileFolder.remove({_id: file._id});
 	}
