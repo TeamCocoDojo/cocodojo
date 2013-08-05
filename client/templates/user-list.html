@@ -1,10 +1,18 @@
 <template name="userList">
   <div id="user-container">
     {{#each users}}
-      <div class="user-instance" title="{{username}}" data-placement="right">
-        <div style="border-left: 6px solid {{userColor}};" class="user-initial" data-id="{{ _id }}">  {{initial}}
+      {{#if isMe}}
+        <div id="my-user-instance" class="user-instance" title="Hi {{username}}, click to change your name" data-placement="right">
+          <div style="border-left: 6px solid {{userColor}};" class="user-initial" data-id="{{ _id }}">  {{initial}}
+          </div>
         </div>
-      </div>
+      {{else}}
+        <div class="user-instance" title="{{username}}" data-placement="right">
+          <div style="border-left: 6px solid {{userColor}};" class="user-initial" data-id="{{ _id }}">  {{initial}}
+          </div>
+        </div>
+      {{/if}}
+
     {{/each}}
   </div>
 </template>

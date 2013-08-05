@@ -3,10 +3,13 @@ var
   serverAddress = "http://live.cocodojo.com";
   liveSocket = io.connect(serverAddress, {port: 3333} ),
   serverDirectoryReady = false,
-  modifiedFilesCount = -1;
+  modifiedFilesCount = -1,
+  eventsRegistered = false,
+  previewWindow = undefined,
+  previewType = 'popup',
 
   uploadFiles = function(){
-    serverDirectoryReady = true;
+
     var fileTabs = FileTab.find({});
     modifiedFilesCount = fileTabs.count(); // update modified files count
 
@@ -27,53 +30,83 @@ var
     }
 
   },
+
   loadPreview = function(){
-    $('#previewWindow iframe').attr('src', serverAddress+":3333/"+Session.get('codeSessionId'));
-    $('#previewWindow').modal('show');
-    //window.open(serverAddress+":3333/"+Session.get('codeSessionId'), 'Preview');
+    switch(previewType){
+      case 'modalbox':
+        $('#previewWindow iframe').attr('src', serverAddress+":3333/"+Session.get('codeSessionId'));
+        $('#previewWindow').modal('show');
+        break;
+      case 'popup':
+        if(previewWindow == undefined || previewWindow.closed){
+          previewWindow = window.open(serverAddress+":3333/"+Session.get('codeSessionId'), 'Preview');
+        } else {
+          previewWindow.location = serverAddress+":3333/"+Session.get('codeSessionId');
+        }
+        break;
+    }
   };
+
 
 
 Template.preview.rendered = function() {
 
-  liveSocket.on('livePreview', function(data){
+  if(!eventsRegistered){
 
-    $('#preview-btn').click(function(){
+    $('#select-modalbox .icon-ok').hide();
 
-      var
-        userSession = Session.get('userSession'),
-        codeSession = CodeSession.find({}).fetch();
+    liveSocket.on('livePreview', function(data){
 
-      if(serverDirectoryReady) { uploadFiles(); }
-      else if(codeSession[0].githubHost){
-        //var repoAddr = 'https://github.com/'+codeSession[0].githubHost+'/'+codeSession[0].githubRepo+'.git';
-        liveSocket.emit("clone", {
-          sessionId: Session.get('codeSessionId'),
-          repoAddr: 'https://github.com/'+codeSession[0].githubHost+'/'+codeSession[0].githubRepo+'.git',
-          repoBranch: codeSession[0].githubBranch
-        });
-      } else {
-        liveSocket.emit("makedir", {
-          sessionId: Session.get('codeSessionId')
-        });
-      }
+      $('#preview-btn').click(function(e){
+        var
+          userSession = Session.get('userSession'),
+          codeSession = CodeSession.find({}).fetch();
 
+        if(serverDirectoryReady) { uploadFiles(); }
+        else if(codeSession[0].githubHost){
+          liveSocket.emit("clone", {
+            sessionId: Session.get('codeSessionId'),
+            repoAddr: 'https://github.com/'+codeSession[0].githubHost+'/'+codeSession[0].githubRepo+'.git',
+            repoBranch: codeSession[0].githubBranch
+          });
+        } else {
+          liveSocket.emit("makedir", {
+            sessionId: Session.get('codeSessionId')
+          });
+        }
+
+      });
     });
-  });
 
-  // When clone or create directory is finished
-  liveSocket.on('serverDirectoryReady', function(data){
-    uploadFiles();
-  });
+    // When clone or create directory is finished
+    liveSocket.on('serverDirectoryReady', function(data){
+      serverDirectoryReady = true;
+      uploadFiles();
+    });
 
-  // When all files are saved
-  liveSocket.on('fileSaved', function(data){
-    if(--modifiedFilesCount == 0){ // if all files are updated
-      loadPreview();
-    }
-  });
+    // When all files are saved
+    liveSocket.on('fileSaved', function(data){
+      if(--modifiedFilesCount == 0){ // if all files are updated
+        loadPreview();
+      }
+    });
+
+    eventsRegistered = true;
+  }
 
 };
 
+Template.preview.events = {
+  'click #select-modalbox': function(e) {
+    $('#select-popup .icon-ok').hide();
+    $('#select-modalbox .icon-ok').show();
+    previewType = "modalbox";
+  },
+  'click #select-popup': function(e) {
+    $('#select-modalbox .icon-ok').hide();
+    $('#select-popup .icon-ok').show();
+    previewType = "popup";
+  }
+};
 
 
