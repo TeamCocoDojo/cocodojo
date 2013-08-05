@@ -16,7 +16,7 @@ var
     if(modifiedFilesCount == 0){ loadPreview(); }
     else {
       $(document).trigger("preview");
-      $(document).on('doneCommit', function() {
+      setTimeout(function() {
         fileTabs.forEach(function(d){
           if(d.file.path){
             liveSocket.emit("replaceFile", {
@@ -26,18 +26,7 @@ var
             });
           }
         });
-      });
-      // setTimeout(function() {
-      //   fileTabs.forEach(function(d){
-      //     if(d.file.path){
-      //       liveSocket.emit("replaceFile", {
-      //         sessionId: Session.get('codeSessionId'),
-      //         fileString: d.file.content,
-      //         path: d.file.path
-      //       });
-      //     }
-      //   });
-      // }, 1000);
+      }, 2000);
     }
 
   },
