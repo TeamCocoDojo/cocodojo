@@ -42,6 +42,7 @@
 
 #editorTabContent {
   height: 100%;
+  overflow: hidden;
 }
 
 .editor-wrapper {
