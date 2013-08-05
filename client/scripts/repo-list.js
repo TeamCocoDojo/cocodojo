@@ -1,13 +1,18 @@
 Template.repoTree.rendered = function() {
 	$('#repoTree').on('show', function () {
 	});
+	$("#btn-choose-repo").click(function (event) {
+		event.preventDefault();
+		$(".select-repo").removeClass("hide");
+		$(".select-branch").addClass("hide");
+	});
 }
-
 function createBranchList(repoOwner, repoName){
 	cocodojo.codeSessionHost = cocodojo.githubUser.username; 
 	var repo = cocodojo.getGithubObj().getRepo(repoOwner, repoName);
 	repo.listBranches(function(err, branches) {
 		var ul = $("#branch-list");
+		ul.empty();
 		branches.forEach( function(branch) {
 			var li = $("<li/>");
 			var a = $("<a/>");
