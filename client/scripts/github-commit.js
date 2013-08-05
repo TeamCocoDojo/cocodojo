@@ -12,7 +12,7 @@ function commitFail(err){
 Template.commitBox.rendered = function() {
   $('#commitBox').on('show', function () {
     $("#commitBox .loading").removeClass("hide");
-    $(document).on("doneCommit", function() {
+  	setTimeout( function() {
       docs = $.map(FileTab.find({codeSessionId: Session.get("codeSessionId")}).fetch(), function(file){
         if(file.file.path === undefined) return null;
         return {path: file.file.path, content: file.file.content };
@@ -40,7 +40,7 @@ Template.commitBox.rendered = function() {
         $("<li/>").text("Deleted: " +doc.path).appendTo("#files-commited");
       });
       $("#commitConfirm").removeAttr("disabled");
-    });
+    }, 2000);
   });
 
   var sessionSocket = io.connect(document.location.hostname + "/sesssion" + Session.get("codeSessionId"), {port: 3333});
