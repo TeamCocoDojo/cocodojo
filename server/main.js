@@ -12,7 +12,7 @@ if(Meteor.isServer) {
   var currentUserMap = {};
 
   var getFileTabSocketId = function(record) {
-    return (record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
+    return (record.codeSessionId + "_" + record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
   }
 
   Meteor.publish("codesession", function(code_session_id) {

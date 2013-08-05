@@ -57,7 +57,7 @@ var saveAllTabs = function() {
 }
 
 var getFileTabSocketId = function(record) {
-  return (record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
+  return (Session.get("codeSessionId") + "_" + record.file.owner + "_" + record.file.repo + "_" + record.file.path).split('/').join('_');;
 }
 
 var Tab = function(record) {
