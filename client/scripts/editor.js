@@ -17,7 +17,6 @@ var existTab = function(path) {
 }
 
 var insertNewTab = function(data) {
-  console.log(data.content);
   if (!existTab(data.path)) {
     insertFileTab({
       content: data.content,
@@ -52,7 +51,6 @@ var saveAllTabs = function() {
       console.log(error);
     }
     else {
-      console.log("done commit " + Session.get("userId"));
       $(document).trigger("doneSingleCommit");
     }
   });
@@ -233,6 +231,7 @@ Template.codeMirror.rendered = function() {
     removed: function(record) {
       var tab = tabs[record.file.path];
       tab.close();
+      delete tabs[record.file.path];
     }
   });
 
@@ -287,9 +286,7 @@ Template.codeMirror.events = {
 }
 
 $(document).on("preview", function(data) {
-  ChangeLog.insert({
-    codeSessionId: Session.get("codeSessionId"),
-  });
+  $(document).trigger("commitToGit");
 });
 
 $(document).on("repoFileSelected", function(event, data) {

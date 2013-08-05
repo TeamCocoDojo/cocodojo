@@ -42,6 +42,24 @@ Template.commitBox.rendered = function() {
       $("#commitConfirm").removeAttr("disabled");
     });
   });
+
+  var sessionSocket = io.connect(document.location.hostname + "/sesssion" + Session.get("codeSessionId"), {port: 3333});
+  $(document).on("commitToGit", function() {
+    sessionSocket.emit("commit");
+    ChangeLog.insert({
+      codeSessionId: Session.get("codeSessionId"),
+    });
+  });
+        
+  $(document).on("doneSingleCommit", function() {
+    console.log("done single commit");
+    sessionSocket.emit("finishCommit");
+  });
+        
+  sessionSocket.on("doneCommit", function() {
+    console.log("Done commit.....");
+    $(document).trigger("doneCommit");
+  });
 }
 
 $(document).on("repoSelected", function(e, repoInfo){
@@ -49,23 +67,6 @@ $(document).on("repoSelected", function(e, repoInfo){
   cocodojo.repoOwner = repoInfo.owner;
   cocodojo.repoName = repoInfo.name;
   currentBranch = repoInfo.branch;
-
-  var sessionSocket = io.connect(document.location.hostname + "/sesssion" + Session.get("codeSessionId"), {port: 3333});
-    $(document).on("commitToGit", function() {
-      console.log("Commit to git o");
-      sessionSocket.emit("commit");
-      ChangeLog.insert({
-        codeSessionId: Session.get("codeSessionId"),
-      });
-    });
-        
-    $(document).on("doneSingleCommit", function() {
-      sessionSocket.emit("finishCommit");
-    });
-        
-    sessionSocket.on("doneCommit", function() {
-      $(document).trigger("doneCommit");
-    });
 
   $("#branch-name").text(repoInfo.branch);
 
