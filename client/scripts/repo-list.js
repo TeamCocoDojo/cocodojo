@@ -1,5 +1,7 @@
 Template.repoTree.rendered = function() {
-	$('#repoTree').on('show', function () {
+	$('#repoTree').on('hidden', function () {
+		$(".select-repo").removeClass("hide");
+		$(".select-branch").addClass("hide");
 	});
 	$("#btn-choose-repo").click(function (event) {
 		event.preventDefault();
