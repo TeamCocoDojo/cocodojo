@@ -33,6 +33,7 @@ To code collaboratively, just copy the URL and paste it to your friends. They ca
 + Install Meteor 0.6.X
 + Make Possible Changes
 + meteor (it's running!)
++ If you need to change anything to the preview server, please refer this link https://github.com/TeamCocoDojo/code-preview
 
 ###Black Magix
 + Sean's Gossip
